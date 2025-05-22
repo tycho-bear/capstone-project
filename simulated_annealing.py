@@ -28,6 +28,9 @@ class SimulatedAnnealing:
         :return:
         """
 
+    def anneal(self):
+        """run the whole algorithm"""
+
 
 
 
