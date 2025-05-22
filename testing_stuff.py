@@ -1,6 +1,6 @@
 from helper_classes import City, Tour
 from helper_functions import generate_random_cities
-from config import seed
+from config import seed, x_min_WA, x_max_WA, y_min_WA, y_max_WA
 import numpy as np
 
 np.random.seed(seed)
@@ -11,10 +11,7 @@ def test_stuff():
     num_cities = 7
     # intuitive x/y view in WA
     # this is reversed from lat/lon
-    x_min = -125
-    x_max = -117
-    y_min = 45.5
-    y_max = 49
+
 
     city1 = City("Seattle", 2, 5)
     city2 = City("Boston", 5, 4)
@@ -33,7 +30,8 @@ def test_stuff():
     print()
 
     # random city generation - works
-    random_cities = generate_random_cities(num_cities, x_min, x_max, y_min, y_max)
+    random_cities = generate_random_cities(num_cities, x_min_WA, x_max_WA,
+                                           y_min_WA, y_max_WA)
     random_tour = Tour(random_cities)
     print("Randomly generated cities:")
     for i in range(random_tour.num_cities):

@@ -5,7 +5,8 @@ from config import seed
 np.random.seed(seed)
 
 
-def generate_random_cities(num_cities, x_min, x_max, y_min, y_max):
+def generate_random_cities(num_cities: int, x_min: float, x_max: float,
+                           y_min: float, y_max: float) -> list[City]:
     """
     Generates a specific number of cities in random positions.
 
@@ -19,7 +20,8 @@ def generate_random_cities(num_cities, x_min, x_max, y_min, y_max):
 
     cities = []
     for i in range(num_cities):
-        name = f"city{i}"
+        # name = f"city{i}"
+        name = f"c{i}"
         x = np.random.uniform(x_min, x_max)
         y = np.random.uniform(y_min, y_max)
         city = City(name, x, y)
