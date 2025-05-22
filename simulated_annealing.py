@@ -122,6 +122,12 @@ class SimulatedAnnealing:
     def print_current_iteration_information(self):
         """"""
         # another quick helper function
+        print(f"Iteration {self.current_iteration}: {self.solution}, distance "
+              f"{self.solution_distance}")
+
+    def display_solution(self):
+        """"""
+        self.solution.draw_tour(include_start_end=True)
 
 
 
@@ -132,9 +138,66 @@ def main():
     # max iter 1000
 
     # start with temp=100, rate=0.9, 20 iterations, just to see if it works
-    # also print everything!! I can do this in anneal()
+
 
     # see final tour
+
+    # Distance 20.839
+    # max_iterations = 8000
+    # initial_temperature = 40
+    # cooling_rate = 0.999
+    # num_cities = 20
+    # shift_max = 2
+
+    # Distance 20.548
+    # max_iterations = 8000
+    # initial_temperature = 33
+    # cooling_rate = 0.999
+    # num_cities = 20
+    # shift_max = 2
+
+    # Distance 20.839
+    # max_iterations = 10000
+    # initial_temperature = 40
+    # cooling_rate = 0.999
+    # num_cities = 20
+    # shift_max = 2
+
+    # Distance 21.315
+    # max_iterations = 10000
+    # initial_temperature = 46
+    # cooling_rate = 0.999
+    # num_cities = 20
+    # shift_max = 2
+
+    # Distance 19.752
+    # max_iterations = 10000
+    # initial_temperature = 17
+    # cooling_rate = 0.999
+    # num_cities = 20
+    # shift_max = 2
+
+    # Distance 19.780
+    # max_iterations = 10000
+    # initial_temperature = 5
+    # cooling_rate = 0.999
+    # num_cities = 20
+    # shift_max = 2
+
+    # Distance 19.782
+    max_iterations = 10000
+    initial_temperature = 2.5
+    cooling_rate = 0.999
+    num_cities = 20
+    shift_max = 2
+
+    annealer = SimulatedAnnealing(max_iterations, initial_temperature,
+                                      cooling_rate, num_cities, shift_max)
+    annealer.anneal()
+
+    annealer.display_solution()
+
+
 
 
 
