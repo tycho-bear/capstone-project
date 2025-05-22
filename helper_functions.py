@@ -1,5 +1,8 @@
 import numpy as np
 from helper_classes import City
+from config import seed
+
+np.random.seed(seed)
 
 
 def generate_random_cities(num_cities, x_min, x_max, y_min, y_max):

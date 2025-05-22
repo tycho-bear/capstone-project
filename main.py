@@ -1,12 +1,11 @@
 import numpy as np
-from helper_functions import generate_random_cities
 
-
+from config import seed
+np.random.seed(seed)
 
 def main():
     """"""
-    seed = 123
-    np.random.seed(seed)
+
 
 
 
