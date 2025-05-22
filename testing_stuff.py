@@ -8,6 +8,13 @@ np.random.seed(seed)
 
 def test_stuff():
     """"""
+    num_cities = 7
+    # intuitive x/y view in WA
+    # this is reversed from lat/lon
+    x_min = -125
+    x_max = -117
+    y_min = 45.5
+    y_max = 49
 
     city1 = City("Seattle", 2, 5)
     city2 = City("Boston", 5, 4)
@@ -26,14 +33,14 @@ def test_stuff():
     print()
 
     # random city generation - works
-    random_cities = generate_random_cities(5, 1, 10, 1, 10)
+    random_cities = generate_random_cities(num_cities, x_min, x_max, y_min, y_max)
     random_tour = Tour(random_cities)
     print("Randomly generated cities:")
     for i in range(random_tour.num_cities):
         print(f"\t{random_tour.cities[i]}")
     print()
 
-    random_tour.draw_tour(plot_title="random_tour", include_start_end=True)
+    random_tour.draw_tour(plot_title="random_tour", include_start_end=False)
 
     # swapping two cities - works
     # swap city1 and city3
@@ -43,7 +50,7 @@ def test_stuff():
     new_tour = random_tour.swap_cities(pos1, shift1)
     print(f"After swapping:\t{new_tour}")
 
-    new_tour.draw_tour(plot_title="new_tour", include_start_end=True)
+    new_tour.draw_tour(plot_title="new_tour", include_start_end=False)
 
     print()
     pos2 = 3
@@ -53,7 +60,7 @@ def test_stuff():
     print(f"After swapping:\t{new_new_tour}")
     print(f"new_tour:\t\t{new_tour}")
 
-    new_new_tour.draw_tour(plot_title="new_new_tour", include_start_end=True)
+    new_new_tour.draw_tour(plot_title="new_new_tour", include_start_end=False)
 
 
 def main():
