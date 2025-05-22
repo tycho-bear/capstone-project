@@ -1,8 +1,14 @@
 from helper_classes import City, Tour
 from helper_functions import generate_random_cities
+from config import seed
+import numpy as np
+
+np.random.seed(seed)
+
 
 def test_stuff():
     """"""
+
     city1 = City("Seattle", 2, 5)
     city2 = City("Boston", 5, 4)
     city3 = City("Austin", 3, 3)
@@ -27,6 +33,8 @@ def test_stuff():
         print(f"\t{random_tour.cities[i]}")
     print()
 
+    random_tour.draw_tour(plot_title="random_tour", include_start_end=True)
+
     # swapping two cities - works
     # swap city1 and city3
     pos1 = 1
@@ -35,6 +43,8 @@ def test_stuff():
     new_tour = random_tour.swap_cities(pos1, shift1)
     print(f"After swapping:\t{new_tour}")
 
+    new_tour.draw_tour(plot_title="new_tour", include_start_end=True)
+
     print()
     pos2 = 3
     shift2 = 2
@@ -42,6 +52,8 @@ def test_stuff():
     new_new_tour = new_tour.swap_cities(pos2, shift2)
     print(f"After swapping:\t{new_new_tour}")
     print(f"new_tour:\t\t{new_tour}")
+
+    new_new_tour.draw_tour(plot_title="new_new_tour", include_start_end=True)
 
 
 def main():

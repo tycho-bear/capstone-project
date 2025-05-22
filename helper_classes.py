@@ -2,6 +2,7 @@ import math
 import numpy
 import numpy as np
 import copy
+import matplotlib.pyplot as plot
 
 
 # tour class
@@ -72,6 +73,7 @@ class Tour:
         """
         self.cities = cities
         self.num_cities = len(cities)
+        self.tour_distance = self.calculate_tour_distance()
 
     def calculate_tour_distance(self) -> float:
         """
@@ -110,33 +112,14 @@ class Tour:
         :return: (Tour) A new Tour object the same as this one, but with the two
             cities swapped.
         """
-        # need current position and a shift value
-        # example: current tour [0, 1, 2, 3, 4]
-        # length = 5
-        # random position = 3 (index)
-        # shift = 2
-        # (this can be 1 or 2 for a lower dimensional graph)
-        # (higher dimensional graph may improve the ability to break out of
-        # local optima)
-        # swap index 3 with index (3 + 2) mod 5, so swap index 3 with index 0
-
-        # copy list
-        # swap in list
-        # create new tour with copied swapped list
 
         swap_index = (position + shift) % self.num_cities  # wrap around
-        # new_tour = Tour(self.cities)
-        # self.cities[position], self.cities[swap_index] = self.cities[
-        #     swap_index], self.cities[position]
-
-
         cities_copy = copy.deepcopy(self.cities)
         cities_copy[position], cities_copy[swap_index] = cities_copy[
             swap_index], cities_copy[position]
-        swapped_tour = Tour(cities_copy)
+
+        swapped_tour = Tour(cities_copy)  # should automatically update distance
         return swapped_tour
-
-
 
 
     # def generate_updated_tour(self) -> "Tour":
@@ -145,9 +128,50 @@ class Tour:
     #     # want to re-calculate the tour distance after doing this
 
 
-    def draw_tour(self, include_segments=False):
-        """"""
-        # get a visualization of the tour and the points in it
+    # def draw_tour(self, include_segments=False):
+    #     """"""
+    #     # get a visualization of the tour and the points in it
+
+    def draw_tour(self, include_start_end=False, show_segments=True,
+                  plot_title="Tour Visualization") -> None:
+        """
+        Shows a visualization of the tour and the points in it.
+
+        *Creation of this function was assisted by GitHub Copilot.*
+
+        :param include_segments: (bool) If True, include lines connecting the
+            cities.
+        """
+        # Extract x and y coordinates of the cities
+        x_coords = [city.x for city in self.cities]
+        y_coords = [city.y for city in self.cities]
+
+        # Add the starting city to the end to close the loop
+        if include_start_end:
+            x_coords.append(self.cities[0].x)
+            y_coords.append(self.cities[0].y)
+
+        # Plot the cities as points
+        plot.scatter(x_coords, y_coords, color='darkslateblue', label='Cities')
+
+        # Connect the cities with lines if include_segments is True
+        if show_segments:
+            plot.plot(x_coords, y_coords, color='mediumseagreen', linestyle='-',
+                     label='Tour Path')
+
+        # Annotate the cities with their names
+        for city in self.cities:
+            plot.text(city.x, city.y, city.name, fontsize=8, ha='right')
+
+        # Add labels and legend
+        # plot.xlabel('X Coordinate')
+        # plot.ylabel('Y Coordinate')
+        plot.title(f"{plot_title}, distance:  {self.calculate_tour_distance():.3f}")
+        # plot.legend()
+        # plot.grid(True)
+        plot.axis("off")
+        plot.show()
+
 
 
     def __str__(self):
