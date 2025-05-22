@@ -1,6 +1,7 @@
 import math
 import numpy
 import numpy as np
+import copy
 
 
 # tour class
@@ -15,32 +16,32 @@ class City:
     """
     Class representing a city. It has a name and two x/y or lat/lon coordinates.
     """
-    def __init__(self, name, x, y):
+    def __init__(self, name: str, x: float, y: float) -> None:
         """
         Creates a new City.
 
         :param name: (str) The name of this City, such as "Seattle".
-        :param x: (double) The x coordinate (alternatively, latitude) of this
+        :param x: (float) The x coordinate (alternatively, latitude) of this
             City.
-        :param y: (double) The y coordinate (alternatively, longitude) of this
+        :param y: (float) The y coordinate (alternatively, longitude) of this
             City.
         """
         self.name = name
         self.x = x
         self.y = y
 
-    def distance_to(self, other_city, use_geographical_distance=False):
+    def distance_to(self, other_city: "City", use_geographical_distance=False):
         """
         Calculates the distance between this City and another City. Set
-        `use_geographical_distance` = `True` to calculate the distance along
+        ``use_geographical_distance`` = ``True`` to calculate the distance along
         Earth's surface.
 
         :param other_city: (City) The other City object to calculate the
             distance to.
-        :return: (double) the distance to the other City.
+        :return: (float) the distance to the other City.
         """
         if not use_geographical_distance:
-            # use Euclidean distance
+            # use Euclidean distance instead
             sum_term = (self.x - other_city.x)**2 + (self.y - other_city.y)**2
             return math.sqrt(sum_term)
 
@@ -72,8 +73,13 @@ class Tour:
         self.cities = cities
         self.num_cities = len(cities)
 
-    def calculate_tour_distance(self):
-        """"""
+    def calculate_tour_distance(self) -> float:
+        """
+        Calculates the total distance between all Cities in this Tour. This
+        includes the distance from the ending city to the starting city.
+
+        :return: (float) The distance between all cities in the tour.
+        """
         # distance from city 1 to city 2, then city 2 to city 3, and so on
         # then distance from last city to first city
         total_distance = 0
@@ -83,11 +89,27 @@ class Tour:
 
         start_end_distance = self.cities[0].distance_to(self.cities[-1])
         total_distance += start_end_distance
+
         return total_distance
 
 
-    def swap_cities(self):
-        """"""
+    def swap_cities(self, position: int, shift: int) -> "Tour":
+        """
+        Creates a copy of this Tour with two cities swapped.
+        The city at the given ``position``
+        is swapped with the city that is ``shift`` units ahead of it, wrapping
+        around if necessary.
+
+        For example, with a current tour of 5 cities, ``[0, 1, 2, 3, 4]``, a
+        ``position`` of `3` and a ``shift`` of `2`, index `3` would be swapped
+        with index `3 + 2 mod 5`, or index `0`.
+
+        :param position: (int) The index of the first city to swap.
+        :param shift: (int) Swap positions with the city this many units ahead
+            of ``position``.
+        :return: (Tour) A new Tour object the same as this one, but with the two
+            cities swapped.
+        """
         # need current position and a shift value
         # example: current tour [0, 1, 2, 3, 4]
         # length = 5
@@ -98,16 +120,40 @@ class Tour:
         # local optima)
         # swap index 3 with index (3 + 2) mod 5, so swap index 3 with index 0
 
+        # copy list
+        # swap in list
+        # create new tour with copied swapped list
 
-    def update_tour(self):
-        """"""
-        # just call swap_cities for now
-        # want to re-calculate the tour distance after doing this
+        swap_index = (position + shift) % self.num_cities  # wrap around
+        # new_tour = Tour(self.cities)
+        # self.cities[position], self.cities[swap_index] = self.cities[
+        #     swap_index], self.cities[position]
+
+
+        cities_copy = copy.deepcopy(self.cities)
+        cities_copy[position], cities_copy[swap_index] = cities_copy[
+            swap_index], cities_copy[position]
+        swapped_tour = Tour(cities_copy)
+        return swapped_tour
+
+
+
+
+    # def generate_updated_tour(self) -> "Tour":
+    #     """"""
+    #     # just call swap_cities for now
+    #     # want to re-calculate the tour distance after doing this
+
 
     def draw_tour(self, include_segments=False):
         """"""
         # get a visualization of the tour and the points in it
 
 
-    # TODO: __str__?
+    def __str__(self):
+        """"""
+        self_str = "Tour: "
+        for city in self.cities:
+            self_str += city.name + " "
+        return self_str
 
