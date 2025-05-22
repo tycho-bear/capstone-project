@@ -79,8 +79,11 @@ class Tour:
         total_distance = 0
         for i in range(self.num_cities - 1):
             this_distance = self.cities[i].distance_to(self.cities[i + 1])
+            total_distance += this_distance
 
-
+        start_end_distance = self.cities[0].distance_to(self.cities[-1])
+        total_distance += start_end_distance
+        return total_distance
 
 
     def swap_cities(self):
