@@ -6,7 +6,7 @@
 # ===============================
 
 import math
-from helper_functions import generate_random_cities
+from helper_functions import generate_random_cities, generate_square_grid
 from config import seed, x_min_WA, x_max_WA, y_min_WA, y_max_WA
 from helper_classes import Tour
 import copy
@@ -22,8 +22,8 @@ class SimulatedAnnealing:
     This class implements the simulated annealing algorithm.
     """
 
-    def __init__(self, max_iterations, initial_temperature, cooling_rate,
-                 num_cities, shift_max):
+    def __init__(self, initial_guess: Tour, max_iterations, initial_temperature,
+                 cooling_rate, shift_max):
         """
         Creates a new instance of a simulated annealing algorithm with the given
         hyperparameters. These influence the behavior of the algorithm and the
@@ -31,6 +31,7 @@ class SimulatedAnnealing:
 
         Class structure subject to revisions in the near future.
 
+        :param initial_guess:
         :param max_iterations: (int) The maximum number of iterations the
             algorithm should run for.
         :param initial_temperature: (float) The temperature to start at. This
@@ -49,14 +50,16 @@ class SimulatedAnnealing:
         self.current_iteration = 0
         self.temperature = initial_temperature
         self.COOLING_RATE = cooling_rate
-        self.NUM_CITIES = num_cities
         self.SHIFT_MAX = shift_max
 
         # set up initial stuff
-        initial_cities = generate_random_cities(num_cities, x_min_WA, x_max_WA,
-                                                y_min_WA, y_max_WA)
-        self.solution = Tour(initial_cities)
+        # initial_cities = generate_random_cities(num_cities, x_min_WA, x_max_WA,
+        #                                         y_min_WA, y_max_WA)
+        # self.solution = Tour(initial_cities)
+
+        self.solution = initial_guess
         self.solution_distance = self.solution.tour_distance
+        self.NUM_CITIES = self.solution.num_cities
 
         # keep track of the best here, this won't be used in the algorithm
         self.best_solution = copy.deepcopy(self.solution)
@@ -171,7 +174,7 @@ class SimulatedAnnealing:
 
         :return: None
         """
-        self.solution.draw_tour(include_start_end=True, show_segments=True,
+        self.solution.draw_tour(include_start_end=False, show_segments=True,
                                 plot_title=f"{self.NUM_CITIES} cities, distance"
                                            f" {self.solution_distance:.3f}")
 
@@ -248,14 +251,18 @@ def main() -> None:
     # |  The actual code to run the algorithm:
     # ==========================================================================
 
-    max_iterations = 5000
-    initial_temperature = 2.5
-    cooling_rate = 0.999
+    max_iterations = 10000
+    initial_temperature = 27
+    cooling_rate = 0.9995
     num_cities = 20
     shift_max = 2
 
-    annealer = SimulatedAnnealing(max_iterations, initial_temperature,
-                                      cooling_rate, num_cities, shift_max)
+    grid_side_length = 5
+    initial_guess = generate_square_grid(5)
+
+    annealer = SimulatedAnnealing(initial_guess, max_iterations,
+                                  initial_temperature, cooling_rate,
+                                  shift_max)
     annealer.anneal()
     annealer.display_solution()
 
