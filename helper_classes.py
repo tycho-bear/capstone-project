@@ -1,3 +1,10 @@
+# ===============================
+# Tycho Bear
+# CSCI.788.01C1
+# Capstone Project
+# Summer 2025
+# ===============================
+
 import math
 import numpy
 import numpy as np
@@ -5,21 +12,14 @@ import copy
 import matplotlib.pyplot as plot
 
 
-# tour class
-
-
-
-# city class
-# name, position
-# maybe indicate whether these are lat/long coordinates?
-
 class City:
     """
     Class representing a city. It has a name and two x/y or lat/lon coordinates.
     """
+
     def __init__(self, name: str, x: float, y: float) -> None:
         """
-        Creates a new City.
+        Creates a new City at the given coordinates.
 
         :param name: (str) The name of this City, such as "Seattle".
         :param x: (float) The x coordinate (alternatively, latitude) of this
@@ -27,9 +27,11 @@ class City:
         :param y: (float) The y coordinate (alternatively, longitude) of this
             City.
         """
+
         self.name = name
         self.x = x
         self.y = y
+
 
     def distance_to(self, other_city: "City", use_geographical_distance=False):
         """
@@ -50,6 +52,7 @@ class City:
         # https://stackoverflow.com/questions/27928/calculate-distance-between-two-latitude-longitude-points-haversine-formula
         earth_radius = 6371.009  # kilometers
 
+
     def __str__(self):
         """
         This is used for printing.
@@ -65,15 +68,18 @@ class Tour:
     It is essentially a collection of City objects with auxiliary functions to
     calculate the total distance or swap two cities.
     """
-    def __init__(self, cities: list[City]):
+
+    def __init__(self, cities: list[City]) -> None:
         """
-        Create a new Tour.
+        Create a new Tour with the given list of Cities.
 
         :param cities: (list) A list of all the City objects in this tour.
         """
+
         self.cities = cities
         self.num_cities = len(cities)
         self.tour_distance = self.calculate_tour_distance()
+
 
     def calculate_tour_distance(self) -> float:
         """
@@ -82,6 +88,7 @@ class Tour:
 
         :return: (float) The distance between all cities in the tour.
         """
+
         # distance from city 1 to city 2, then city 2 to city 3, and so on
         # then distance from last city to first city
         total_distance = 0
@@ -122,56 +129,44 @@ class Tour:
         return swapped_tour
 
 
-    # def generate_updated_tour(self) -> "Tour":
-    #     """"""
-    #     # just call swap_cities for now
-    #     # want to re-calculate the tour distance after doing this
-
-
-    # def draw_tour(self, include_segments=False):
-    #     """"""
-    #     # get a visualization of the tour and the points in it
-
     def draw_tour(self, include_start_end=False, show_segments=True,
                   plot_title="Tour Visualization") -> None:
         """
-        Shows a visualization of the tour and the points in it.
+        Uses matplotlib to show a visualization of the tour and its points.
 
-        *Creation of this function was assisted by GitHub Copilot.*
-
-        :param include_segments: (bool) If True, include lines connecting the
-            cities.
+        :param include_start_end: (bool) Whether to include a segment connecting
+            the start and end points.
+        :param show_segments: (bool) Whether to show lines between the points.
+        :param plot_title: (str) The title of the plot. The tour distance should
+            be included here for clarity.
+        :return: None
         """
-        # Extract x and y coordinates of the cities
-        x_coords = [city.x for city in self.cities]
-        y_coords = [city.y for city in self.cities]
 
-        # Add the starting city to the end to close the loop
+        # get coordinates
+        x_coords = []
+        y_coords = []
+        for city in self.cities:
+            x_coords.append(city.x)
+            y_coords.append(city.y)
+
+        # put the first city at the end of the list so the line connects to it
+        # this closes the loop
         if include_start_end:
             x_coords.append(self.cities[0].x)
             y_coords.append(self.cities[0].y)
 
-        # Plot the cities as points
-        plot.scatter(x_coords, y_coords, color='darkslateblue', label='Cities')
+        plot.scatter(x_coords, y_coords, color="darkslateblue")
+        if show_segments:  # include segments between the cities
+            plot.plot(x_coords, y_coords, color="mediumseagreen",
+                      linestyle="-")
 
-        # Connect the cities with lines if include_segments is True
-        if show_segments:
-            plot.plot(x_coords, y_coords, color='mediumseagreen', linestyle='-',
-                     label='Tour Path')
-
-        # Annotate the cities with their names
+        # including city names
         for city in self.cities:
-            plot.text(city.x, city.y, city.name, fontsize=8, ha='right')
+            plot.text(city.x, city.y, city.name, fontsize=9, ha="right")
 
-        # Add labels and legend
-        # plot.xlabel('X Coordinate')
-        # plot.ylabel('Y Coordinate')
-        plot.title(f"{plot_title}, distance:  {self.calculate_tour_distance():.3f}")
-        # plot.legend()
-        # plot.grid(True)
+        plot.title(plot_title)
         plot.axis("off")
         plot.show()
-
 
 
     def __str__(self):

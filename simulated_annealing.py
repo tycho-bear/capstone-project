@@ -1,9 +1,17 @@
+# ===============================
+# Tycho Bear
+# CSCI.788.01C1
+# Capstone Project
+# Summer 2025
+# ===============================
+
 import math
 from helper_functions import generate_random_cities
 from config import seed, x_min_WA, x_max_WA, y_min_WA, y_max_WA
 from helper_classes import Tour
 import copy
 import numpy as np
+from typing import Any
 
 
 np.random.seed(seed)
@@ -11,20 +19,30 @@ np.random.seed(seed)
 
 class SimulatedAnnealing:
     """
-    ...
+    This class implements the simulated annealing algorithm.
     """
 
     def __init__(self, max_iterations, initial_temperature, cooling_rate,
                  num_cities, shift_max):
         """
-        ...
+        Creates a new instance of a simulated annealing algorithm with the given
+        hyperparameters. These influence the behavior of the algorithm and the
+        quality of the solutions it finds.
 
-        :param max_iterations:
-        :param initial_temperature:
-        :param cooling_rate:
-        :param num_cities:
+        Class structure subject to revisions in the near future.
+
+        :param max_iterations: (int) The maximum number of iterations the
+            algorithm should run for.
+        :param initial_temperature: (float) The temperature to start at. This
+            influences the acceptance probability.
+        :param cooling_rate: (float) For a geometric cooling rate, the
+            temperature will be multiplied by this number after every iteration.
+        :param num_cities: ABC
         :param shift_max:
         """
+        # TODO: Update class to be more modular. Pass in these things:
+        # TODO:     (1) an initial solution guess, (2) a fitness metric
+        # TODO:     function, and (3) a function that generates a new solution.
 
         # main SA parameters
         self.MAX_ITERATIONS = max_iterations
@@ -45,44 +63,48 @@ class SimulatedAnnealing:
         self.best_solution_distance = copy.deepcopy(self.solution_distance)
         self.best_solution_iteration_num = copy.deepcopy(self.current_iteration)
 
-        # self.solution_fitness =
 
-        # set current solution
-        # set current solution fitness
+    def accept_solution(self, new_solution: Any) -> None:
+        """
+        Helper function that accepts the given solution. It sets the current
+        solution to ``new_solution``, and saves its fitness value.
 
-        # set best solution  # careful of copying...
+        :param new_solution: (Any) The new solution to accept. For the TSP, this
+            would be a Tour object.
+        :return: None
+        """
 
-
-        # iteration number (set to 0)   (while this < max {..., this += 1})
-        # max iterations
-        # temperature (set with initial)
-        # cooling rate
-        # current solution (set with initial guess)
-        # current solution fitness
-
-        # (just check these each iteration when updating the current solution)
-        # best solution
-        # best solution fitness
-        # best solution iteration number
-
-
-    def accept_solution(self, new_solution):
-        """"""
         self.solution = new_solution
         self.solution_distance = new_solution.tour_distance
 
 
-    def update_temperature(self):
-        """"""
+    def update_temperature(self) -> None:
+        """
+        Updates the current temperature using a geometric cooling schedule.
+        Multiplies the temperature by the cooling rate (less than 1).
+
+        :return: None
+        """
+
         # can do something more complicated in the future
         self.temperature *= self.COOLING_RATE
 
 
-    def sa_step(self):
+    def sa_step(self) -> None:
         """
         Performs one step of the simulated annealing algorithm.
-        :return:
+
+        First obtains a new solution, then evaluates its fitness compared to the
+        current solution. If the new solution's fitness is better, it is
+        accepted. If it's worse, then it's accepted with an exponential
+        probability based on (a) the current temperature, and (b) how much worse
+        it is.
+
+        Also keeps track of the best solution found.
+
+        :return: None
         """
+
         # get new solution
         position = np.random.randint(low=0, high=self.NUM_CITIES)
         shift = np.random.randint(low=1, high=self.SHIFT_MAX+1)
@@ -90,7 +112,6 @@ class SimulatedAnnealing:
 
         difference = new_solution.tour_distance - self.solution_distance
 
-        # if new_solution.tour_distance < self.solution_distance:
         # this solution is worse, we will accept it with a probability
         if difference >= 0:
             r = np.random.random()
@@ -99,8 +120,6 @@ class SimulatedAnnealing:
             return
 
         # this solution is better, so accept it
-        # self.solution = new_solution
-        # self.solution_distance = new_solution.tour_distance
         self.accept_solution(new_solution)
 
         # keep track of the best solution, not super important, but it's cool
@@ -110,29 +129,59 @@ class SimulatedAnnealing:
             self.best_solution_iteration_num = self.current_iteration
 
 
-    def anneal(self):
-        """run the whole algorithm"""
-        self.print_current_iteration_information()
+    def anneal(self) -> None:
+        """
+        Runs the whole simulated annealing algorithm, performing the specified
+        number of iterations. At each iteration, performs a single sa_step() and
+        updates the temperature.
+
+        :return: None
+        """
+
+        # self.print_current_iteration_information()
         while self.current_iteration < self.MAX_ITERATIONS:
             self.sa_step()
             self.update_temperature()
+
+            # print every 100 iterations
+            if self.current_iteration % 100 == 0:
+                self.print_current_iteration_information()
+
             self.current_iteration += 1
-            self.print_current_iteration_information()
 
-    def print_current_iteration_information(self):
-        """"""
-        # another quick helper function
+
+    def print_current_iteration_information(self) -> None:
+        """
+        Helper function that prints out information about the current iteration.
+        For the TSP, this includes the iteration number, the current tour, and
+        the tour's distance.
+
+        :return: None
+        """
+
         print(f"Iteration {self.current_iteration}: {self.solution}, distance "
-              f"{self.solution_distance}")
-
-    def display_solution(self):
-        """"""
-        self.solution.draw_tour(include_start_end=True)
+              f"{self.solution_distance:.3f}")
 
 
+    def display_solution(self) -> None:
+        """
+        Helper function that calls draw_tour() on the current solution. Shows
+        a visual representation of the current tour, and also displays its
+        length.
 
-def main():
-    """"""
+        :return: None
+        """
+        self.solution.draw_tour(include_start_end=True, show_segments=True,
+                                plot_title=f"{self.NUM_CITIES} cities, distance"
+                                           f" {self.solution_distance:.3f}")
+
+
+def main() -> None:
+    """
+    Driver, runs the algorithms.
+
+    :return: None
+    """
     # temp 1000
     # cooling rate 0.99
     # max iter 1000
@@ -141,6 +190,10 @@ def main():
 
 
     # see final tour
+
+    # ==========================================================================
+    # |  Different combinations of hyperparameters below:
+    # ==========================================================================
 
     # Distance 20.839
     # max_iterations = 8000
@@ -185,7 +238,17 @@ def main():
     # shift_max = 2
 
     # Distance 19.782
-    max_iterations = 10000
+    # max_iterations = 10000
+    # initial_temperature = 2.5
+    # cooling_rate = 0.999
+    # num_cities = 20
+    # shift_max = 2
+
+    # ==========================================================================
+    # |  The actual code to run the algorithm:
+    # ==========================================================================
+
+    max_iterations = 5000
     initial_temperature = 2.5
     cooling_rate = 0.999
     num_cities = 20
@@ -194,10 +257,7 @@ def main():
     annealer = SimulatedAnnealing(max_iterations, initial_temperature,
                                       cooling_rate, num_cities, shift_max)
     annealer.anneal()
-
     annealer.display_solution()
-
-
 
 
 
