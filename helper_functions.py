@@ -6,7 +6,7 @@ np.random.seed(seed)
 
 
 def generate_random_cities(num_cities: int, x_min: float, x_max: float,
-                           y_min: float, y_max: float) -> list[City]:
+                           y_min: float, y_max: float) -> Tour:
     """
     Generates a specific number of cities in random positions.
 
@@ -15,7 +15,8 @@ def generate_random_cities(num_cities: int, x_min: float, x_max: float,
     :param x_max: (double) Upper bound on the x coordinates.
     :param y_min: (double) Lower bound on the y coordinates.
     :param y_max: (double) Upper bound on the y coordinates.
-    :return: (list) A list of City objects with random x and y coordinates.
+    :return: (Tour) A Tour containing the City objects with random x and y
+        coordinates.
     """
 
     cities = []
@@ -27,7 +28,7 @@ def generate_random_cities(num_cities: int, x_min: float, x_max: float,
         city = City(name, x, y)
         cities.append(city)
 
-    return cities
+    return Tour(cities)
 
 
 def generate_square_grid(side_length: int) -> Tour:
@@ -42,10 +43,12 @@ def generate_square_grid(side_length: int) -> Tour:
     """
 
     cities = []
+    city_number = 1
     for x in range(1, side_length + 1):
         for y in range(1, side_length + 1):
-            city = City(f"c{x*y}", x, y)
+            city = City(f"c{city_number}", x, y)
             cities.append(city)
+            city_number += 1
 
     # print(f"Before shuffling: {Tour(cities)}")
     np.random.shuffle(cities)  # works fine
