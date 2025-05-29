@@ -12,6 +12,7 @@ from helper_classes import Tour
 import copy
 import numpy as np
 from typing import Any
+import time
 
 
 np.random.seed(seed)
@@ -141,16 +142,26 @@ class SimulatedAnnealing:
         :return: None
         """
 
+        start_time = time.time()
+
         # self.print_current_iteration_information()
         while self.current_iteration < self.MAX_ITERATIONS:
             self.sa_step()
             self.update_temperature()
 
             # print every 100 iterations
-            if self.current_iteration % 100 == 0:
+            if self.current_iteration % 500 == 0:
                 self.print_current_iteration_information()
 
             self.current_iteration += 1
+        self.print_current_iteration_information()
+
+        end_time = time.time()
+
+        print(f"Found best solution at iteration "
+              f"{self.best_solution_iteration_num}:  "
+              f"distance {self.best_solution_distance:.3f}")
+        print(f"Elapsed time: {(end_time - start_time):.1f} seconds.")
 
 
     def print_current_iteration_information(self) -> None:
@@ -162,8 +173,9 @@ class SimulatedAnnealing:
         :return: None
         """
 
-        print(f"Iteration {self.current_iteration}: {self.solution}, distance "
-              f"{self.solution_distance:.3f}")
+        print(f"Iteration {self.current_iteration}: "
+              f"temp. {self.temperature:.4f},  "
+              f"distance {self.solution_distance:.3f}")
 
 
     def display_solution(self) -> None:
@@ -241,24 +253,51 @@ def main() -> None:
     # shift_max = 2
 
     # Distance 19.782
-    # max_iterations = 10000
-    # initial_temperature = 2.5
-    # cooling_rate = 0.999
-    # num_cities = 20
-    # shift_max = 2
+    max_iterations = 10000
+    initial_temperature = 2.5
+    cooling_rate = 0.999
+    num_cities = 20
+    shift_max = 2
+
 
     # ==========================================================================
     # |  The actual code to run the algorithm:
     # ==========================================================================
 
-    max_iterations = 10000
-    initial_temperature = 27
-    cooling_rate = 0.9995
-    num_cities = 20
-    shift_max = 2
+    # 25 cities, distance 26.243
+    # max_iterations = 10000
+    # initial_temperature = 9
+    # cooling_rate = 0.999
+    # num_cities = 20
+    # shift_max = 10
 
-    grid_side_length = 5
-    initial_guess = generate_square_grid(5)
+    # 49 cities, distance 56.055
+    # max_iterations = 20000
+    # initial_temperature = 12
+    # cooling_rate = 0.9995
+    # num_cities = 20
+    # shift_max = 20
+
+    # 64 cities, distance 73.265
+    # max_iterations = 30000
+    # initial_temperature = 20
+    # cooling_rate = 0.9997
+    # num_cities = 20
+    # shift_max = 30
+
+    # 64 cities, distance 72.028
+    max_iterations = 40000
+    initial_temperature = 19
+    cooling_rate = 0.9997
+    num_cities = 20
+    shift_max = 32
+
+    # using the commented out parameter settings
+    # initial_guess = generate_random_cities(num_cities, x_min_WA, x_max_WA,
+    #                                        y_min_WA, y_max_WA)
+
+    grid_side_length = 8
+    initial_guess = generate_square_grid(grid_side_length)
 
     annealer = SimulatedAnnealing(initial_guess, max_iterations,
                                   initial_temperature, cooling_rate,
