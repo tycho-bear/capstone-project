@@ -110,6 +110,8 @@ class SimulatedAnnealing:
         """
 
         # get new solution
+        # TODO - this will be updated to vary the size of the atomic units
+        # TODO - and also put into a single method "generate_new_solution"
         position = np.random.randint(low=0, high=self.NUM_CITIES)
         shift = np.random.randint(low=1, high=self.SHIFT_MAX+1)
         new_solution = self.solution.swap_cities(position, shift)
@@ -253,11 +255,11 @@ def main() -> None:
     # shift_max = 2
 
     # Distance 19.782
-    max_iterations = 10000
-    initial_temperature = 2.5
-    cooling_rate = 0.999
-    num_cities = 20
-    shift_max = 2
+    # max_iterations = 10000
+    # initial_temperature = 2.5
+    # cooling_rate = 0.999
+    # num_cities = 20
+    # shift_max = 2
 
 
     # ==========================================================================
@@ -285,10 +287,17 @@ def main() -> None:
     # num_cities = 20
     # shift_max = 30
 
-    # 64 cities, distance 72.028
-    max_iterations = 40000
-    initial_temperature = 19
-    cooling_rate = 0.9997
+    # # 64 cities, distance 72.028
+    # max_iterations = 40000
+    # initial_temperature = 19
+    # cooling_rate = 0.9997
+    # num_cities = 20
+    # shift_max = 32
+
+    # 64 cities, distance 69.136
+    max_iterations = 50000
+    initial_temperature = 29
+    cooling_rate = 0.9998
     num_cities = 20
     shift_max = 32
 
