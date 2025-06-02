@@ -1,3 +1,10 @@
+# ===============================
+# Tycho Bear
+# CSCI.788.01C1
+# Capstone Project
+# Summer 2025
+# ===============================
+
 import numpy as np
 from helper_classes import City, Tour
 from config import seed

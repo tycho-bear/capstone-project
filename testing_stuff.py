@@ -1,3 +1,10 @@
+# ===============================
+# Tycho Bear
+# CSCI.788.01C1
+# Capstone Project
+# Summer 2025
+# ===============================
+
 from helper_classes import City, Tour
 from helper_functions import generate_random_cities
 from config import seed, x_min_WA, x_max_WA, y_min_WA, y_max_WA
