@@ -342,7 +342,8 @@ def main() -> None:
 
     # define problem here
     problem = TravelingSalesmanProblem(
-        initial_guess=generate_square_grid(grid_side_length),
+        # initial_guess=generate_square_grid(grid_side_length),
+        initial_guess=initial_guess,
         shift_max=shift_max
     )
 
