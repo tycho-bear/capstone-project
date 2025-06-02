@@ -10,7 +10,10 @@ from typing import Any
 from helper_classes import Tour
 from helper_functions import generate_random_cities, generate_square_grid
 import numpy as np
+from config import seed
 
+
+np.random.seed(seed)
 Solution = Any  # abstract methods return this instead of a Tour or something
 
 class Problem(ABC):
@@ -57,9 +60,16 @@ class TravelingSalesmanProblem(Problem):
         return new_solution
 
     def evaluate_solution(self, solution: Tour) -> float:
-        """(For simulated annealing)"""
+        """(For simulated annealing?)"""
 
         return solution.tour_distance
+
+    def display_solution(self, solution: Tour) -> None:
+        """"""
+        solution.draw_tour(include_start_end=False, show_segments=True,
+                           plot_title=f"{self.NUM_CITIES} cities, distance "
+                                      f"{solution.tour_distance:.3f}")
+
 
 # (SA) generate random initial solution
 
