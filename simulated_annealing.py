@@ -13,6 +13,7 @@ import copy
 import numpy as np
 from typing import Any
 import time
+from problems import Problem, TravelingSalesmanProblem, Solution
 
 
 np.random.seed(seed)
@@ -23,8 +24,14 @@ class SimulatedAnnealing:
     This class implements the simulated annealing algorithm.
     """
 
-    def __init__(self, initial_guess: Tour, max_iterations, initial_temperature,
-                 cooling_rate, shift_max):
+    def __init__(self,
+                 # initial_guess: Tour,
+                 problem: Problem,
+                 max_iterations: int,
+                 initial_temperature: float,
+                 cooling_rate: float,
+                 # shift_max
+                ):
         """
         Creates a new instance of a simulated annealing algorithm with the given
         hyperparameters. These influence the behavior of the algorithm and the
@@ -32,7 +39,9 @@ class SimulatedAnnealing:
 
         Class structure subject to revisions in the near future.
 
-        :param initial_guess:
+        :param problem: (Problem) The problem to be optimized, such as the
+            traveling salesman problem (represented by the class
+            TravelingSalesmanProblem).
         :param max_iterations: (int) The maximum number of iterations the
             algorithm should run for.
         :param initial_temperature: (float) The temperature to start at. This
@@ -42,44 +51,51 @@ class SimulatedAnnealing:
         :param num_cities: ABC
         :param shift_max:
         """
-        # TODO: Update class to be more modular. Pass in these things:
-        # TODO:     (1) an initial solution guess, (2) a fitness metric
-        # TODO:     function, and (3) a function that generates a new solution.
+
+        self.problem = problem
 
         # main SA parameters
         self.MAX_ITERATIONS = max_iterations
         self.current_iteration = 0
         self.temperature = initial_temperature
         self.COOLING_RATE = cooling_rate
-        self.SHIFT_MAX = shift_max
+        # self.SHIFT_MAX = shift_max  # TSP-specific, removed
 
         # set up initial stuff
         # initial_cities = generate_random_cities(num_cities, x_min_WA, x_max_WA,
         #                                         y_min_WA, y_max_WA)
         # self.solution = Tour(initial_cities)
+        # TSP-specific, removed earlier
 
-        self.solution = initial_guess
-        self.solution_distance = self.solution.tour_distance
-        self.NUM_CITIES = self.solution.num_cities
+        # self.solution = initial_guess  # TSP-specific, removed
+        self.solution = problem.generate_initial_guess()
+
+        # self.solution_distance = self.solution.tour_distance  # TSP-specific, removed
+        self.solution_fitness = problem.evaluate_solution(self.solution)
+        """Like golf, lower is better."""
+
+        # self.NUM_CITIES = self.solution.num_cities  # TSP-specific, removed
 
         # keep track of the best here, this won't be used in the algorithm
         self.best_solution = copy.deepcopy(self.solution)
-        self.best_solution_distance = copy.deepcopy(self.solution_distance)
+        # self.best_solution_distance = copy.deepcopy(self.solution_distance)  # TSP-specific, removed
+        self.best_solution_fitness = copy.deepcopy(self.solution_fitness)
         self.best_solution_iteration_num = copy.deepcopy(self.current_iteration)
 
 
-    def accept_solution(self, new_solution: Any) -> None:
+    def accept_solution(self, new_solution: Solution) -> None:
         """
         Helper function that accepts the given solution. It sets the current
         solution to ``new_solution``, and saves its fitness value.
 
-        :param new_solution: (Any) The new solution to accept. For the TSP, this
-            would be a Tour object.
+        :param new_solution: (Solution) The new solution to accept. For the TSP,
+            this would be a Tour object.
         :return: None
         """
 
         self.solution = new_solution
-        self.solution_distance = new_solution.tour_distance
+        # self.solution_distance = new_solution.tour_distance  # TSP-specific, removed
+        self.solution_fitness = self.problem.evaluate_solution(new_solution)
 
 
     def update_temperature(self) -> None:
@@ -112,13 +128,20 @@ class SimulatedAnnealing:
         # get new solution
         # TODO - this will be updated to vary the size of the atomic units
         # TODO - and also put into a single method "generate_new_solution"
-        position = np.random.randint(low=0, high=self.NUM_CITIES)
-        shift = np.random.randint(low=1, high=self.SHIFT_MAX+1)
-        new_solution = self.solution.swap_cities(position, shift)
 
-        difference = new_solution.tour_distance - self.solution_distance
+        # TODO - done.
+        # OLD
+        # position = np.random.randint(low=0, high=self.NUM_CITIES)
+        # shift = np.random.randint(low=1, high=self.SHIFT_MAX+1)
+        # new_solution = self.solution.swap_cities(position, shift)
+        # NEW
+        new_solution = self.problem.generate_new_solution(self.solution)
 
-        # this solution is worse, we will accept it with a probability
+        # difference = new_solution.tour_distance - self.solution_distance
+        difference = (self.problem.evaluate_solution(new_solution) -
+                      self.solution_fitness)
+
+        # this solution is worse, so we will accept it with a probability
         if difference >= 0:
             r = np.random.random()
             if r < math.exp((-1 * difference) / self.temperature):
@@ -129,9 +152,11 @@ class SimulatedAnnealing:
         self.accept_solution(new_solution)
 
         # keep track of the best solution, not super important, but it's cool
-        if self.solution_distance < self.best_solution_distance:
+        # if self.solution_distance < self.best_solution_distance:  # TSP-specific, removed
+        if self.solution_fitness < self.best_solution_fitness:
             self.best_solution = copy.deepcopy(self.solution)
-            self.best_solution_distance = self.solution_distance
+            # self.best_solution_distance = self.solution_distance
+            self.best_solution_fitness = self.solution_fitness
             self.best_solution_iteration_num = self.current_iteration
 
 
@@ -162,7 +187,8 @@ class SimulatedAnnealing:
 
         print(f"Found best solution at iteration "
               f"{self.best_solution_iteration_num}:  "
-              f"distance {self.best_solution_distance:.3f}")
+              # f"distance {self.best_solution_distance:.3f}")  # TSP-specific, removed
+              f"distance {self.best_solution_fitness:.3f}")
         print(f"Elapsed time: {(end_time - start_time):.1f} seconds.")
 
 
@@ -177,20 +203,25 @@ class SimulatedAnnealing:
 
         print(f"Iteration {self.current_iteration}: "
               f"temp. {self.temperature:.4f},  "
-              f"distance {self.solution_distance:.3f}")
+              # f"distance {self.solution_distance:.3f}")  # TSP-specific, removed
+              f"distance {self.solution_fitness:.3f}")
 
 
-    def display_solution(self) -> None:
-        """
-        Helper function that calls draw_tour() on the current solution. Shows
-        a visual representation of the current tour, and also displays its
-        length.
 
-        :return: None
-        """
-        self.solution.draw_tour(include_start_end=False, show_segments=True,
-                                plot_title=f"{self.NUM_CITIES} cities, distance"
-                                           f" {self.solution_distance:.3f}")
+    # display_solution is TSP-specific. Move this to the class?
+    # Doesn't have to be. There will be ways to visualize other problems.
+    # def display_solution(self) -> None:
+    #     """
+    #     Helper function that calls draw_tour() on the current solution. Shows
+    #     a visual representation of the current tour, and also displays its
+    #     length.
+    #
+    #     :return: None
+    #     """
+    #     self.solution.draw_tour(include_start_end=False, show_segments=True,
+    #                             # plot_title=f"{self.NUM_CITIES} cities, distance"
+    #                             plot_title=f"{self.NUM_CITIES} cities, distance"
+    #                                        f" {self.solution_distance:.3f}")
 
 
 def main() -> None:
@@ -308,11 +339,21 @@ def main() -> None:
     grid_side_length = 8
     initial_guess = generate_square_grid(grid_side_length)
 
-    annealer = SimulatedAnnealing(initial_guess, max_iterations,
-                                  initial_temperature, cooling_rate,
-                                  shift_max)
-    annealer.anneal()
-    annealer.display_solution()
+
+    # define problem here
+    problem = TravelingSalesmanProblem(
+        initial_guess=generate_square_grid(grid_side_length),
+        shift_max=shift_max
+    )
+
+
+    SA_solver = SimulatedAnnealing(problem,
+                                   max_iterations,
+                                   initial_temperature,
+                                   cooling_rate)
+    SA_solver.anneal()
+    # annealer.display_solution()
+    problem.display_solution(SA_solver.solution)  # 74.601?
 
 
 
