@@ -33,8 +33,10 @@ def generate_random_cities(num_cities: int, x_min: float, x_max: float,
 
 def generate_square_grid(side_length: int) -> Tour:
     """
-    Generates a Tour whose cities are arranged in a completely square grid.
-    This is useful for benchmarking the algorithms, since we know the
+    Generates a Tour whose cities are arranged in a completely square grid. The
+    positions of each City are shuffled to avoid starting with the optimal
+    solution.
+    A square grid is useful for benchmarking the algorithms, since we know the
     shortest path beforehand.
 
     :param side_length: (int) The length of each side. Setting this to `5`
