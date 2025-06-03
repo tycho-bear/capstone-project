@@ -130,7 +130,7 @@ class Tour:
 
 
     def draw_tour(self, include_start_end=False, show_segments=True,
-                  plot_title="Tour Visualization") -> None:
+                  include_names=False, plot_title="Tour Visualization") -> None:
         """
         Uses matplotlib to show a visualization of the tour and its points.
 
@@ -161,8 +161,9 @@ class Tour:
                       linestyle="-")
 
         # including city names
-        for city in self.cities:
-            plot.text(city.x, city.y, city.name, fontsize=9, ha="right")
+        if include_names:
+            for city in self.cities:
+                plot.text(city.x, city.y, city.name, fontsize=9, ha="right")
 
         plot.title(plot_title)
         plot.axis("off")
