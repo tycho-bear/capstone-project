@@ -90,8 +90,8 @@ y_max_WA = 49
 # shift_max = 32
 
 # 64 cities, distance 69.136
-max_iterations = 50000
-initial_temperature = 29
-cooling_rate = 0.9998
-num_cities = 20
-shift_max = 32
+# max_iterations = 50000
+# initial_temperature = 29
+# cooling_rate = 0.9998
+# num_cities = 20
+# shift_max = 32
