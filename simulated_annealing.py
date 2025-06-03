@@ -13,7 +13,7 @@ import copy
 import numpy as np
 from typing import Any
 import time
-from problems import Problem, TravelingSalesmanProblem, Solution
+from problems import Problem, Solution, TravelingSalesmanProblem
 
 
 np.random.seed(seed)
@@ -185,19 +185,93 @@ def main() -> None:
     :return: None
     """
 
-    # 64 cities, distance 69.136
+    # 64 city grid, distance 69.136
+    # max_iterations = 50000
+    # initial_temperature = 29
+    # cooling_rate = 0.9998
+    # shift_max = 32
+
+    # random 64 cities, distance 44.598
+    # max_iterations = 50000
+    # initial_temperature = 34
+    # cooling_rate = 0.9998
+    # shift_max = 32
+
+    # random 64 cities, distance 42.603
+    # max_iterations = 50000
+    # initial_temperature = 32
+    # cooling_rate = 0.9998
+    # shift_max = 32
+
+    # random 64 cities, distance 39.819
+    # max_iterations = 55000
+    # initial_temperature = 36
+    # cooling_rate = 0.9998
+    # shift_max = 32
+
+    # random 64 cities, distance 42.977 (cool)
+    # max_iterations = 50000
+    # initial_temperature = 39
+    # cooling_rate = 0.9998
+    # shift_max = 32
+
+    # random 64 cities, distance 41.216 (cool)
+    # max_iterations = 50000
+    # initial_temperature = 40
+    # cooling_rate = 0.9998
+    # shift_max = 32
+
+    # random 64 cities, distance 41.493 (cool)
+    # max_iterations = 50000
+    # initial_temperature = 43
+    # cooling_rate = 0.9998
+    # shift_max = 32
+
+    # random 64 cities, distance 41.436 (cool)
+    # max_iterations = 50000
+    # initial_temperature = 45
+    # cooling_rate = 0.9998
+    # shift_max = 32
+
+    # random 64 cities, distance 42.056 (cool)
+    # max_iterations = 50000
+    # initial_temperature = 49
+    # cooling_rate = 0.9998
+    # shift_max = 32
+
+    # random 64 cities, distance 40.882 (cool)
+    # max_iterations = 50000
+    # initial_temperature = 75
+    # cooling_rate = 0.9998
+    # shift_max = 32
+
+    # random 64 cities, distance 38.171 (good)
     max_iterations = 50000
-    initial_temperature = 29
+    initial_temperature = 2
     cooling_rate = 0.9998
-    num_cities = 20
     shift_max = 32
+
+    # random 64 cities, distance 46.573
+    # max_iterations = 50000
+    # initial_temperature = 1.8
+    # cooling_rate = 0.9998
+    # shift_max = 32
+
+    # random 64 cities, distance
+    # max_iterations = 50000
+    # initial_temperature = 2.05
+    # cooling_rate = 0.9998
+    # shift_max = 32
+
 
     # ==========================================================================
     # |  The actual code to run the algorithm:
     # ==========================================================================
 
     grid_side_length = 8
-    initial_guess = generate_square_grid(grid_side_length)
+    # initial_guess = generate_square_grid(grid_side_length)  # grid
+    initial_guess = generate_random_cities(grid_side_length**2, x_min_WA,
+                                           x_max_WA, y_min_WA, y_max_WA)
 
     # define problem here
     problem = TravelingSalesmanProblem(
