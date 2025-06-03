@@ -71,9 +71,5 @@ class TravelingSalesmanProblem(Problem):
                                       f"{solution.tour_distance:.3f}")
 
 
-# (SA) generate random initial solution
-
-# (SA) generate new solution, just swap 2 cities
-
-# (SA) evaluate solution, use tour distance
+    # TODO - add new methods to support the genetic algorithm.
 
