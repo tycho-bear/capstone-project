@@ -38,7 +38,7 @@ class Problem(ABC):
 class TravelingSalesmanProblem(Problem):
     """"""
 
-    def __init__(self, initial_guess: Tour, shift_max: int):
+    def __init__(self, initial_guess: Any, shift_max: int):
         """"""
 
         self.initial_guess = initial_guess  # so we can pass in a square grid
@@ -72,4 +72,29 @@ class TravelingSalesmanProblem(Problem):
 
 
     # TODO - add new methods to support the genetic algorithm.
+
+    # ==========================================================================
+    # |  Genetic algorithm methods
+    # ==========================================================================
+
+    def sort_by_fitness(self, population: list[Tour]) -> list[Tour]:
+        """"""
+
+    def get_elite(self, sorted_population: list[Tour]) -> list[Tour]:
+        """"""
+
+    def tournament_selection(self, population: list[Tour], num_samples: int) -> Tour:
+        """"""
+
+    def crossover(self, parent1: Tour, parent2: Tour) -> list[Tour]:
+        """"""
+
+    def mutate_individual(self, individual: Tour) -> Tour:
+        """"""
+
+    def apply_random_mutation(self, population: list[Tour], mutation_prob: float) -> list[Tour]:
+        """"""
+
+
+
 
