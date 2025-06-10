@@ -6,7 +6,8 @@
 # ===============================
 
 import math
-from helper_functions import generate_random_cities, generate_square_grid
+from helper_functions import (generate_random_cities, generate_square_grid,
+                              visualize_solution_fitness)
 from config import seed, x_min_WA, x_max_WA, y_min_WA, y_max_WA
 from helper_classes import Tour
 import copy
@@ -45,6 +46,7 @@ class SimulatedAnnealing:
         """
 
         self.problem = problem
+        self.solution_values = []
 
         # main SA parameters
         self.MAX_ITERATIONS = max_iterations
@@ -55,7 +57,7 @@ class SimulatedAnnealing:
         # set up initial stuff
         self.solution = problem.generate_initial_guess()
         self.solution_fitness = problem.evaluate_solution(self.solution)
-        """Like golf, lower is better."""
+        """Like golf, lower is better (at least for the TSP)."""
 
         # keep track of the best here, this won't be used in the algorithm
         self.best_solution = copy.deepcopy(self.solution)
@@ -148,6 +150,9 @@ class SimulatedAnnealing:
             # that causes an error after too many plots are generated.
             # self.problem.display_solution(self.solution)
 
+            # keep track of solution fitness for each iteration
+            self.solution_values.append(self.solution_fitness)
+
             # print every 500 iterations
             if self.current_iteration % 500 == 0:
                 self.print_current_iteration_information()
@@ -177,6 +182,15 @@ class SimulatedAnnealing:
               f"temp. {self.temperature:.4f},  "
               f"distance {self.solution_fitness:.3f}")
 
+    def get_solution_values(self) -> list[float]:
+        """
+        Helper function that returns the stored list of solution fitness values.
+
+        :return: (list[float]) The stored list of solution fitness values.
+        """
+
+        return self.solution_values
+
 
 def main() -> None:
     """
@@ -185,11 +199,7 @@ def main() -> None:
     :return: None
     """
 
-    # 64 city grid, distance 69.136
-    # max_iterations = 50000
-    # initial_temperature = 29
-    # cooling_rate = 0.9998
-    # shift_max = 32
+
 
     # random 64 cities, distance 44.598
     # max_iterations = 50000
@@ -245,12 +255,6 @@ def main() -> None:
     # cooling_rate = 0.9998
     # shift_max = 32
 
-    # random 64 cities, distance 38.171 (good)
-    max_iterations = 50000
-    initial_temperature = 2
-    cooling_rate = 0.9998
-    shift_max = 32
-
     # random 64 cities, distance 46.573
     # max_iterations = 50000
     # initial_temperature = 1.8
@@ -263,12 +267,34 @@ def main() -> None:
     # cooling_rate = 0.9998
     # shift_max = 32
 
+    # ------------------------------------------------------------
+
+    # 64 city grid, distance 69.136
+    # max_iterations = 50000
+    # initial_temperature = 29
+    # cooling_rate = 0.9998
+    # shift_max = 32
+    # grid_side_length = 8
+
+    # random 64 cities, distance 38.171 (good)
+    # max_iterations = 50000
+    # initial_temperature = 2
+    # cooling_rate = 0.9998
+    # shift_max = 32
+    # grid_side_length = 8
+
+    max_iterations = 50000
+    initial_temperature = 29
+    cooling_rate = 0.9998
+    shift_max = 32
+    grid_side_length = 8
+
 
     # ==========================================================================
     # |  The actual code to run the algorithm:
     # ==========================================================================
 
-    grid_side_length = 8
+    # grid_side_length = 8
     # initial_guess = generate_square_grid(grid_side_length)  # grid
     initial_guess = generate_random_cities(grid_side_length**2, x_min_WA,
                                            x_max_WA, y_min_WA, y_max_WA)
@@ -283,6 +309,11 @@ def main() -> None:
                                    cooling_rate)
     sa_solver.anneal()
     problem.display_solution(sa_solver.solution)  # 74.601?
+
+    print(f"Generating plot of fitness values...")
+    visualize_solution_fitness(sa_solver.get_solution_values(),
+                               # downsample_factor=50
+                               )
 
 
 

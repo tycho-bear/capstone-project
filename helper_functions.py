@@ -8,6 +8,7 @@
 import numpy as np
 from helper_classes import City, Tour
 from config import seed
+import matplotlib.pyplot as plot
 
 np.random.seed(seed)
 
@@ -64,4 +65,41 @@ def generate_square_grid(side_length: int) -> Tour:
     # print(f"After shuffling: {Tour(cities)}")
 
     return Tour(cities)
+
+
+def visualize_solution_fitness(fitness_values: list[float],
+                               downsample_factor: int = 1) -> None:
+    """
+    Helper function that creates a plot showing fitness values over iterations.
+
+    :param fitness_values: (list) The fitness values to show.
+    :param downsample_factor: (int) Factor to downsample the data for plotting.
+    :return: None
+    """
+
+    # downsampling also affects the x-axis values... :(
+    if downsample_factor > 1:
+        fitness_values = fitness_values[::downsample_factor]
+
+    iteration_numbers = range(1, len(fitness_values) + 1)  # for x-axis
+
+    # making the plot size smaller basically scales up the text and axis numbers
+    # this will be useful for presentations and reports
+    plot.figure(figsize=(6, 4))
+    plot.plot(iteration_numbers, fitness_values,
+              # marker="o", markersize=2,
+              linestyle="-", linewidth=3,
+              color="b",
+              # color="mediumslateblue",
+              # color="royalblue",  # good color
+              label="Distance")
+
+    plot.xlabel("Iteration")
+    plot.ylabel("Current Tour Distance")  # TODO: need to pass axis labels
+    plot.title("Tour Distance Over Iterations")
+
+    plot.legend()
+    plot.grid(True)
+    plot.show()
+
 
