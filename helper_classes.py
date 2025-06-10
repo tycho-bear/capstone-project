@@ -61,6 +61,26 @@ class City:
         """
         return f"City \"{self.name}\" at ({self.x}, {self.y})"
 
+    def __eq__(self, other):
+        """
+        Equality checker for ordered crossover.
+
+        :param other: The other object.
+        :return: Boolean T/F
+        """
+
+        if not isinstance(other, City):
+            return False
+
+        if not other.name == self.name:
+            return False
+
+        if not other.x == self.x:
+            return False
+
+        if not other.y == self.y:
+            return False
+
 
 class Tour:
     """
