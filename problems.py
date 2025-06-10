@@ -20,9 +20,9 @@ class Problem(ABC):
     """"""
 
     # generate random initial solution
-    @abstractmethod
-    def generate_initial_guess(self) -> Solution:
-        pass
+    # @abstractmethod
+    # def generate_initial_guess(self) -> Solution:
+    #     pass
 
     # generate new solution
     @abstractmethod
@@ -38,17 +38,18 @@ class Problem(ABC):
 class TravelingSalesmanProblem(Problem):
     """"""
 
-    def __init__(self, initial_guess: Any, shift_max: int):
+    def __init__(self, num_cities: int, shift_max: int):
         """"""
 
-        self.initial_guess = initial_guess  # so we can pass in a square grid
-        self.NUM_CITIES = initial_guess.num_cities
+        # self.initial_guess = initial_guess  # so we can pass in a square grid
+        # self.NUM_CITIES = initial_guess.num_cities
+        self.NUM_CITIES = num_cities
         self.SHIFT_MAX = shift_max
 
-    def generate_initial_guess(self) -> Solution:
-        """(For simulated annealing)"""
-
-        return self.initial_guess
+    # def generate_initial_guess(self) -> Solution:
+    #     """(For simulated annealing)"""
+    #
+    #     return self.initial_guess
 
     def generate_new_solution(self, current_solution: Tour) -> Solution:
         """(For simulated annealing)"""

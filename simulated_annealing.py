@@ -25,8 +25,13 @@ class SimulatedAnnealing:
     This class implements the simulated annealing algorithm.
     """
 
-    def __init__(self, problem: Problem, max_iterations: int,
-                 initial_temperature: float, cooling_rate: float):
+    def __init__(self,
+                 problem: Problem,
+                 initial_guess: Solution,
+                 max_iterations: int,
+                 initial_temperature: float,
+                 cooling_rate: float
+                 ):
         """
         Creates a new instance of a simulated annealing algorithm with the given
         hyperparameters. These influence the behavior of the algorithm and the
@@ -55,7 +60,8 @@ class SimulatedAnnealing:
         self.COOLING_RATE = cooling_rate
 
         # set up initial stuff
-        self.solution = problem.generate_initial_guess()
+        # self.solution = problem.generate_initial_guess()
+        self.solution = initial_guess
         self.solution_fitness = problem.evaluate_solution(self.solution)
         """Like golf, lower is better (at least for the TSP)."""
 
@@ -277,17 +283,17 @@ def main() -> None:
     # grid_side_length = 8
 
     # random 64 cities, distance 38.171 (good)
-    # max_iterations = 50000
-    # initial_temperature = 2
-    # cooling_rate = 0.9998
-    # shift_max = 32
-    # grid_side_length = 8
-
     max_iterations = 50000
-    initial_temperature = 29
+    initial_temperature = 2
     cooling_rate = 0.9998
     shift_max = 32
     grid_side_length = 8
+
+    # max_iterations = 50000
+    # initial_temperature = 29
+    # cooling_rate = 0.9998
+    # shift_max = 32
+    # grid_side_length = 8
 
 
     # ==========================================================================
@@ -296,17 +302,24 @@ def main() -> None:
 
     # grid_side_length = 8
     # initial_guess = generate_square_grid(grid_side_length)  # grid
-    initial_guess = generate_random_cities(grid_side_length**2, x_min_WA,
-                                           x_max_WA, y_min_WA, y_max_WA)
+    num_cities = grid_side_length**2
+    initial_guess = generate_random_cities(num_cities, x_min_WA, x_max_WA,
+                                           y_min_WA, y_max_WA)
 
     # define problem here
     problem = TravelingSalesmanProblem(
-        initial_guess=initial_guess,
+        # initial_guess=initial_guess,
+        num_cities=num_cities,
         shift_max=shift_max
     )
 
-    sa_solver = SimulatedAnnealing(problem, max_iterations, initial_temperature,
-                                   cooling_rate)
+    sa_solver = SimulatedAnnealing(
+        problem=problem,
+        initial_guess=initial_guess,
+        max_iterations=max_iterations,
+        initial_temperature=initial_temperature,
+        cooling_rate=cooling_rate
+    )
     sa_solver.anneal()
     problem.display_solution(sa_solver.solution)  # 74.601?
 
