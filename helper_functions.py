@@ -56,7 +56,7 @@ def generate_square_grid(side_length: int) -> Tour:
     city_number = 1
     for x in range(1, side_length + 1):
         for y in range(1, side_length + 1):
-            city = City(f"c{city_number}", x, y)
+            city = City(f"{city_number}", x, y)
             cities.append(city)
             city_number += 1
 
