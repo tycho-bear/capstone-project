@@ -71,15 +71,14 @@ class City:
 
         if not isinstance(other, City):
             return False
-
         if not other.name == self.name:
             return False
-
         if not other.x == self.x:
             return False
-
         if not other.y == self.y:
             return False
+
+        return True
 
 
 class Tour:
