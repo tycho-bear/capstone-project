@@ -12,6 +12,7 @@ from helper_functions import generate_random_cities, generate_square_grid
 import numpy as np
 from config import seed
 import math
+import copy
 
 
 np.random.seed(seed)
@@ -52,14 +53,20 @@ class TravelingSalesmanProblem(Problem):
     #
     #     return self.initial_guess
 
-    def generate_new_solution(self, current_solution: Tour) -> Solution:
-        """(For simulated annealing)"""
-
+    def swap_two_cities(self, current_solution: Tour) -> Solution:
+        """"""
         position = np.random.randint(low=0, high=self.NUM_CITIES)
         shift = np.random.randint(low=1, high=self.SHIFT_MAX + 1)
         # new_solution = self.solution.swap_cities(position, shift)
         new_solution = current_solution.swap_cities(position, shift)
         return new_solution
+
+
+    def generate_new_solution(self, current_solution: Tour) -> Solution:
+        """(For simulated annealing)"""
+
+        return self.swap_two_cities(current_solution)
+
 
     def evaluate_solution(self, solution: Tour) -> float:
         """(For simulated annealing?)"""
@@ -108,7 +115,8 @@ class TravelingSalesmanProblem(Problem):
         """
 
         population_size = len(sorted_population)
-        count_to_retain = math.ceil(elitism_percent * population_size)
+        # count_to_retain = math.ceil(elitism_percent * population_size)
+        count_to_retain = round(elitism_percent * population_size)
         elite = sorted_population[:count_to_retain]
         return elite
 
@@ -148,23 +156,57 @@ class TravelingSalesmanProblem(Problem):
     def crossover(self, parent1: Tour, parent2: Tour):
         """
         Performs ordered crossover with the two parents. Randomly chooses a
-        slice from parent 1, then fills in the remaining cities from parent 2.
+        slice from parent 1, wrapping around as needed, then fills in the
+        remaining cities from parent 2.
 
         :param parent1: (Tour) The first parent.
         :param parent2: (Tour) The second parent.
         :return: A child containing elements of parent 1 and parent 2.
         """
 
+        # just have this one return a single tour?
+
         num_cities = parent1.num_cities
+
         # pick random point
-        # slice will be 1/3 to 1/2 the tour size
+        # start = np.random.uniform(low=0, high=num_cities)
+        start = np.random.randint(low=0, high=num_cities)
+
+        # slice will be 1/3 to 2/3 the tour size
+        # TODO: use random size slices?
+        lower_bound = round((1/3) * num_cities)
+        upper_bound = round((2/3) * num_cities)
+        # slice_size = np.random.uniform(low=lower_bound, high=upper_bound)
+        slice_size = np.random.randint(low=lower_bound, high=upper_bound)
+
+        end = (start + slice_size) % num_cities
+
         # copy that slice from the first parent to the same position in the child
+        child_cities = [None] * num_cities
+        if start <= end:  # normal slice here
+            child_cities[start:end] = copy.deepcopy(parent1.cities[start:end])
+        else:
+            # wrap around slice here
+            child_cities[start:] = copy.deepcopy(parent1.cities[start:])
+            child_cities[:end] = copy.deepcopy(parent1.cities[:end])
+
+        # get the cities from parent2 that aren't in the child
+        parent2_safe_cities = []
+        for city in parent2.cities:
+            if city not in child_cities:
+                parent2_safe_cities.append(copy.deepcopy(city))
+
         # fill the rest of the child in order from the second parent
+        parent_index = 0
+        for i in range(num_cities):
+            if child_cities[i] is None:
+                # grab one from the second parent
+                new_city = copy.deepcopy(parent2_safe_cities[parent_index])
+                child_cities[i] = new_city
+                parent_index += 1
 
-
-
-
-
+        child = Tour(child_cities)
+        return child
 
 
     def mutate_individual(self, individual: Tour) -> Tour:
@@ -178,6 +220,8 @@ class TravelingSalesmanProblem(Problem):
         :return: (Tour) The mutated Tour.
         """
 
+        # TODO: add more
+        return self.swap_two_cities(individual)
 
 
 
@@ -191,6 +235,11 @@ class TravelingSalesmanProblem(Problem):
         :return:
         """
 
+        for i in range(len(population)):
+            rand = np.random.random()
+            if rand < mutation_prob:
+                population[i] = self.mutate_individual(population[i])
 
+        return population
 
 
