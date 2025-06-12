@@ -77,6 +77,11 @@ class GeneticAlgorithm():
         # new_population.append(elite)
         new_population = elite
 
+        # todo: add best solution to list here
+        # sorted_population = self.problem.sort_by_fitness(self.population)
+        current_best_fitness = self.problem.evaluate_solution(sorted_population[0])
+        self.solution_values.append(current_best_fitness)
+
 
         # (tournament) selection and crossover
         num_children = round(self.CROSSOVER_PERCENT * self.POPULATION_SIZE)
@@ -111,36 +116,61 @@ class GeneticAlgorithm():
         # at the end, return the most fit individual in the solution
 
         # save the best in this generation for plotting later
-        sorted_population = self.problem.sort_by_fitness(self.population)
-        self.solution_values.append(self.problem.evaluate_solution(
-            sorted_population[0]))
+        # TODO - comment after timing
+        # sorted_population = self.problem.sort_by_fitness(self.population)
+        # self.solution_values.append(self.problem.evaluate_solution(
+        #     sorted_population[0]))
+
+
 
         while self.generation_number < self.NUM_GENERATIONS:
             self.ga_generation()
 
             # save the best in this generation for plotting later
-            sorted_population = self.problem.sort_by_fitness(self.population)
-
-            self.solution_values.append(self.problem.evaluate_solution(
-                sorted_population[0]))
+            # TODO - comment after timing
+            # sorted_population = self.problem.sort_by_fitness(self.population)
+            # self.solution_values.append(self.problem.evaluate_solution(
+            #     sorted_population[0]))
 
             if self.generation_number % 10 == 0:
                 self.print_current_generation_information()
 
             self.generation_number += 1
 
-        self.print_current_generation_information()
+        # get the last one into the list
+        # TODO - uncomment after timing
+        sorted_population = self.problem.sort_by_fitness(self.population)
+        final_best = self.problem.evaluate_solution(sorted_population[0])
+        self.solution_values.append(final_best)
 
+        self.print_current_generation_information()
         end_time = time.time()
+
+        # print best solution data
         print(f"Best solution in population at generation "
               f"{self.generation_number}: distance "
               # f"{self.problem.evaluate_solution(self.solution_values[-1])}")
-              f"{self.solution_values[-1]}")
+              f"{self.solution_values[-1]:.3f}")
+        print(f"Elapsed time: {(end_time - start_time):.1f} seconds.")
 
+
+    def print_initial_information(self) -> None:
+        """"""
+        print("Running genetic algorithm...")
+        print(f"Population size: {self.POPULATION_SIZE}")
+        print(f"Generations to complete: {self.NUM_GENERATIONS}")
+        print(f"Elitism percentage: {self.ELITISM_PERCENT}")
+        print(f"Crossover percentage: {self.CROSSOVER_PERCENT}")
+        print(f"Mutation rate: {self.MUTATION_RATE}")
+        print(f"Tournament size: {self.TOURNAMENT_SIZE}")
+        print()
 
 
     def print_current_generation_information(self) -> None:
         """"""
+        index_0 = self.problem.evaluate_solution(self.population[0])
+        print(f"Generation {self.generation_number}/{self.NUM_GENERATIONS}: "
+              f"Population index 0 fitness (possibly mutated): {index_0:.3f}")
 
 
     def get_solution_values(self):
@@ -171,6 +201,11 @@ def main():
     num_cities = grid_side_length ** 2
     problem = TravelingSalesmanProblem(num_cities, shift_max=num_cities)
 
+    print("------------------------------------------")
+    print(f"Solving {num_cities}-city TSP with GA.")
+    print(f"If grid, optimal solution distance is {num_cities}.")
+    print("------------------------------------------")
+
     initial_population = generate_grid_population(pop_size, grid_side_length)
 
     ga_solver = GeneticAlgorithm(
@@ -183,8 +218,14 @@ def main():
         mutation_rate=mutation_rate,
         tournament_size=tournament_size
     )
+    ga_solver.print_initial_information()
     ga_solver.evolve()
     # problem.display_solution(ga_solver.solution_values[-1])
+    # problem.display_solution(ga_solver.)
+    best_individual = min(ga_solver.population,
+                          key=lambda individual:
+                          problem.evaluate_solution(individual))
+    problem.display_solution(best_individual)
     visualize_solution_fitness(ga_solver.get_solution_values())
 
 
