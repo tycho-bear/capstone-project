@@ -4,10 +4,16 @@
 # Capstone Project
 # Summer 2025
 # ===============================
+import math
 
 import numpy as np
 from config import seed
 from problems import Problem, Solution
+import time
+from helper_functions import (generate_random_population,
+                              generate_grid_population,
+                              visualize_solution_fitness)
+from problems import TravelingSalesmanProblem
 
 
 np.random.seed(seed)
@@ -20,7 +26,9 @@ class GeneticAlgorithm():
 
     def __init__(self,
                  problem: Problem,
+                 initial_population: list,
                  population_size: int,
+                 num_generations: int,
                  elitism_percent: float,
                  crossover_percent: float,
                  mutation_rate: float,
@@ -37,6 +45,22 @@ class GeneticAlgorithm():
         self.solution_values = []  # for plotting
 
         # main GA parameters
+        self.POPULATION_SIZE = population_size
+        self.NUM_GENERATIONS = num_generations
+        self.ELITISM_PERCENT = elitism_percent
+        self.CROSSOVER_PERCENT = crossover_percent
+        self.MUTATION_RATE = mutation_rate
+        self.TOURNAMENT_SIZE = tournament_size
+
+        self.population = initial_population
+        self.generation_number = 0
+        self.current_best_fitness = problem.evaluate_solution(
+            self.population[0])
+
+        self.best_solution = None
+        self.best_solution_fitness = None
+
+
 
 
 
@@ -45,12 +69,78 @@ class GeneticAlgorithm():
     def ga_generation(self):
         """"""
 
+        new_population = []
+
+        # elitism
+        sorted_population = self.problem.sort_by_fitness(self.population)
+        elite = self.problem.get_elite(sorted_population, self.ELITISM_PERCENT)
+        # new_population.append(elite)
+        new_population = elite
+
+
+        # (tournament) selection and crossover
+        num_children = round(self.CROSSOVER_PERCENT * self.POPULATION_SIZE)
+        for i in range(num_children):
+            parent1 = self.problem.tournament_selection(self.population,
+                                                        self.TOURNAMENT_SIZE)
+            parent2 = self.problem.tournament_selection(self.population,
+                                                        self.TOURNAMENT_SIZE)
+            child = self.problem.crossover(parent1, parent2)
+            new_population.append(child)
+
+        # mutation
+        new_population = self.problem.apply_mutation(new_population,
+                                                     self.MUTATION_RATE)
+
+        # fill with random solutions until we hit the population size
+        while len(new_population) < self.POPULATION_SIZE:
+            reference = self.population[0]
+            new_individual = self.problem.generate_new_individual(reference)
+            new_population.append(new_individual)
+
+        # this generation is done, onto the next
+        self.population = new_population
 
 
     def evolve(self):
         """"""
+
+        start_time = time.time()
+
         # loop, call ga_generation
-        # at the end, return self.solution.best_agent
+        # at the end, return the most fit individual in the solution
+
+        # save the best in this generation for plotting later
+        sorted_population = self.problem.sort_by_fitness(self.population)
+        self.solution_values.append(self.problem.evaluate_solution(
+            sorted_population[0]))
+
+        while self.generation_number < self.NUM_GENERATIONS:
+            self.ga_generation()
+
+            # save the best in this generation for plotting later
+            sorted_population = self.problem.sort_by_fitness(self.population)
+
+            self.solution_values.append(self.problem.evaluate_solution(
+                sorted_population[0]))
+
+            if self.generation_number % 10 == 0:
+                self.print_current_generation_information()
+
+            self.generation_number += 1
+
+        self.print_current_generation_information()
+
+        end_time = time.time()
+        print(f"Best solution in population at generation "
+              f"{self.generation_number}: distance "
+              # f"{self.problem.evaluate_solution(self.solution_values[-1])}")
+              f"{self.solution_values[-1]}")
+
+
+
+    def print_current_generation_information(self) -> None:
+        """"""
 
 
     def get_solution_values(self):
@@ -64,10 +154,42 @@ def main():
     # |  Hyperparameter combinations:
     # =========================================
 
+    pop_size = 400
+    num_generations = 400
+    elitism_percent = 0.05
+    crossover_percent = 0.75
+    mutation_rate = 0.10
+    # tournament_size = round(math.sqrt(pop_size))
+    # tournament_size = round(pop_size**(1/3))
+    tournament_size = 3
 
     # =========================================
     # |  The actual code to run the algorithm:
     # =========================================
+
+    grid_side_length = 7
+    num_cities = grid_side_length ** 2
+    problem = TravelingSalesmanProblem(num_cities, shift_max=num_cities)
+
+    initial_population = generate_grid_population(pop_size, grid_side_length)
+
+    ga_solver = GeneticAlgorithm(
+        problem=problem,
+        initial_population=initial_population,
+        population_size=pop_size,
+        num_generations=num_generations,
+        elitism_percent=elitism_percent,
+        crossover_percent=crossover_percent,
+        mutation_rate=mutation_rate,
+        tournament_size=tournament_size
+    )
+    ga_solver.evolve()
+    # problem.display_solution(ga_solver.solution_values[-1])
+    visualize_solution_fitness(ga_solver.get_solution_values())
+
+
+
+    # initial_guess = generate_grid_population()
 
 
 
