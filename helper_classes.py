@@ -148,6 +148,21 @@ class Tour:
         return swapped_tour
 
 
+    def shuffle_tour(self) -> "Tour":
+        """
+        Helper function that shuffles the city order in this Tour. Returns a new
+        shuffled Tour object.
+
+        :return: (Tour) A new Tour object containing the cities in this Tour,
+            but shuffled randomly.
+        """
+
+        self_cities = copy.deepcopy(self.cities)
+        np.random.shuffle(self_cities)  # this works
+        shuffled_tour = Tour(self_cities)
+        return shuffled_tour
+
+
     def draw_tour(self, include_start_end=False, show_segments=True,
                   include_names=False, plot_title="Tour Visualization") -> None:
         """
