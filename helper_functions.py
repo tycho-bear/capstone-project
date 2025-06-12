@@ -39,6 +39,34 @@ def generate_random_cities(num_cities: int, x_min: float, x_max: float,
     return Tour(cities)
 
 
+def generate_random_population(pop_size: int, num_cities: int, x_min: float,
+                               x_max: float, y_min: float,
+                               y_max: float) -> list[Tour]:
+    """
+    Generates a random population of Tours for use in a genetic algorithm.
+    Each individual in the population is a different Tour over the same cities.
+
+    :param pop_size:
+    :param num_cities:
+    :param x_min:
+    :param x_max:
+    :param y_min:
+    :param y_max:
+    :return:
+    """
+
+    # make sure we use the same cities for all tours in the population
+    pop = [generate_random_cities(num_cities, x_min, x_max, y_min, y_max)]
+    pop = pop * pop_size
+
+    # shuffle each tour
+    for i in range(pop_size):
+        pop[i] = pop[i].shuffle_tour()
+
+    return pop
+
+
+
 def generate_square_grid(side_length: int) -> Tour:
     """
     Generates a Tour whose cities are arranged in a completely square grid. The
@@ -65,6 +93,19 @@ def generate_square_grid(side_length: int) -> Tour:
     # print(f"After shuffling: {Tour(cities)}")
 
     return Tour(cities)
+
+
+def generate_grid_population(pop_size: int, side_length: int):
+    """"""
+    # make sure we use the same cities for all tours in the population
+    pop = [generate_square_grid(side_length)]
+    pop = pop * pop_size
+
+    # shuffle each tour
+    for i in range(pop_size):
+        pop[i] = pop[i].shuffle_tour()
+
+    return pop
 
 
 def visualize_solution_fitness(fitness_values: list[float],

@@ -7,7 +7,9 @@
 
 from config import seed, x_min_WA, x_max_WA, y_min_WA, y_max_WA
 import numpy as np
-from helper_functions import generate_random_cities, generate_square_grid
+from helper_functions import (generate_random_cities, generate_square_grid,
+                              generate_random_population,
+                              generate_grid_population)
 from problems import TravelingSalesmanProblem
 
 
@@ -76,6 +78,19 @@ def test_stuff():
     mutated_pop = problem.apply_mutation(sorted_pop, mutation_prob)
     print("Applied mutation.")
     print_population(mutated_pop)
+
+    # generate random population
+    print()
+    print("generating random population:")
+    new_pop_size = 5
+    new_num_cities = 5
+    new_pop = generate_random_population(new_pop_size, new_num_cities, x_min_WA,
+                                         x_max_WA, y_min_WA, y_max_WA)
+    print_population(new_pop)
+
+    new_grid = generate_grid_population(new_pop_size, 3)
+    print_population(new_grid)
+
 
 
 def main():
