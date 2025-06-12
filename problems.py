@@ -36,6 +36,43 @@ class Problem(ABC):
     def evaluate_solution(self, solution) -> float:
         pass
 
+    # ==========================================================================
+    # |  Genetic algorithm methods
+    # ==========================================================================
+
+    @abstractmethod
+    def sort_by_fitness(self, population: list[Tour]) -> list[Tour]:
+        pass
+
+    @abstractmethod
+    def get_elite(self, sorted_population: list[Tour],
+                  elitism_percent) -> list[Tour]:
+        pass
+
+    @abstractmethod
+    def tournament_selection(self, population: list[Tour],
+                             num_samples: int) -> Tour:
+        pass
+
+    @abstractmethod
+    def crossover(self, parent1: Tour, parent2: Tour):
+        pass
+
+    @abstractmethod
+    def mutate_individual(self, individual: Tour) -> Tour:
+        pass
+
+    @abstractmethod
+    def apply_mutation(self, population: list[Tour],
+                       mutation_prob: float) -> list[Tour]:
+        pass
+
+    @abstractmethod
+    def generate_new_individual(self, reference_individual: Tour) -> Tour:
+        pass
+
+    # TODO - don't want type annotations on these?
+
 
 class TravelingSalesmanProblem(Problem):
     """"""
@@ -97,6 +134,8 @@ class TravelingSalesmanProblem(Problem):
             ascending order.
         """
 
+        # print(f"sorting this: {population}")
+
         new_population = sorted(population, key=lambda tour: tour.tour_distance)
         return new_population
 
@@ -153,7 +192,7 @@ class TravelingSalesmanProblem(Problem):
         return best
 
 
-    def crossover(self, parent1: Tour, parent2: Tour):
+    def crossover(self, parent1: Tour, parent2: Tour) -> Tour:
         """
         Performs ordered crossover with the two parents. Randomly chooses a
         slice from parent 1, wrapping around as needed, then fills in the
@@ -220,6 +259,10 @@ class TravelingSalesmanProblem(Problem):
         :return: (Tour) The mutated Tour.
         """
 
+        # swap 2 cities
+        # reverse a segment
+        # scramble a segment
+
         # TODO: add more
         return self.swap_two_cities(individual)
 
@@ -235,6 +278,8 @@ class TravelingSalesmanProblem(Problem):
         :return:
         """
 
+        # TODO - don't mutate the best individual?
+
         for i in range(len(population)):
             rand = np.random.random()
             if rand < mutation_prob:
@@ -242,4 +287,9 @@ class TravelingSalesmanProblem(Problem):
 
         return population
 
+
+    def generate_new_individual(self, reference_tour: Tour) -> Tour:
+        """"""
+        new_tour = reference_tour.shuffle_tour()
+        return new_tour
 
