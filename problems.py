@@ -253,19 +253,37 @@ class TravelingSalesmanProblem(Problem):
         Applies a random mutation to the specified Tour. The mutated Tour is
         returned as a new object.
 
-        Mutations can include
+        Mutations include swapping two cities, reversing a random segment, or
+        scrambling a random segment.
 
         :param individual: (Tour) The Tour to mutate.
         :return: (Tour) The mutated Tour.
         """
 
-        # swap 2 cities
-        # reverse a segment
-        # scramble a segment
+        operation = np.random.randint(low=0, high=3)
 
-        # TODO: add more
-        return self.swap_two_cities(individual)
+        # 0 = swap two cities
+        if operation == 0:
+            return self.swap_two_cities(individual)
 
+        # pick segment
+        # not wrapping around, but easier this way
+        num_cities = individual.num_cities
+        start, end = sorted(np.random.choice(num_cities, size=2, replace=False))
+        new_cities = copy.deepcopy(individual.cities)
+        segment = new_cities[start:end]
+
+        # 1 = reverse a segment
+        if operation == 1:
+            segment = reversed(segment)
+
+        # 2 = scramble a segment
+        elif operation == 2:
+            np.random.shuffle(segment)  # this works
+
+        new_cities[start:end] = segment
+        mutated_tour = Tour(new_cities)
+        return mutated_tour
 
 
     def apply_mutation(self, population: list[Tour], mutation_prob: float) -> list[Tour]:
