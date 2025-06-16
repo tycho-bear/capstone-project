@@ -317,7 +317,10 @@ def main():
 
     best_individual = ga_solver.gen_best_solution
     problem.display_solution(best_individual)
-    visualize_solution_fitness(ga_solver.get_solution_values())
+    visualize_solution_fitness(ga_solver.get_solution_values(),
+                               xlabel="Generation",
+                               ylabel="Current Tour Distance",
+                               title="Tour Distance Over Generations")
 
 
 

@@ -109,18 +109,19 @@ def generate_grid_population(pop_size: int, side_length: int):
 
 
 def visualize_solution_fitness(fitness_values: list[float],
-                               downsample_factor: int = 1) -> None:
+                               xlabel: str="Iteration",
+                               ylabel: str="Current Tour Distance",
+                               title: str="Tour Distance Over Iterations") \
+        -> None:
     """
     Helper function that creates a plot showing fitness values over iterations.
 
     :param fitness_values: (list) The fitness values to show.
-    :param downsample_factor: (int) Factor to downsample the data for plotting.
+    :param xlabel: (str) The label for the x-axis.
+    :param ylabel: (str) The label for the y-axis.
+    :param title: (str) The plot title.
     :return: None
     """
-
-    # downsampling also affects the x-axis values... :(
-    if downsample_factor > 1:
-        fitness_values = fitness_values[::downsample_factor]
 
     iteration_numbers = range(1, len(fitness_values) + 1)  # for x-axis
 
@@ -135,9 +136,9 @@ def visualize_solution_fitness(fitness_values: list[float],
               # color="royalblue",  # good color
               label="Distance")
 
-    plot.xlabel("Iteration")
-    plot.ylabel("Current Tour Distance")  # TODO: need to pass axis labels
-    plot.title("Tour Distance Over Iterations")
+    plot.xlabel(xlabel)
+    plot.ylabel(ylabel)
+    plot.title(title)
 
     plot.legend()
     plot.grid(True)
