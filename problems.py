@@ -41,37 +41,36 @@ class Problem(ABC):
     # ==========================================================================
 
     @abstractmethod
-    def sort_by_fitness(self, population: list[Tour]) -> list[Tour]:
+    def sort_by_fitness(self, population: list[Solution]) -> list[Solution]:
         pass
 
     @abstractmethod
-    def get_elite(self, sorted_population: list[Tour],
-                  elitism_percent) -> list[Tour]:
+    def get_elite(self, sorted_population: list[Solution],
+                  elitism_percent) -> list[Solution]:
         pass
 
     @abstractmethod
-    def tournament_selection(self, population: list[Tour],
-                             num_samples: int) -> Tour:
+    def tournament_selection(self, population: list[Solution],
+                             num_samples: int) -> Solution:
         pass
 
     @abstractmethod
-    def crossover(self, parent1: Tour, parent2: Tour):
+    def crossover(self, parent1: Solution, parent2: Solution):
         pass
 
     @abstractmethod
-    def mutate_individual(self, individual: Tour) -> Tour:
+    def mutate_individual(self, individual: Solution) -> Solution:
         pass
 
     @abstractmethod
-    def apply_mutation(self, population: list[Tour],
-                       mutation_prob: float) -> list[Tour]:
+    def apply_mutation(self, population: list[Solution],
+                       mutation_prob: float) -> list[Solution]:
         pass
 
     @abstractmethod
-    def generate_new_individual(self, reference_individual: Tour) -> Tour:
+    def generate_new_individual(self, reference_individual: Solution) -> (
+            Solution):
         pass
-
-    # TODO - don't want type annotations on these?
 
 
 class TravelingSalesmanProblem(Problem):
@@ -85,10 +84,6 @@ class TravelingSalesmanProblem(Problem):
         self.NUM_CITIES = num_cities
         self.SHIFT_MAX = shift_max
 
-    # def generate_initial_guess(self) -> Solution:
-    #     """(For simulated annealing)"""
-    #
-    #     return self.initial_guess
 
     def swap_two_cities(self, current_solution: Tour) -> Solution:
         """"""
@@ -117,8 +112,6 @@ class TravelingSalesmanProblem(Problem):
                                       f"{solution.tour_distance:.3f}")
 
 
-    # TODO - add new methods to support the genetic algorithm.
-
     # ==========================================================================
     # |  Genetic algorithm methods
     # ==========================================================================
@@ -134,8 +127,6 @@ class TravelingSalesmanProblem(Problem):
             ascending order.
         """
 
-        # print(f"sorting this: {population}")
-
         new_population = sorted(population, key=lambda tour: tour.tour_distance)
         return new_population
 
@@ -143,7 +134,7 @@ class TravelingSalesmanProblem(Problem):
     def get_elite(self, sorted_population: list[Tour],
                   elitism_percent) -> list[Tour]:
         """
-        Simple function to extract
+        Simple function to extract the best few individuals from a population.
 
         :param sorted_population: (list[Tour]) A population sorted in ascending
             order by tour distance.
@@ -154,13 +145,13 @@ class TravelingSalesmanProblem(Problem):
         """
 
         population_size = len(sorted_population)
-        # count_to_retain = math.ceil(elitism_percent * population_size)
         count_to_retain = round(elitism_percent * population_size)
         elite = sorted_population[:count_to_retain]
         return elite
 
 
-    def tournament_selection(self, population: list[Tour], num_samples: int) -> Tour:
+    def tournament_selection(self, population: list[Tour], num_samples: int) \
+            -> Tour:
         """
         Chooses `num_samples` Tours from the population without replacement and
         returns the one with the shortest tour distance.
@@ -170,20 +161,12 @@ class TravelingSalesmanProblem(Problem):
         :return: (Tour) The shortest Tour from the samples.
         """
 
-        # participants = np.random.choice(population, size=num_samples,
-        #                                 replace=False)  # works fine?
-
+        # choose a few unique participants from the population
         pop_size = len(population)
-        # indices = np.random.randint(low=0, high=pop_size, size=num_samples)
         indices = np.random.choice(pop_size, size=num_samples, replace=False)
         participants = [population[i] for i in indices]
 
-        ###
-        # print("participants:")
-        # for tour in participants:
-        #     print(tour, tour.tour_distance)
-        ###
-
+        # get the best participant
         best = participants[0]
         for tour in participants:
             if tour.tour_distance < best.tour_distance:
@@ -200,27 +183,22 @@ class TravelingSalesmanProblem(Problem):
 
         :param parent1: (Tour) The first parent.
         :param parent2: (Tour) The second parent.
-        :return: A child containing elements of parent 1 and parent 2.
+        :return: (Tour) A child containing elements of parent 1 and parent 2.
         """
-
-        # just have this one return a single tour?
 
         num_cities = parent1.num_cities
 
         # pick random point
-        # start = np.random.uniform(low=0, high=num_cities)
         start = np.random.randint(low=0, high=num_cities)
 
-        # slice will be 1/3 to 2/3 the tour size
-        # TODO: use random size slices?
+        # slice will be 1/3 to 2/3 the tour size    TODO: use random slices?
         lower_bound = round((1/3) * num_cities)
         upper_bound = round((2/3) * num_cities)
-        # slice_size = np.random.uniform(low=lower_bound, high=upper_bound)
         slice_size = np.random.randint(low=lower_bound, high=upper_bound)
 
         end = (start + slice_size) % num_cities
 
-        # copy that slice from the first parent to the same position in the child
+        # copy the slice from the first parent to the same position in the child
         child_cities = [None] * num_cities
         if start <= end:  # normal slice here
             child_cities[start:end] = copy.deepcopy(parent1.cities[start:end])
@@ -262,12 +240,11 @@ class TravelingSalesmanProblem(Problem):
 
         operation = np.random.randint(low=0, high=3)
 
-        # 0 = swap two cities
+        # 0 = swap two cities, already have a method for this
         if operation == 0:
             return self.swap_two_cities(individual)
 
-        # pick segment
-        # not wrapping around, but easier this way
+        # pick segment (not wrapping around, but easier this way)
         num_cities = individual.num_cities
         start, end = sorted(np.random.choice(num_cities, size=2, replace=False))
         new_cities = copy.deepcopy(individual.cities)
@@ -279,24 +256,24 @@ class TravelingSalesmanProblem(Problem):
 
         # 2 = scramble a segment
         elif operation == 2:
-            np.random.shuffle(segment)  # this works
+            np.random.shuffle(segment)  # this works, ignore pycharm highlight
 
         new_cities[start:end] = segment
         mutated_tour = Tour(new_cities)
         return mutated_tour
 
 
-    def apply_mutation(self, population: list[Tour], mutation_prob: float) -> list[Tour]:
+    def apply_mutation(self, population: list[Tour], mutation_prob: float) ->\
+            list[Tour]:
         """
         Probabilistically applies mutation to the entire population. Sometimes
         nothing happens, and sometimes several Tours are changed.
 
-        :param population:
-        :param mutation_prob:
-        :return:
+        :param population: (list[Tour]) The population to mutate.
+        :param mutation_prob: (float) The probability of mutating a given
+            individual in the population.
+        :return: (list[Tour]) The mutated population.
         """
-
-        # TODO - don't mutate the best individual?
 
         for i in range(len(population)):
             rand = np.random.random()
@@ -307,7 +284,14 @@ class TravelingSalesmanProblem(Problem):
 
 
     def generate_new_individual(self, reference_tour: Tour) -> Tour:
-        """"""
+        """
+        Generates a new individual on the same cities as the reference tour.
+        This is useful when generating a population for a genetic algorithm.
+
+        :param reference_tour: (Tour) The tour whose cities will be referenced.
+        :return: (Tour) A new, shuffled tour.
+        """
+
         new_tour = reference_tour.shuffle_tour()
         return new_tour
 
