@@ -37,7 +37,7 @@ class Problem(ABC):
     # ==========================================================================
 
     @abstractmethod
-    def generate_new_solution(self, current_solution) -> Solution:
+    def generate_neighbor(self, current_solution) -> Solution:
         pass
 
     # ==========================================================================

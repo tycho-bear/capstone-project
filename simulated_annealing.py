@@ -114,7 +114,7 @@ class SimulatedAnnealing:
         """
 
         # get new solution
-        new_solution = self.problem.generate_new_solution(self.solution)
+        new_solution = self.problem.generate_neighbor(self.solution)
 
         # make comparison
         difference = (self.problem.evaluate_solution(new_solution) -

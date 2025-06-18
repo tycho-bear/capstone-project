@@ -36,7 +36,7 @@ class TravelingSalesmanProblem(Problem):
         return new_solution
 
 
-    def generate_new_solution(self, current_solution: Tour) -> Solution:
+    def generate_neighbor(self, current_solution: Tour) -> Solution:
         """(For simulated annealing)"""
 
         return self.swap_two_cities(current_solution)

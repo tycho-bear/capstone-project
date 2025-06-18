@@ -28,7 +28,7 @@ class BinPackingProblem(Problem):
     def evaluate_solution(self, solution) -> float:
         """"""
 
-    def generate_new_solution(self, current_solution) -> Solution:
+    def generate_neighbor(self, current_solution) -> Solution:
         """"""
 
 
