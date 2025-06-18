@@ -14,7 +14,8 @@ import copy
 import numpy as np
 from typing import Any
 import time
-from problems import Problem, Solution, TravelingSalesmanProblem
+from problem import Problem, Solution
+from traveling_salesman_problem import TravelingSalesmanProblem
 
 
 np.random.seed(seed)

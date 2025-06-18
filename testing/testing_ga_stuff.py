@@ -10,7 +10,7 @@ import numpy as np
 from helper_functions import (generate_random_cities, generate_square_grid,
                               generate_random_population,
                               generate_grid_population)
-from problems import TravelingSalesmanProblem
+from problem import TravelingSalesmanProblem
 
 
 np.random.seed(seed)

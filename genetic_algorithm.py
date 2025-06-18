@@ -8,12 +8,12 @@
 import math
 import numpy as np
 from config import seed
-from problems import Problem, Solution
+from problem import Problem, Solution
 import time
 from helper_functions import (generate_random_population,
                               generate_grid_population,
                               visualize_solution_fitness)
-from problems import TravelingSalesmanProblem
+from problem import TravelingSalesmanProblem
 
 
 np.random.seed(seed)
@@ -255,7 +255,7 @@ def main():
     # # 64 city grid, distance 68.307
     # # 228 --> 175 --> 170 --> 151 (30)
     pop_size = 500
-    num_generations = 30  # 400
+    num_generations = 400  # 400
     elitism_percent = 0.05
     crossover_percent = 0.75
     mutation_rate = 0.10

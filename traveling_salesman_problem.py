@@ -5,72 +5,14 @@
 # Summer 2025
 # ===============================
 
-from abc import ABC, abstractmethod
-from typing import Any
 from helper_classes import Tour
-from helper_functions import generate_random_cities, generate_square_grid
 import numpy as np
 from config import seed
-import math
 import copy
+from problem import Problem, Solution
 
 
 np.random.seed(seed)
-Solution = Any  # abstract methods return this instead of a Tour or something
-
-class Problem(ABC):
-    """"""
-
-    # generate random initial solution
-    # @abstractmethod
-    # def generate_initial_guess(self) -> Solution:
-    #     pass
-
-    # generate new solution
-    @abstractmethod
-    def generate_new_solution(self, current_solution) -> Solution:
-        pass
-
-    # evaluate solution
-    @abstractmethod
-    def evaluate_solution(self, solution) -> float:
-        pass
-
-    # ==========================================================================
-    # |  Genetic algorithm methods
-    # ==========================================================================
-
-    @abstractmethod
-    def sort_by_fitness(self, population: list[Solution]) -> list[Solution]:
-        pass
-
-    @abstractmethod
-    def get_elite(self, sorted_population: list[Solution],
-                  elitism_percent) -> list[Solution]:
-        pass
-
-    @abstractmethod
-    def tournament_selection(self, population: list[Solution],
-                             num_samples: int) -> Solution:
-        pass
-
-    @abstractmethod
-    def crossover(self, parent1: Solution, parent2: Solution):
-        pass
-
-    @abstractmethod
-    def mutate_individual(self, individual: Solution) -> Solution:
-        pass
-
-    @abstractmethod
-    def apply_mutation(self, population: list[Solution],
-                       mutation_prob: float) -> list[Solution]:
-        pass
-
-    @abstractmethod
-    def generate_new_individual(self, reference_individual: Solution) -> (
-            Solution):
-        pass
 
 
 class TravelingSalesmanProblem(Problem):
@@ -294,4 +236,3 @@ class TravelingSalesmanProblem(Problem):
 
         new_tour = reference_tour.shuffle_tour()
         return new_tour
-
