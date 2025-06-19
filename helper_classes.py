@@ -10,6 +10,7 @@ import numpy
 import numpy as np
 import copy
 import matplotlib.pyplot as plot
+import statistics
 
 
 class City:
@@ -210,4 +211,108 @@ class Tour:
         for city in self.cities:
             self_str += city.name + " "
         return self_str
+
+
+# class Item:
+#     """"""
+#
+#     def __init__(self):
+#         """"""
+
+
+
+class BinConfiguration:
+    """
+    Class representing a configuration of bins for the bin packing problem.
+    It is essentially a list of item weights with auxiliary functions to
+    determine the bin arrangement and fitness.
+
+    After determining the bin arrangement, stores each bin as a list.
+    """
+
+    def __init__(self, item_weights: list[int], bin_capacity) -> None:
+        """"""
+
+        self.ITEM_WEIGHTS = item_weights
+        self.BIN_CAPACITY = bin_capacity
+        self.bins = self.first_fit_packing()
+        """List of lists"""
+        self.num_bins = len(self.bins)
+        self.num_weights = len(self.ITEM_WEIGHTS)
+        self.fitness = self.num_bins
+
+
+    # fitness - # bins, but also penalize even distributions
+    # def calculate_num_bins(self):
+    #     """"""
+
+
+
+    # first fit packing, get the bins here
+    def first_fit_packing(self):
+        """
+        Uses the list of weights to pack items into bins. Each item is checked
+        against the existing bins, and is placed in the first one where it fits.
+        If it doesn't fit anywhere, a new bin is created.
+
+        https://en.wikipedia.org/wiki/First-fit_bin_packing
+
+        The number of bins and their distribution of items is dependent on what
+        self.ITEM_WEIGHTS looks like. Swapping two weights may produce a
+        different solution.
+
+        :return:
+        """
+
+        bins = []
+
+        for weight in self.ITEM_WEIGHTS:
+            placed = False
+            for bin in bins:  # check each bin
+                # put it in if we can
+                if (sum(bin) + weight) <= self.BIN_CAPACITY:
+                    bin.append(weight)
+                    placed = True
+                    break
+
+            # create a new bin here
+            if not placed:
+                new_bin = [weight]
+                bins.append(new_bin)
+
+        return bins
+
+
+
+
+    # swap 2 bins?
+    def swap_two_bins(self):
+        """
+        Swaps two random bins in this configuration. This may affect the number
+        of bins used. Returns the new configuration as a new object.
+
+        :return:
+        """
+
+        # start, end = sorted(np.random.choice(num_cities, size=2, replace=False))
+        pos1, pos2 = sorted(np.random.choice(self.num_weights, size=2,
+                                             replace=False))
+        new_weights = copy.deepcopy(self.ITEM_WEIGHTS)
+        # do the swap
+        new_weights[pos1], new_weights[pos2] = new_weights[pos2], new_weights[
+            pos1]
+
+        # create a new object
+        swapped_configuration = BinConfiguration(new_weights, self.BIN_CAPACITY)
+        return swapped_configuration
+
+
+    # reverse a segment  (need this for TSP too?)  (later)
+
+
+    # scramble a segment  (need this for TSP too?)  (later)
+
+
+    # visualize fitness (show number of bins, plus how full they are) (see pic)
+
 
