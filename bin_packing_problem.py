@@ -5,7 +5,7 @@
 # Summer 2025
 # ===============================
 
-from helper_classes import Tour
+from helper_classes import BinConfiguration
 import numpy as np
 from config import seed
 import copy
@@ -25,10 +25,31 @@ class BinPackingProblem(Problem):
         self.BIN_CAPACITY = bin_capacity
 
 
-    def evaluate_solution(self, solution) -> float:
+    def evaluate_solution(self, solution: BinConfiguration) -> int:
+        """minimize this"""
+        return solution.fitness
+
+
+    # def swap_two_items(self, current_solution: BinConfiguration) \
+    #         -> BinConfiguration:
+    #     """"""
+
+
+    def generate_neighbor(self, current_solution: BinConfiguration) \
+            -> BinConfiguration:
         """"""
 
-    def generate_neighbor(self, current_solution) -> Solution:
-        """"""
+        # can do other stuff here too, like reversing/scrambling segments
+        # Unfortunately, bin packing isn't a very interesting problem, so I may
+            # just move on and look at something else
+
+        # return self.swap_two_items(current_solution)
+        swapped_config = current_solution.swap_two_bins()
+        return swapped_config
+
+
+
+
+    # use BinConfiguration as the solution class
 
 
