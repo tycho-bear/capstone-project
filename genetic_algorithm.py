@@ -13,7 +13,7 @@ import time
 from helper_functions import (generate_random_population,
                               generate_grid_population,
                               visualize_solution_fitness)
-from problem import TravelingSalesmanProblem
+from traveling_salesman_problem import TravelingSalesmanProblem
 
 
 np.random.seed(seed)
