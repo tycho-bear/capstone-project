@@ -32,6 +32,9 @@ class Problem(ABC):
     def evaluate_solution(self, solution) -> float:
         pass
 
+    def display_solution(self, solution):
+        pass
+
     # ==========================================================================
     # |  Simulated annealing methods
     # ==========================================================================
