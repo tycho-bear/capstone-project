@@ -6,7 +6,7 @@
 # ===============================
 
 import numpy as np
-from helper_classes import City, Tour
+from helper_classes import City, Tour, BinConfiguration
 from config import seed
 import matplotlib.pyplot as plot
 
@@ -37,6 +37,20 @@ def generate_random_cities(num_cities: int, x_min: float, x_max: float,
         cities.append(city)
 
     return Tour(cities)
+
+
+def generate_random_bin_config(num_items, weights_min, weights_max,
+                               bin_capacity) -> BinConfiguration:
+    """SA with bin packing, weights_max is inclusive"""
+
+    weights = []
+    for i in range(num_items):
+        weight = np.random.randint(low=weights_min, high=weights_max)
+        weights.append(weight)
+
+    config = BinConfiguration(weights, bin_capacity)
+    return config
+
 
 
 def generate_random_population(pop_size: int, num_cities: int, x_min: float,
