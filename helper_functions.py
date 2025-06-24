@@ -45,7 +45,13 @@ def generate_random_bin_config(num_items, weights_min, weights_max,
 
     weights = []
     for i in range(num_items):
-        weight = np.random.randint(low=weights_min, high=weights_max)
+        # weight = np.random.randint(low=weights_min, high=weights_max)
+        # weight = round(weights_min + np.random.beta(2, 8) * (weights_max - weights_min))
+        # weight = round(weights_min + np.random.beta(2, 5) * (weights_max - weights_min))
+
+        weight = round(weights_min + np.random.beta(2, 7) * (weights_max - weights_min))
+
+        # weight = round(weights_min + np.random.beta(0.3, 0.3) * (weights_max - weights_min))
         weights.append(weight)
 
     config = BinConfiguration(weights, bin_capacity)
