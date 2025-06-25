@@ -9,7 +9,8 @@ import math
 from helper_functions import (generate_random_cities, generate_square_grid,
                               visualize_solution_fitness,
                               generate_grid_population,
-                              generate_random_bin_config)
+                              generate_random_bin_config,
+                              generate_random_population)
 from config import seed, x_min_WA, x_max_WA, y_min_WA, y_max_WA
 from helper_classes import Tour
 import copy
@@ -89,12 +90,21 @@ def ga_with_tsp():
 
     # # 64 city grid, distance 68.307
     # # 228 --> 175 --> 170 --> 151 (30)
-    pop_size = 500
+    # pop_size = 500
+    # num_generations = 400  # 400
+    # elitism_percent = 0.05
+    # crossover_percent = 0.75
+    # mutation_rate = 0.10
+    # tournament_size = 3
+
+    # 64 city grid, distance 66.243
+    # 228 --> 191 --> 163 --> 147
+    pop_size = 600
     num_generations = 400  # 400
     elitism_percent = 0.05
     crossover_percent = 0.75
     mutation_rate = 0.10
-    tournament_size = 3
+    tournament_size = 4
 
     # # 64 city grid, distance 70.614 (looks cool though, no loops)
     # # converges pretty fast
@@ -118,7 +128,12 @@ def ga_with_tsp():
     print(f"If grid, optimal solution distance is {num_cities}.")
     print("------------------------------------------")
 
-    initial_population = generate_grid_population(pop_size, grid_side_length)
+    initial_population = generate_random_population(pop_size, num_cities,
+                                                    x_min=x_min_WA,
+                                                    x_max=x_max_WA,
+                                                    y_min=y_min_WA,
+                                                    y_max=y_max_WA)
+    # initial_population = generate_grid_population(pop_size, grid_side_length)
 
     ga_solver = GeneticAlgorithm(
         problem=problem,
@@ -149,23 +164,26 @@ def sa_with_bin_packing():
     max_iterations = 10000
     initial_temperature = 10
     cooling_rate = 0.999
-    num_items = 50
-    bin_capacity = 25
+    num_items = 200
+    bin_capacity = 50
     weights_min = 1
     # weights_max = bin_capacity
-    # weights_max = bin_capacity - 1
+    weights_max = bin_capacity - 1
     # weights_max = round(bin_capacity / 2)
-    weights_max = round(bin_capacity**(5/6))
+    # weights_max = round(bin_capacity**(5/6))
+    # weights_max = 29
+    # weights_max = round(bin_capacity**(2/3))
 
 
     # ==========================================================================
     # |  The actual code to run the algorithm:
     # ==========================================================================
 
+    problem = BinPackingProblem()
     initial_guess = generate_random_bin_config(num_items, weights_min,
                                                weights_max, bin_capacity)
-
-    problem = BinPackingProblem()
+    # print("Initial guess, for reference:")
+    # problem.display_solution(initial_guess)
 
     sa_solver = SimulatedAnnealing(
         problem=problem,
@@ -175,10 +193,23 @@ def sa_with_bin_packing():
         cooling_rate=cooling_rate
     )
     sa_solver.anneal()
-    problem.display_solution(sa_solver.solution)
+    solution = sa_solver.solution
 
     print(f"Displaying bin configuration...")
-    visualize_solution_fitness(sa_solver.get_solution_values())
+    problem.display_solution(solution)
+
+    lower_bound = math.ceil(sum(initial_guess.ITEM_WEIGHTS) / bin_capacity)
+    print(f"Theoretical minimum number of bins, maybe impossible: {lower_bound}")
+
+    print("Displaying solution fitness over time...")
+    visualize_solution_fitness(sa_solver.get_solution_values(),
+                               ylabel="Number of bins in solution",
+                               title="Number of bins over iterations")
+
+    # current # bins used
+    # print(f"Current number of bins used: {}")
+    # theoretical minimum
+
 
 
 
@@ -196,8 +227,8 @@ def main():
     # future: choose algorithm/problem combination to run
 
     # sa_with_tsp()
-    # ga_with_tsp()
-    sa_with_bin_packing()
+    ga_with_tsp()
+    # sa_with_bin_packing()
 
 
 
