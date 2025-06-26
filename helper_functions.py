@@ -45,12 +45,15 @@ def generate_random_bin_config(num_items, weights_min, weights_max,
 
     weights = []
     for i in range(num_items):
+
+
         # weight = np.random.randint(low=weights_min, high=weights_max)
+        # weight = round(weights_min + np.random.beta(a=2, b=7) * (weights_max - weights_min))
+        weight = round(weights_min + np.random.beta(a=2, b=3) * (weights_max - weights_min))
+        #
+
         # weight = round(weights_min + np.random.beta(2, 8) * (weights_max - weights_min))
         # weight = round(weights_min + np.random.beta(2, 5) * (weights_max - weights_min))
-
-        weight = round(weights_min + np.random.beta(2, 7) * (weights_max - weights_min))
-
         # weight = round(weights_min + np.random.beta(0.3, 0.3) * (weights_max - weights_min))
         weights.append(weight)
 
@@ -59,9 +62,9 @@ def generate_random_bin_config(num_items, weights_min, weights_max,
 
 
 
-def generate_random_population(pop_size: int, num_cities: int, x_min: float,
-                               x_max: float, y_min: float,
-                               y_max: float) -> list[Tour]:
+def generate_random_city_population(pop_size: int, num_cities: int,
+                                    x_min: float, x_max: float, y_min: float,
+                                    y_max: float) -> list[Tour]:
     """
     Generates a random population of Tours for use in a genetic algorithm.
     Each individual in the population is a different Tour over the same cities.
@@ -85,6 +88,29 @@ def generate_random_population(pop_size: int, num_cities: int, x_min: float,
 
     return pop
 
+
+def generate_random_bin_population(pop_size: int, num_items: int,
+                                   weights_min: int, weights_max: int,
+                                   bin_capacity: int) -> list[BinConfiguration]:
+     """
+     Generates a random population of BinConfigurations for use in a genetic
+     algorithm. Each individual in the population is a different
+     BinConfiguration over the same items.
+
+     :param pop_size: (int) The size of the population to generate.
+     :param num_items: (int) The number of items in each configuration.
+     :param weights_min: (int) The minimum weight of an item.
+     :param weights_max: (int) The maximum weight of an item.
+     :param bin_capacity: (int) The capacity of each bin.
+     :return: (list[BinConfiguration]) A list of BinConfiguration objects.
+     """
+
+     # make sure we use the same items for all configurations in the population
+     pop = [generate_random_bin_config(num_items, weights_min, weights_max,
+                                          bin_capacity)]
+     pop = pop * pop_size
+
+     return pop
 
 
 def generate_square_grid(side_length: int) -> Tour:

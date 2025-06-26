@@ -10,7 +10,7 @@ import numpy as np
 from config import seed
 from problem import Problem, Solution
 import time
-from helper_functions import (generate_random_population,
+from helper_functions import (generate_random_city_population,
                               generate_grid_population,
                               visualize_solution_fitness)
 from traveling_salesman_problem import TravelingSalesmanProblem
