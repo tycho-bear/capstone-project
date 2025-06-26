@@ -16,41 +16,73 @@ np.random.seed(seed)
 
 
 class TravelingSalesmanProblem(Problem):
-    """"""
+    """
+    Implementation of the Problem class for the traveling salesman problem.
+    The methods are designed to work with Tour objects, since those represent
+    solutions to this problem.
+    """
 
-    def __init__(self, num_cities: int, shift_max: int):
-        """"""
+    def __init__(self):
+        """
+        Creates a new problem instance. This object will be passed into one of
+        the metaheuristic algorithms, where the overridden abstract methods will
+        be called.
+        """
 
-        # self.initial_guess = initial_guess  # so we can pass in a square grid
-        # self.NUM_CITIES = initial_guess.num_cities
-        self.NUM_CITIES = num_cities
-        self.SHIFT_MAX = shift_max
 
+    def swap_two_cities(self, current_solution: Tour) -> Tour:
+        """
+        Helper method that swaps two cities at random in the given Tour.
 
-    def swap_two_cities(self, current_solution: Tour) -> Solution:
-        """"""
-        position = np.random.randint(low=0, high=self.NUM_CITIES)
-        shift = np.random.randint(low=1, high=self.SHIFT_MAX + 1)
-        # new_solution = self.solution.swap_cities(position, shift)
+        :param current_solution: (Tour) The current solution, where two cities
+            will be swapped.
+        :return: (Tour) A new Tour object where the two cities are swapped.
+        """
+
+        shift_max = round(current_solution.num_cities / 2)
+
+        position = np.random.randint(low=0, high=current_solution.num_cities)
+        shift = np.random.randint(low=1, high=shift_max + 1)
         new_solution = current_solution.swap_cities(position, shift)
         return new_solution
 
 
-    def generate_neighbor(self, current_solution: Tour) -> Solution:
-        """(For simulated annealing)"""
+    def generate_neighbor(self, current_solution: Tour) -> Tour:
+        """
+        Given a current Tour, generates a neighboring solution by swapping two
+        cities.
+
+        :param current_solution: (Tour) The current solution to generate a
+            neighbor for.
+        :return: (Tour) The neighboring Tour object.
+        """
 
         return self.swap_two_cities(current_solution)
 
 
     def evaluate_solution(self, solution: Tour) -> float:
-        """(For simulated annealing?)"""
+        """
+        Helper method, mainly used to avoid looking inside the solution class,
+        since those will differ based on solution implementation.
+
+        :param solution: (Tour) The Tour whose fitness will be returned.
+        :return: (float) The total distance of the given Tour.
+        """
 
         return solution.tour_distance
 
+
     def display_solution(self, solution: Tour) -> None:
-        """"""
+        """
+        Displays the given Tour in a plot. Cities are shown as points, and lines
+        connect them to show the Tour's path.
+
+        :param solution: (Tour) The solution to display.
+        :return: None
+        """
+
         solution.draw_tour(include_start_end=False, show_segments=True,
-                           plot_title=f"{self.NUM_CITIES} cities, distance "
+                           plot_title=f"{solution.num_cities} cities, distance "
                                       f"{solution.tour_distance:.3f}")
 
 
@@ -73,8 +105,8 @@ class TravelingSalesmanProblem(Problem):
         return new_population
 
 
-    def get_elite(self, sorted_population: list[Tour],
-                  elitism_percent) -> list[Tour]:
+    def get_elite(self, sorted_population: list[Tour], elitism_percent: float) \
+            -> list[Tour]:
         """
         Simple function to extract the best few individuals from a population.
 
