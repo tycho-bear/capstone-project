@@ -239,7 +239,7 @@ def ga_with_bin_packing():
     tournament_size = 4
 
     num_items = 150
-    bin_capacity = 45
+    bin_capacity = 50
     weights_min = 1
     weights_max = bin_capacity - 1
 

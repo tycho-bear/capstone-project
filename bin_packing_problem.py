@@ -10,6 +10,7 @@ import numpy as np
 from config import seed
 import copy
 from problem import Problem, Solution
+from collections import Counter
 
 
 np.random.seed(seed)
@@ -178,7 +179,13 @@ class BinPackingProblem(Problem):
     def crossover(self, parent1: BinConfiguration, parent2: BinConfiguration) \
             -> BinConfiguration:
         """
-        TODO
+        Performs crossover between two parent BinConfigurations to create a new
+        individual. The crossover is done by randomly selecting half of the
+        items from parent1 and filling the rest with items from parent2.
+
+        We also make sure that the resulting configuration is valid. This means
+        that the weights of the items in the child configuration do not exceed
+        the bin capacity.
 
         :param parent1: (BinConfiguration) The first parent.
         :param parent2: (BinConfiguration) The second parent.
@@ -186,13 +193,38 @@ class BinPackingProblem(Problem):
             of parent 1 and parent 2.
         """
 
-        # need to think more about this, it will be a little different
-        # like TSP, must use the same weights
-        # unlike TSP, weights are not unique
+        num_items = parent1.num_weights
+        child_weights = [None] * parent1.num_weights
 
+        # get crossover positions
+        crossover_positions = sorted(np.random.choice(num_items,
+                                                      size=num_items // 2,
+                                                      replace=False))
 
+        # copy in the weights from parent1 at the crossover positions
+        for pos in crossover_positions:
+            child_weights[pos] = parent1.ITEM_WEIGHTS[pos]
 
-        pass
+        # calculate what weights we sitll need from parent2
+        remaining_weights = Counter(parent1.ITEM_WEIGHTS)
+        for weight in child_weights:
+            if weight is not None:
+                remaining_weights[weight] -= 1
+
+        # fill the rest with stuff from parent2
+        parent2_weights = iter(parent2.ITEM_WEIGHTS)
+        for i in range(num_items):
+            if child_weights[i] is None:
+                # find next available weight
+                while True:
+                    candidate_weight = next(parent2_weights)
+                    if remaining_weights[candidate_weight] > 0:
+                        child_weights[i] = candidate_weight
+                        remaining_weights[candidate_weight] -= 1
+                        break
+
+        child = BinConfiguration(child_weights, parent1.BIN_CAPACITY)
+        return child
 
 
     def mutate_individual(self, individual: BinConfiguration) \
