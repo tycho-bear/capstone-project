@@ -257,14 +257,15 @@ class TravelingSalesmanProblem(Problem):
         return population
 
 
-    def generate_new_individual(self, reference_tour: Tour) -> Tour:
+    def generate_new_individual(self, reference_individual: Tour) -> Tour:
         """
         Generates a new individual on the same cities as the reference tour.
         This is useful when generating a population for a genetic algorithm.
 
-        :param reference_tour: (Tour) The tour whose cities will be referenced.
+        :param reference_individual: (Tour) The tour whose cities will be
+            referenced.
         :return: (Tour) A new, shuffled tour.
         """
 
-        new_tour = reference_tour.shuffle_tour()
+        new_tour = reference_individual.shuffle_tour()
         return new_tour
