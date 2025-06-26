@@ -116,40 +116,75 @@ class BinPackingProblem(Problem):
     def sort_by_fitness(self, population: list[BinConfiguration]) \
             -> list[BinConfiguration]:
         """
-        Simple
+        Simple helper function that sorts a given population according to
+        fitness value. Most fit individuals are at the start of the list. For
+        bin packing, this sorts in ascending order according to the number
+        of bins used.
 
-        :param population:
-        :return:
+        :param population: (list[BinConfiguration]) The population to sort.
+        :return: (list[BinConfiguration]) The population, sorted by number of
+            bins used in ascending order.
         """
 
-        # can be the same
-
-        pass
+        new_population = sorted(population, key=lambda config: config.fitness)
+        return new_population
 
 
     def get_elite(self, sorted_population: list[BinConfiguration],
                   elitism_percent: float) -> list[BinConfiguration]:
-        """"""
+        """
+        Simple function to extract the best few individuals from a population.
+
+        :param sorted_population: (list[BinConfiguration]) A population sorted
+            in ascending order by number of bins used.
+        :param elitism_percent: (float) The percentage of the population to
+            retain for the next generation. Ceiling will be used if this does
+            not come out to a whole number.
+        :return: (list[BinConfiguration]) The elite subset of the population.
+        """
         # can be the same
-
-
-        pass
+        population_size = len(sorted_population)
+        count_to_retain = round(elitism_percent * population_size)
+        elite = sorted_population[:count_to_retain]
+        return elite
 
 
     def tournament_selection(self, population: list[BinConfiguration],
                              num_samples: int) -> BinConfiguration:
-        """"""
+        """
+        Chooses `num_samples` BinConfigurations from the population without
+        replacement and returns the one with the fewest bins used.
 
-        # can be the same
+        :param population: (list[BinConfiguration]) The population to choose
+            from.
+        :param num_samples: (int) The number of samples, without replacement.
+        :return: (BinConfiguration) The BinConfiguration with the fewest bins.
+        """
 
+        # choose a few unique participants from the population
+        pop_size = len(population)
+        indices = np.random.choice(pop_size, size=num_samples, replace=False)
+        participants = [population[i] for i in indices]
 
-        pass
+        # get the best participant
+        best = participants[0]
+        for configuration in participants:
+            if configuration.fitness < best.fitness:
+                best = configuration
 
+        return best
 
 
     def crossover(self, parent1: BinConfiguration, parent2: BinConfiguration) \
             -> BinConfiguration:
-        """"""
+        """
+        TODO
+
+        :param parent1: (BinConfiguration) The first parent.
+        :param parent2: (BinConfiguration) The second parent.
+        :return: (BinConfiguration) A new BinConfiguration containing elements
+            of parent 1 and parent 2.
+        """
 
         # need to think more about this, it will be a little different
         # like TSP, must use the same weights
@@ -162,33 +197,79 @@ class BinPackingProblem(Problem):
 
     def mutate_individual(self, individual: BinConfiguration) \
             -> BinConfiguration:
-        """"""
+        """
+        Applies a random mutation to the given BinConfiguration. The mutated
+        configuration is returned as a new object.
 
-        # can be the same
+        Mutations include swapping the position of two items in the internal
+        list, reversing a random segment, or scrambling a random segment.
 
-        pass
+        :param individual: (BinConfiguration) The bin configuration to mutate.
+        :return: (BinConfiguration) The mutated BinConfiguration.
+        """
+
+        operation = np.random.randint(low=0, high=3)
+
+        # 0 = swap two items, already have a method for this
+        if operation == 0:
+            return individual.swap_two_bins()
+
+        # pick segment (not wrapping around, but easier this way)
+        num_weights = individual.num_weights
+        start, end = sorted(np.random.choice(num_weights, size=2,
+                                             replace=False))
+        new_weights = copy.deepcopy(individual.ITEM_WEIGHTS)
+        segment = new_weights[start:end]
+
+        # 1 = reverse a segment
+        if operation == 1:
+            segment = reversed(segment)
+
+        # 2 = scramble a segment
+        elif operation == 2:
+            np.random.shuffle(segment)
+
+        # put it back together
+        new_weights[start:end] = segment
+        mutated_configuration = BinConfiguration(new_weights,
+                                                 individual.BIN_CAPACITY)
+        return mutated_configuration
 
 
     def apply_mutation(self, population: list[BinConfiguration],
                        mutation_prob: float) -> list[BinConfiguration]:
-        """"""
-        # can be the same
+        """
+        Probabilistically applies mutation to each individual in the population.
+        Sometimes nothing happens, and sometimes several BinConfigurations are
+        changed.
 
-        pass
+        :param population: (list[BinConfiguration]) The population to mutate.
+        :param mutation_prob: (float) The probability of mutating a given
+            individual in the population.
+        :return: (list[BinConfiguration]) The mutated population.
+        """
+
+        for i in range(len(population)):
+            rand = np.random.random()
+            if rand < mutation_prob:
+                population[i] = self.mutate_individual(population[i])
+
+        return population
+
 
     def generate_new_individual(self, reference_individual: BinConfiguration) \
             -> BinConfiguration:
-        """"""
+        """
+        Generates a new individual with the same weights as the reference
+        configuration. This is useful when generating a population for a genetic
+        algorithm.
+
+        :param reference_individual: (BinConfiguration) The individual whose
+            weights will be used to generate a new individual.
+        :return: (BinConfiguration) A new, shuffled BinConfiguration.
+        """
 
         # can be the same
 
-        pass
-
-
-
-
-
-
-
-
-
+        new_config = reference_individual.shuffle_bins()
+        return new_config

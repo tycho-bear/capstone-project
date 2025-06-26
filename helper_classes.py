@@ -234,6 +234,7 @@ class BinConfiguration:
         """"""
 
         self.ITEM_WEIGHTS = item_weights
+        """This and the bin capacity are what define a configuration."""
         self.BIN_CAPACITY = bin_capacity
         self.bins = self.first_fit_packing()
         """List of lists"""
@@ -288,8 +289,8 @@ class BinConfiguration:
     # swap 2 bins?
     def swap_two_bins(self):
         """
-        Swaps two random bins in this configuration. This may affect the number
-        of bins used. Returns the new configuration as a new object.
+        Swaps two random bins in this configuration. This may or may not affect
+        the number of bins used. Returns the new configuration as a new object.
 
         :return:
         """
@@ -305,6 +306,22 @@ class BinConfiguration:
         # create a new object
         swapped_configuration = BinConfiguration(new_weights, self.BIN_CAPACITY)
         return swapped_configuration
+
+
+    # need to do something similar to shuffle_tour()
+    def shuffle_bins(self):
+        """
+        Helper function that shuffles the weights in this configuration. Returns
+        a new BinConfiguration object with the same item weights, but shuffled.
+
+        :return: (BinConfiguration) A new BinConfiguration object with the same
+            items, but shuffled.
+        """
+
+        self_weights = copy.deepcopy(self.ITEM_WEIGHTS)
+        np.random.shuffle(self_weights)
+        shuffled_config = BinConfiguration(self_weights, self.BIN_CAPACITY)
+        return shuffled_config
 
 
     # reverse a segment  (need this for TSP too?)  (later)
