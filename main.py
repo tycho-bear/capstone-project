@@ -232,14 +232,14 @@ def ga_with_bin_packing():
     #
     #
     pop_size = 150
-    num_generations = 250
+    num_generations = 300
     elitism_percent = 0.05
     crossover_percent = 0.75
     mutation_rate = 0.10
     tournament_size = 4
 
     num_items = 150
-    bin_capacity = 50
+    bin_capacity = 40
     weights_min = 1
     weights_max = bin_capacity - 1
 
@@ -253,28 +253,16 @@ def ga_with_bin_packing():
     # |  The actual code to run the algorithm:
     # =========================================
 
-    # grid_side_length = 8
-    # num_cities = grid_side_length ** 2
-    # problem = TravelingSalesmanProblem()
     problem = BinPackingProblem()
 
     print("-----------------------------------------------")
     print(f"Solving {num_items}-item bin packing with GA.")
     print("-----------------------------------------------")
 
-    # initial_population = generate_random_population(pop_size, num_cities,
-    #                                                 x_min=x_min_WA,
-    #                                                 x_max=x_max_WA,
-    #                                                 y_min=y_min_WA,
-    #                                                 y_max=y_max_WA)
-    # initial_population = generate_grid_population(pop_size, grid_side_length)
-
     initial_population = generate_random_bin_population(pop_size, num_items,
                                                         weights_min=weights_min,
                                                         weights_max=weights_max,
                                                     bin_capacity=bin_capacity)
-
-
 
     ga_solver = GeneticAlgorithm(
         problem=problem,
@@ -290,17 +278,6 @@ def ga_with_bin_packing():
     ga_solver.evolve()
 
     print(f"Displaying bin configuration...")
-    # problem.display_solution(sa_solver.solution)
-    #
-    # lower_bound = math.ceil(sum(initial_guess.ITEM_WEIGHTS) / bin_capacity)
-    # print(
-    #     f"Theoretical minimum number of bins, maybe impossible: {lower_bound}")
-    #
-    # print("Displaying solution fitness over time...")
-    # visualize_solution_fitness(sa_solver.get_solution_values(),
-    #                            ylabel="Number of bins in solution",
-    #                            title="Number of bins over iterations")
-
     best_individual = ga_solver.gen_best_solution
     problem.display_solution(best_individual)
 
@@ -314,23 +291,13 @@ def ga_with_bin_packing():
                                title="Bins Used Over Generations")
 
 
-
-
-
-
 def main():
     """"""
-
-    # future: choose algorithm/problem combination to run
 
     # sa_with_tsp()
     # ga_with_tsp()
     # sa_with_bin_packing()
     ga_with_bin_packing()
-
-
-
-
 
 
 
