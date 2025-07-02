@@ -7,8 +7,10 @@
 
 import numpy as np
 from helper_classes import City, Tour, BinConfiguration
-from config import seed
+from config import seed, thickness_min, thickness_max, thickness_scalar, radius_min, radius_max, length_min, length_max
 import matplotlib.pyplot as plot
+from pressure_vessel_problem import PVSolution
+import math
 
 np.random.seed(seed)
 
@@ -152,6 +154,82 @@ def generate_grid_population(pop_size: int, side_length: int):
         pop[i] = pop[i].shuffle_tour()
 
     return pop
+
+
+
+
+
+def generate_random_solution_in_bounds():
+    """"""
+
+    # thicknesses are discrete
+    head_thickness = thickness_scalar * np.random.randint(low=thickness_min,
+                                                          high=thickness_max)
+    body_thickness = thickness_scalar * np.random.randint(low=thickness_min,
+                                                          high=thickness_max)
+
+    inner_radius = np.random.uniform(low=radius_min, high=radius_max)
+    cylindrical_length = np.random.uniform(low=length_min, high=length_max)
+
+    return np.array([head_thickness, body_thickness, inner_radius,
+                     cylindrical_length])
+
+
+def get_constraints(solution: PVSolution):
+    """"""
+    # head_thickness, body_thickness, inner_radius, cylindrical_length = solution
+
+    head_thickness = solution[0]
+    body_thickness = solution[1]
+    inner_radius = solution[2]
+    cylindrical_length = solution[3]
+
+    g1 = -head_thickness + 0.0193 * inner_radius
+    g2 = -body_thickness + 0.00954 * inner_radius
+    g3 = (-math.pi * inner_radius**2 * cylindrical_length -
+          (4/3) * math.pi * inner_radius**3 + 1296000)
+    g4 = cylindrical_length - 240
+
+    return [g1, g2, g3, g4]
+
+
+def is_valid_pressure_vessel_solution(solution: PVSolution):
+    """"""
+    constraints = get_constraints(solution)
+    for constraint in constraints:
+        if constraint > 0:  # they all have to be <= 0, see paper
+            return False
+
+    return True
+
+
+
+def generate_pressure_vessel_solution():
+    """"""
+
+    while True:
+        potential_solution = generate_random_solution_in_bounds()
+        if is_valid_pressure_vessel_solution(potential_solution):
+            return potential_solution
+
+
+
+
+    # # thicknesses are discrete
+    # head_thickness = thickness_scalar * np.random.randint(low=thickness_min,
+    #                                                       high=thickness_max)
+    # body_thickness = thickness_scalar * np.random.randint(low=thickness_min,
+    #                                                       high=thickness_max)
+    #
+    # inner_radius = np.random.uniform(low=radius_min, high=radius_max)
+    # cylindrical_length = np.random.uniform(low=length_min, high=length_max)
+
+
+    # generate values within the simple bounds
+    # check for validity
+    # repeatedly generate until we have a valid solution
+
+
 
 
 def visualize_solution_fitness(fitness_values: list[float],
