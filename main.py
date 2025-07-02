@@ -6,13 +6,16 @@
 # ===============================
 
 import math
-from helper_functions import (generate_random_cities, generate_square_grid,
+from helper_functions import (generate_random_cities,
+                              generate_square_grid,
                               visualize_solution_fitness,
                               generate_grid_population,
                               generate_random_bin_config,
                               generate_random_city_population,
-                              generate_random_bin_population)
-from config import seed, x_min_WA, x_max_WA, y_min_WA, y_max_WA
+                              generate_random_bin_population,
+                              generate_pressure_vessel_solution)
+from config import (seed, x_min_WA, x_max_WA, y_min_WA, y_max_WA,
+                    thickness_min, thickness_max, thickness_scalar, radius_min, radius_max, length_min, length_max)
 from helper_classes import Tour
 import copy
 import numpy as np
@@ -21,6 +24,7 @@ import time
 from problem import Problem, Solution
 from traveling_salesman_problem import TravelingSalesmanProblem
 from bin_packing_problem import BinPackingProblem
+from pressure_vessel_problem import PressureVesselProblem
 from simulated_annealing import SimulatedAnnealing
 from genetic_algorithm import GeneticAlgorithm
 
@@ -28,9 +32,12 @@ from genetic_algorithm import GeneticAlgorithm
 np.random.seed(seed)
 
 
-# SA with TSP
 def sa_with_tsp():
     """"""
+
+    # -----------------------------------
+    # |  Hyperparameter combinations:
+    # -----------------------------------
 
     # 64 city grid, distance 69.136
     # 263 --> 271 --> 246 --> 250
@@ -47,9 +54,9 @@ def sa_with_tsp():
     # shift_max = 32
     # grid_side_length = 8
 
-    # ==========================================================================
+    # ------------------------------------------
     # |  The actual code to run the algorithm:
-    # ==========================================================================
+    # ------------------------------------------
 
     # grid_side_length = 8
     initial_guess = generate_square_grid(grid_side_length)  # grid
@@ -83,16 +90,14 @@ def sa_with_tsp():
                                # downsample_factor=50
                                )
 
+# ==============================================================================
 
-
-
-# GA with TSP
 def ga_with_tsp():
     """"""
 
-    # =========================================
+    # -----------------------------------
     # |  Hyperparameter combinations:
-    # =========================================
+    # -----------------------------------
 
     # # 64 city grid, distance 68.307
     # # 228 --> 175 --> 170 --> 151 (30)
@@ -121,9 +126,9 @@ def ga_with_tsp():
     # mutation_rate = 0.07
     # tournament_size = 3
 
-    # =========================================
+    # ------------------------------------------
     # |  The actual code to run the algorithm:
-    # =========================================
+    # ------------------------------------------
 
     grid_side_length = 8
     num_cities = grid_side_length ** 2
@@ -164,11 +169,15 @@ def ga_with_tsp():
                                ylabel="Current Tour Distance",
                                title="Tour Distance Over Generations")
 
+# ==============================================================================
 
-
-# SA with bin packing
 def sa_with_bin_packing():
     """"""
+
+    # -----------------------------------
+    # |  Hyperparameter combinations:
+    # -----------------------------------
+
     #
     max_iterations = 10000
     initial_temperature = 10
@@ -183,10 +192,9 @@ def sa_with_bin_packing():
     # weights_max = 29
     # weights_max = round(bin_capacity**(2/3))
 
-
-    # ==========================================================================
+    # ------------------------------------------
     # |  The actual code to run the algorithm:
-    # ==========================================================================
+    # ------------------------------------------
 
     problem = BinPackingProblem()
     initial_guess = generate_random_bin_config(num_items, weights_min,
@@ -218,16 +226,14 @@ def sa_with_bin_packing():
     # print(f"Current number of bins used: {}")
     # theoretical minimum
 
+# ==============================================================================
 
-
-
-# GA with bin packing
 def ga_with_bin_packing():
     """"""
 
-    # =========================================
+    # -----------------------------------
     # |  Hyperparameter combinations:
-    # =========================================
+    # -----------------------------------
 
     #
     #
@@ -249,9 +255,9 @@ def ga_with_bin_packing():
     # weights_max = 29
     # weights_max = round(bin_capacity**(2/3))
 
-    # =========================================
+    # ------------------------------------------
     # |  The actual code to run the algorithm:
-    # =========================================
+    # ------------------------------------------
 
     problem = BinPackingProblem()
 
@@ -290,6 +296,59 @@ def ga_with_bin_packing():
                                ylabel="Number of Bins Used",
                                title="Bins Used Over Generations")
 
+# ==============================================================================
+
+def sa_with_pressure_vessel_design():
+    """"""
+
+    # TODO d_1 and d_2 are actually discrete...
+    # d_min = 1
+    # d_max = 100
+    # d_scalar = 0.0625
+    # r_min = 10
+    # r_max = 100  # arbitrary, but not too high
+    # L_min = 10   # arbitrary, but not too low
+    # L_max = 200
+
+
+
+    # -----------------------------------
+    # |  Hyperparameter combinations:
+    # -----------------------------------
+
+    # ...
+    max_iterations = 5000
+    initial_temperature = 100
+    cooling_rate = 0.99
+
+    # ------------------------------------------
+    # |  The actual code to run the algorithm:
+    # ------------------------------------------
+
+    # initial guess, need a helper method
+    initial_guess = generate_pressure_vessel_solution()
+
+    problem = PressureVesselProblem()
+
+    # set up and run solver
+    sa_solver = SimulatedAnnealing(
+        problem=problem,
+        initial_guess=initial_guess,
+        max_iterations=max_iterations,
+        initial_temperature=initial_temperature,
+        cooling_rate=cooling_rate
+    )
+    sa_solver.anneal()
+    problem.display_solution(sa_solver.solution)  # 74.601?
+
+    print(f"Generating plot of fitness values...")
+    visualize_solution_fitness(sa_solver.get_solution_values(),
+                               # downsample_factor=50
+                               )
+
+
+
+
 
 def main():
     """"""
@@ -297,7 +356,9 @@ def main():
     # sa_with_tsp()
     # ga_with_tsp()
     # sa_with_bin_packing()
-    ga_with_bin_packing()
+    # ga_with_bin_packing()
+
+    sa_with_pressure_vessel_design()
 
 
 
