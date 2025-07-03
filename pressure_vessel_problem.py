@@ -10,11 +10,12 @@ import numpy as np
 from config import seed
 import copy
 from problem import Problem, Solution
+from helper_classes import Design
 from collections import Counter
 
 
 np.random.seed(seed)
-PVSolution = np.ndarray
+# PVSolution = np.ndarray
 
 
 class PressureVesselProblem(Problem):
@@ -31,26 +32,36 @@ class PressureVesselProblem(Problem):
     # |  General methods
     # ==========================================================================
 
-    def evaluate_solution(self, solution: PVSolution) -> float:
+    def evaluate_solution(self, solution: Design) -> float:
         """"""
 
         # remember
+        return solution.cost
 
 
-    def display_solution(self, solution: Solution) -> None:
+    def display_solution(self, solution: Design) -> None:
         """"""
 
         # just print stuff
+        print(f"Pressure vessel design variables:\n"
+              f"\tHead thickness:\t{solution.head_thickness}\n"
+              f"\tBody thickness:\t{solution.body_thickness}\n"
+              f"\tInner radius:\t{solution.inner_radius:.4f}\n"
+              f"\tCylindrical length:\t{solution.cylindrical_length:.4f}\n"
+              f"Total cost: {solution.cost:.3f}")
+        print(f"Valid solution? {solution.is_valid_design()}")
 
 
     # ==========================================================================
     # |  Simulated annealing methods
     # ==========================================================================
 
-    def generate_neighbor(self, current_solution: Solution) -> Solution:
+    def generate_neighbor(self, current_solution: Design) -> Design:
         """"""
 
-        # normal SA
+        # sorta normal SA, need to also remember
+        new_solution = current_solution.generate_neighbor()
+        return new_solution
 
 
     # ==========================================================================
