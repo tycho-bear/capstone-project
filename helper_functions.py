@@ -181,35 +181,10 @@ def generate_random_solution_in_bounds() -> Design:
     return random_solution
 
 
-def get_constraints(solution: Design):
-    """"""
-    # head_thickness, body_thickness, inner_radius, cylindrical_length = solution
-
-    # head_thickness = solution[0]
-    # body_thickness = solution[1]
-    # inner_radius = solution[2]
-    # cylindrical_length = solution[3]
 
 
 
 
-    g1 = -1*solution.head_thickness + 0.0193 * solution.inner_radius
-    g2 = -1*solution.body_thickness + 0.00954 * solution.inner_radius
-    g3 = (-math.pi * (solution.inner_radius**2) * solution.cylindrical_length -
-          (4/3) * math.pi * (solution.inner_radius**3) + 1296000)
-    g4 = solution.cylindrical_length - 240
-
-    return [g1, g2, g3, g4]
-
-
-def is_valid_pressure_vessel_solution(solution: Design):
-    """"""
-    constraints = get_constraints(solution)
-    for constraint in constraints:
-        if constraint > 0:  # they all have to be <= 0, see paper
-            return False
-
-    return True
 
 
 
@@ -218,7 +193,8 @@ def generate_pressure_vessel_solution():
 
     while True:
         potential_solution = generate_random_solution_in_bounds()
-        if is_valid_pressure_vessel_solution(potential_solution):
+        # if is_valid_pressure_vessel_solution(potential_solution):
+        if potential_solution.is_valid_design():
             return potential_solution
 
 
@@ -244,7 +220,9 @@ def generate_pressure_vessel_solution():
 def visualize_solution_fitness(fitness_values: list[float],
                                xlabel: str="Iteration",
                                ylabel: str="Current Tour Distance",
-                               title: str="Tour Distance Over Iterations") \
+                               title: str="Tour Distance Over Iterations",
+                               y_min: float=None,
+                               y_max: float=None) \
         -> None:
     """
     Helper function that creates a plot showing fitness values over iterations.
@@ -253,6 +231,10 @@ def visualize_solution_fitness(fitness_values: list[float],
     :param xlabel: (str) The label for the x-axis.
     :param ylabel: (str) The label for the y-axis.
     :param title: (str) The plot title.
+    :param y_min: (float) The minimum value for the y-axis.
+    :param y_max: (float) The maximum value for the y-axis. Useful for filtering
+        extremely high costs in the pressure vessel design problem when the
+        constraints are violated.
     :return: None
     """
 
@@ -272,6 +254,11 @@ def visualize_solution_fitness(fitness_values: list[float],
     plot.xlabel(xlabel)
     plot.ylabel(ylabel)
     plot.title(title)
+
+    if y_min:
+        plot.ylim(bottom=y_min)
+    if y_max:
+        plot.ylim(top=y_max)
 
     plot.legend()
     plot.grid(True)

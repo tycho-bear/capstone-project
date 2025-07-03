@@ -11,7 +11,6 @@ import numpy as np
 import copy
 import matplotlib.pyplot as plot
 import statistics
-from helper_functions import get_constraints
 from config import (thickness_min, thickness_max, thickness_scalar, radius_min,
                     radius_max, length_min, length_max)
 
@@ -354,6 +353,33 @@ class Design:
         # then calculate total cost (see penalty method)
         self.cost = self.calculate_penalized_cost(penalty_constant)
 
+    def get_constraints(self):
+        """"""
+        # head_thickness, body_thickness, inner_radius, cylindrical_length = solution
+
+        # head_thickness = solution[0]
+        # body_thickness = solution[1]
+        # inner_radius = solution[2]
+        # cylindrical_length = solution[3]
+
+        g1 = -1 * self.head_thickness + 0.0193 * self.inner_radius
+        g2 = -1 * self.body_thickness + 0.00954 * self.inner_radius
+        g3 = (-math.pi * (
+                    self.inner_radius ** 2) * self.cylindrical_length -
+              (4 / 3) * math.pi * (self.inner_radius ** 3) + 1296000)
+        g4 = self.cylindrical_length - 240
+
+        return [g1, g2, g3, g4]
+
+    def is_valid_design(self):
+        """"""
+        # constraints = get_constraints(solution)
+        constraints = self.get_constraints()
+        for constraint in constraints:
+            if constraint > 0:  # they all have to be <= 0, see paper
+                return False
+
+        return True
 
 
     # cost function
@@ -367,7 +393,8 @@ class Design:
                      + (3.1661*(self.head_thickness**2)*self.cylindrical_length)
                      + (19.84*(self.head_thickness**2)*self.inner_radius))
 
-        constraints = get_constraints(self)  # TODO - is this okay? can pass in the variables directly if needed
+        # constraints = get_constraints(self)
+        constraints = self.get_constraints()
         constraint_penalty = 0
 
         for constraint in constraints:
