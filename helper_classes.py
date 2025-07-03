@@ -12,6 +12,8 @@ import copy
 import matplotlib.pyplot as plot
 import statistics
 from helper_functions import get_constraints
+from config import (thickness_min, thickness_max, thickness_scalar, radius_min,
+                    radius_max, length_min, length_max)
 
 
 class City:
@@ -376,5 +378,77 @@ class Design:
         return base_cost + constraint_penalty
 
     # neighbor function here, todo
+
+    def generate_neighbor(self):
+        """"""
+
+        # randomly pick 1-4 variables to perturb
+        # use a gaussian with step size
+        # thicknesses must be discrete
+        # each variable will be perturbed in a different way
+        # create new variables for each one
+
+        choices = ["head", "body", "radius", "length"]
+        # randomly pick 1-3 choices to perturb
+        num_choices = np.random.randint(low=1, high=4)  # never all at once
+        perturbations = np.random.choice(choices, size=num_choices,
+                                         replace=False)
+
+        # apply the perturbations here, then create and return the new neighbor
+        (new_head_thickness,
+         new_body_thickness,
+         new_inner_radius,
+         new_cylindrical_length) = self.apply_perturbations(perturbations)
+
+        new_neighbor = Design(head_thickness=new_head_thickness,
+                              body_thickness=new_body_thickness,
+                              inner_radius=new_inner_radius,
+                              cylindrical_length=new_cylindrical_length)
+        return new_neighbor
+
+
+    def apply_perturbations(self, perturbations, step_size:float=0.2):
+        """"""
+        # new design variables for the new neighbor, these may be modified
+        new_head_thickness = copy.deepcopy(self.head_thickness)
+        new_body_thickness = copy.deepcopy(self.body_thickness)
+        new_inner_radius = copy.deepcopy(self.inner_radius)
+        new_cylindrical_length = copy.deepcopy(self.cylindrical_length)
+
+        # apply 1-4 perturbations
+        # generate perturbation, apply it, then clip to bounds
+        for perturbation in perturbations:
+            if perturbation == "head":
+                # can go negative or positive
+                delta = thickness_scalar * np.random.choice([-2, -1, 1, 2])
+                new_head_thickness += delta
+                new_head_thickness = np.clip(new_head_thickness,
+                                             a_min=thickness_min,
+                                             a_max=thickness_max)
+            if perturbation == "body":
+                delta = thickness_scalar * np.random.choice([-2, -1, 1, 2])
+                new_body_thickness += delta
+                new_body_thickness = np.clip(new_body_thickness,
+                                             a_min=thickness_min,
+                                             a_max=thickness_max)
+            if perturbation == "radius":
+                delta = np.random.normal(loc=0, scale=step_size)
+                new_inner_radius += delta
+                new_inner_radius = np.clip(new_inner_radius,
+                                           a_min=radius_min,
+                                           a_max=radius_max)
+            if perturbation == "length":
+                delta = np.random.normal(loc=0, scale=step_size)
+                new_cylindrical_length += delta
+                new_cylindrical_length = np.clip(new_cylindrical_length,
+                                                 a_min=radius_min,
+                                                 a_max=radius_max)
+
+        return (new_head_thickness, new_body_thickness,
+                new_inner_radius, new_cylindrical_length)
+
+
+
+
 
 
