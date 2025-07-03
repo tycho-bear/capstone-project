@@ -6,10 +6,9 @@
 # ===============================
 
 import numpy as np
-from helper_classes import City, Tour, BinConfiguration
+from helper_classes import City, Tour, BinConfiguration, Design
 from config import seed, thickness_min, thickness_max, thickness_scalar, radius_min, radius_max, length_min, length_max
 import matplotlib.pyplot as plot
-from pressure_vessel_problem import PVSolution
 import math
 
 np.random.seed(seed)
@@ -159,7 +158,7 @@ def generate_grid_population(pop_size: int, side_length: int):
 
 
 
-def generate_random_solution_in_bounds():
+def generate_random_solution_in_bounds() -> Design:
     """"""
 
     # thicknesses are discrete
@@ -171,29 +170,39 @@ def generate_random_solution_in_bounds():
     inner_radius = np.random.uniform(low=radius_min, high=radius_max)
     cylindrical_length = np.random.uniform(low=length_min, high=length_max)
 
-    return np.array([head_thickness, body_thickness, inner_radius,
-                     cylindrical_length])
+    random_solution = Design(head_thickness=head_thickness,
+                             body_thickness=body_thickness,
+                             inner_radius=inner_radius,
+                             cylindrical_length=cylindrical_length)
+
+    # return np.array([head_thickness, body_thickness, inner_radius,
+    #                  cylindrical_length])
+
+    return random_solution
 
 
-def get_constraints(solution: PVSolution):
+def get_constraints(solution: Design):
     """"""
     # head_thickness, body_thickness, inner_radius, cylindrical_length = solution
 
-    head_thickness = solution[0]
-    body_thickness = solution[1]
-    inner_radius = solution[2]
-    cylindrical_length = solution[3]
+    # head_thickness = solution[0]
+    # body_thickness = solution[1]
+    # inner_radius = solution[2]
+    # cylindrical_length = solution[3]
 
-    g1 = -head_thickness + 0.0193 * inner_radius
-    g2 = -body_thickness + 0.00954 * inner_radius
-    g3 = (-math.pi * inner_radius**2 * cylindrical_length -
-          (4/3) * math.pi * inner_radius**3 + 1296000)
-    g4 = cylindrical_length - 240
+
+
+
+    g1 = -1*solution.head_thickness + 0.0193 * solution.inner_radius
+    g2 = -1*solution.body_thickness + 0.00954 * solution.inner_radius
+    g3 = (-math.pi * (solution.inner_radius**2) * solution.cylindrical_length -
+          (4/3) * math.pi * (solution.inner_radius**3) + 1296000)
+    g4 = solution.cylindrical_length - 240
 
     return [g1, g2, g3, g4]
 
 
-def is_valid_pressure_vessel_solution(solution: PVSolution):
+def is_valid_pressure_vessel_solution(solution: Design):
     """"""
     constraints = get_constraints(solution)
     for constraint in constraints:

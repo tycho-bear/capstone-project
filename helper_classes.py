@@ -11,6 +11,7 @@ import numpy as np
 import copy
 import matplotlib.pyplot as plot
 import statistics
+from helper_functions import get_constraints
 
 
 class City:
@@ -331,5 +332,49 @@ class BinConfiguration:
 
 
     # visualize fitness (show number of bins, plus how full they are) (see pic)
+
+
+class Design:
+    """
+    Class representing the design of a cylindrical pressure vessel.
+    """
+
+    def __init__(self, head_thickness: float, body_thickness: float,
+                 inner_radius: float, cylindrical_length: float,
+                 penalty_constant:float=1000000) -> None:
+        """"""
+
+        self.head_thickness = head_thickness
+        self.body_thickness = body_thickness
+        self.inner_radius = inner_radius
+        self.cylindrical_length = cylindrical_length
+
+        # then calculate total cost (see penalty method)
+        self.cost = self.calculate_penalized_cost(penalty_constant)
+
+
+
+    # cost function
+    def calculate_penalized_cost(self, penalty_constant:float=1000000):
+        """"""
+        # adds a large number to the cost when constraints are violated
+
+        base_cost = ((0.6224*self.head_thickness*self.inner_radius*
+                     self.cylindrical_length)
+                     + (1.7781*self.body_thickness*(self.inner_radius**2))
+                     + (3.1661*(self.head_thickness**2)*self.cylindrical_length)
+                     + (19.84*(self.head_thickness**2)*self.inner_radius))
+
+        constraints = get_constraints(self)  # TODO - is this okay? can pass in the variables directly if needed
+        constraint_penalty = 0
+
+        for constraint in constraints:
+            if constraint > 0:  # penalty here, > 0
+                constraint_penalty += constraint**2
+
+        constraint_penalty *= penalty_constant
+        return base_cost + constraint_penalty
+
+    # neighbor function here, todo
 
 
