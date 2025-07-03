@@ -317,9 +317,9 @@ def sa_with_pressure_vessel_design():
     # -----------------------------------
 
     # ...
-    max_iterations = 5000
-    initial_temperature = 100
-    cooling_rate = 0.99
+    max_iterations = 30000
+    initial_temperature = 5000
+    cooling_rate = 0.9997
 
     # ------------------------------------------
     # |  The actual code to run the algorithm:
@@ -327,7 +327,6 @@ def sa_with_pressure_vessel_design():
 
     # initial guess, need a helper method
     initial_guess = generate_pressure_vessel_solution()
-
     problem = PressureVesselProblem()
 
     # set up and run solver
@@ -341,10 +340,16 @@ def sa_with_pressure_vessel_design():
     sa_solver.anneal()
     problem.display_solution(sa_solver.solution)  # 74.601?
 
+    plot_y_max = 20000
+    plot_y_min = 6000
     print(f"Generating plot of fitness values...")
     visualize_solution_fitness(sa_solver.get_solution_values(),
-                               # downsample_factor=50
-                               )
+                               xlabel="Iteration",
+                               ylabel="Current pressure vessel cost",
+                             title="Pressure Vessel Design Cost Over Iterations",
+                               y_min=plot_y_min,
+                               y_max=plot_y_max
+                            )
 
 
 
