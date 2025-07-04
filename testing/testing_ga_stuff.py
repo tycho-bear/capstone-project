@@ -5,7 +5,7 @@
 # Summer 2025
 # ===============================
 
-from config import seed, x_min_WA, x_max_WA, y_min_WA, y_max_WA
+from config import SEED, X_MIN_WA, X_MAX_WA, Y_MIN_WA, Y_MAX_WA
 import numpy as np
 from helper_functions import (generate_random_cities, generate_square_grid,
                               generate_random_city_population,
@@ -13,7 +13,7 @@ from helper_functions import (generate_random_cities, generate_square_grid,
 from problem import TravelingSalesmanProblem
 
 
-np.random.seed(seed)
+np.random.seed(SEED)
 
 
 def test_stuff():
@@ -84,8 +84,8 @@ def test_stuff():
     print("generating random population:")
     new_pop_size = 5
     new_num_cities = 5
-    new_pop = generate_random_city_population(new_pop_size, new_num_cities, x_min_WA,
-                                              x_max_WA, y_min_WA, y_max_WA)
+    new_pop = generate_random_city_population(new_pop_size, new_num_cities, X_MIN_WA,
+                                              X_MAX_WA, Y_MIN_WA, Y_MAX_WA)
     print_population(new_pop)
 
     new_grid = generate_grid_population(new_pop_size, 3)

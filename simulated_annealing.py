@@ -8,7 +8,7 @@
 import math
 from helper_functions import (generate_random_cities, generate_square_grid,
                               visualize_solution_fitness)
-from config import seed, x_min_WA, x_max_WA, y_min_WA, y_max_WA
+from config import SEED, X_MIN_WA, X_MAX_WA, Y_MIN_WA, Y_MAX_WA
 from helper_classes import Tour
 import copy
 import numpy as np
@@ -18,7 +18,7 @@ from problem import Problem, Solution
 from traveling_salesman_problem import TravelingSalesmanProblem
 
 
-np.random.seed(seed)
+np.random.seed(SEED)
 
 
 class SimulatedAnnealing:
@@ -304,8 +304,8 @@ def main() -> None:
     # grid_side_length = 8
     # initial_guess = generate_square_grid(grid_side_length)  # grid
     num_cities = grid_side_length**2
-    initial_guess = generate_random_cities(num_cities, x_min_WA, x_max_WA,
-                                           y_min_WA, y_max_WA)
+    initial_guess = generate_random_cities(num_cities, X_MIN_WA, X_MAX_WA,
+                                           Y_MIN_WA, Y_MAX_WA)
 
     # define problem here
     problem = TravelingSalesmanProblem(

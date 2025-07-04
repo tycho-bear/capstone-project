@@ -1,17 +1,19 @@
-seed = 123
-x_min_WA = -125
-x_max_WA = -117
-y_min_WA = 45.5
-y_max_WA = 49
+SEED = 123
+X_MIN_WA = -125
+X_MAX_WA = -117
+Y_MIN_WA = 45.5
+Y_MAX_WA = 49
 
 # pressure vessel design
-thickness_min = 1
-thickness_max = 100
-thickness_scalar = 0.0625
-radius_min = 10
-radius_max = 100  # arbitrary, but not too high
-length_min = 10   # arbitrary, but not too low
-length_max = 200
+THICKNESS_SCALAR = 0.0625
+THICKNESS_MIN_INT = 1
+THICKNESS_MAX_INT = 99
+THICKNESS_MIN = THICKNESS_MIN_INT * THICKNESS_SCALAR
+THICKNESS_MAX = THICKNESS_MAX_INT * THICKNESS_SCALAR
+RADIUS_MIN = 10
+RADIUS_MAX = 100  # arbitrary, but not too high
+LENGTH_MIN = 10   # arbitrary, but not too low
+LENGTH_MAX = 200
 
 
 # ==========================================================================

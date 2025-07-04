@@ -7,7 +7,7 @@
 
 import math
 import numpy as np
-from config import seed
+from config import SEED
 from problem import Problem, Solution
 import time
 from helper_functions import (generate_random_city_population,
@@ -16,7 +16,7 @@ from helper_functions import (generate_random_city_population,
 from traveling_salesman_problem import TravelingSalesmanProblem
 
 
-np.random.seed(seed)
+np.random.seed(SEED)
 
 
 class GeneticAlgorithm:

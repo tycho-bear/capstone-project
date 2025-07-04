@@ -7,12 +7,12 @@
 
 from helper_classes import Tour
 import numpy as np
-from config import seed
+from config import SEED
 import copy
 from problem import Problem, Solution
 
 
-np.random.seed(seed)
+np.random.seed(SEED)
 
 
 class TravelingSalesmanProblem(Problem):

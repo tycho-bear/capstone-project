@@ -7,13 +7,13 @@
 
 from helper_classes import BinConfiguration
 import numpy as np
-from config import seed
+from config import SEED
 import copy
 from problem import Problem, Solution
 from collections import Counter
 
 
-np.random.seed(seed)
+np.random.seed(SEED)
 
 
 class BinPackingProblem(Problem):

@@ -11,8 +11,8 @@ import numpy as np
 import copy
 import matplotlib.pyplot as plot
 import statistics
-from config import (thickness_min, thickness_max, thickness_scalar, radius_min,
-                    radius_max, length_min, length_max)
+from config import (THICKNESS_MIN, THICKNESS_MAX, THICKNESS_SCALAR, RADIUS_MIN,
+                    RADIUS_MAX, LENGTH_MIN, LENGTH_MAX)
 
 
 class City:
@@ -340,9 +340,15 @@ class Design:
     Class representing the design of a cylindrical pressure vessel.
     """
 
-    def __init__(self, head_thickness: float, body_thickness: float,
-                 inner_radius: float, cylindrical_length: float,
-                 penalty_constant:float=1000000) -> None:
+    def __init__(self,
+                 head_thickness: float,
+                 body_thickness: float,
+                 inner_radius: float,
+                 cylindrical_length: float,
+                 radius_step_size: float = 0.2,
+                 length_step_size: float = 0.5,
+                 penalty_constant: float = 100000
+                 ) -> None:
         """"""
 
         self.head_thickness = head_thickness
@@ -350,17 +356,14 @@ class Design:
         self.inner_radius = inner_radius
         self.cylindrical_length = cylindrical_length
 
+        self.radius_step_size = radius_step_size
+        self.length_step_size = length_step_size
+
         # then calculate total cost (see penalty method)
         self.cost = self.calculate_penalized_cost(penalty_constant)
 
     def get_constraints(self):
         """"""
-        # head_thickness, body_thickness, inner_radius, cylindrical_length = solution
-
-        # head_thickness = solution[0]
-        # body_thickness = solution[1]
-        # inner_radius = solution[2]
-        # cylindrical_length = solution[3]
 
         g1 = -1 * self.head_thickness + 0.0193 * self.inner_radius
         g2 = -1 * self.body_thickness + 0.00954 * self.inner_radius
@@ -370,6 +373,7 @@ class Design:
         g4 = self.cylindrical_length - 240
 
         return [g1, g2, g3, g4]
+
 
     def is_valid_design(self):
         """"""
@@ -383,7 +387,7 @@ class Design:
 
 
     # cost function
-    def calculate_penalized_cost(self, penalty_constant:float=1000000):
+    def calculate_penalized_cost(self, penalty_constant:float=100000):
         """"""
         # adds a large number to the cost when constraints are violated
 
@@ -399,12 +403,13 @@ class Design:
 
         for constraint in constraints:
             if constraint > 0:  # penalty here, > 0
-                constraint_penalty += constraint**2
+                constraint_penalty += constraint**2  # quadratic penalty
+                constraint_penalty += 2000  # do this to be safe
+                # constraint_penalty = 20000  # just add a flat 2000
 
-        constraint_penalty *= penalty_constant
+        constraint_penalty *= penalty_constant  # uncomment if doing quadratic
         return base_cost + constraint_penalty
 
-    # neighbor function here, todo
 
     def generate_neighbor(self):
         """"""
@@ -434,7 +439,10 @@ class Design:
         return new_neighbor
 
 
-    def apply_perturbations(self, perturbations, step_size:float=0.2):
+    def apply_perturbations(self, perturbations,
+                            # radius_step_size:float=0.2,
+                            # length_step_size:float=2
+                            ):
         """"""
         # new design variables for the new neighbor, these may be modified
         new_head_thickness = copy.deepcopy(self.head_thickness)
@@ -447,29 +455,29 @@ class Design:
         for perturbation in perturbations:
             if perturbation == "head":
                 # can go negative or positive
-                delta = thickness_scalar * np.random.choice([-2, -1, 1, 2])
+                delta = THICKNESS_SCALAR * np.random.choice([-2, -1, 1, 2])
                 new_head_thickness += delta
                 new_head_thickness = np.clip(new_head_thickness,
-                                             a_min=thickness_min,
-                                             a_max=thickness_max)
+                                             a_min=THICKNESS_MIN,
+                                             a_max=THICKNESS_MAX)
             if perturbation == "body":
-                delta = thickness_scalar * np.random.choice([-2, -1, 1, 2])
+                delta = THICKNESS_SCALAR * np.random.choice([-2, -1, 1, 2])
                 new_body_thickness += delta
                 new_body_thickness = np.clip(new_body_thickness,
-                                             a_min=thickness_min,
-                                             a_max=thickness_max)
+                                             a_min=THICKNESS_MIN,
+                                             a_max=THICKNESS_MAX)
             if perturbation == "radius":
-                delta = np.random.normal(loc=0, scale=step_size)
+                delta = np.random.normal(loc=0, scale=self.radius_step_size)
                 new_inner_radius += delta
                 new_inner_radius = np.clip(new_inner_radius,
-                                           a_min=radius_min,
-                                           a_max=radius_max)
+                                           a_min=RADIUS_MIN,
+                                           a_max=RADIUS_MAX)
             if perturbation == "length":
-                delta = np.random.normal(loc=0, scale=step_size)
+                delta = np.random.normal(loc=0, scale=self.length_step_size)
                 new_cylindrical_length += delta
                 new_cylindrical_length = np.clip(new_cylindrical_length,
-                                                 a_min=radius_min,
-                                                 a_max=radius_max)
+                                                 a_min=RADIUS_MIN,
+                                                 a_max=RADIUS_MAX)
 
         return (new_head_thickness, new_body_thickness,
                 new_inner_radius, new_cylindrical_length)

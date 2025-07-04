@@ -10,12 +10,12 @@ from typing import Any
 from helper_classes import Tour
 from helper_functions import generate_random_cities, generate_square_grid
 import numpy as np
-from config import seed
+from config import SEED
 import math
 import copy
 
 
-np.random.seed(seed)
+np.random.seed(SEED)
 Solution = Any  # abstract methods return this instead of a Tour or something
 
 class Problem(ABC):

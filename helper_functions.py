@@ -7,11 +7,13 @@
 
 import numpy as np
 from helper_classes import City, Tour, BinConfiguration, Design
-from config import seed, thickness_min, thickness_max, thickness_scalar, radius_min, radius_max, length_min, length_max
+from config import (SEED, THICKNESS_MIN, THICKNESS_MAX, THICKNESS_SCALAR,
+                    RADIUS_MIN, RADIUS_MAX, LENGTH_MIN, LENGTH_MAX,
+                    THICKNESS_MIN_INT, THICKNESS_MAX_INT)
 import matplotlib.pyplot as plot
 import math
 
-np.random.seed(seed)
+np.random.seed(SEED)
 
 
 def generate_random_cities(num_cities: int, x_min: float, x_max: float,
@@ -158,22 +160,30 @@ def generate_grid_population(pop_size: int, side_length: int):
 
 
 
-def generate_random_solution_in_bounds() -> Design:
+def generate_random_solution_in_bounds(radius_step_size, length_step_size) \
+        -> Design:
     """"""
 
     # thicknesses are discrete
-    head_thickness = thickness_scalar * np.random.randint(low=thickness_min,
-                                                          high=thickness_max)
-    body_thickness = thickness_scalar * np.random.randint(low=thickness_min,
-                                                          high=thickness_max)
+    head_thickness = THICKNESS_SCALAR * np.random.randint(low=THICKNESS_MIN_INT,
+                                                          high=THICKNESS_MAX_INT
+                                                          )
+    body_thickness = THICKNESS_SCALAR * np.random.randint(low=THICKNESS_MIN_INT,
+                                                          high=THICKNESS_MAX_INT
+                                                          )
 
-    inner_radius = np.random.uniform(low=radius_min, high=radius_max)
-    cylindrical_length = np.random.uniform(low=length_min, high=length_max)
+    # head_thickness = np.random.uniform(low=THICKNESS_MIN, high=THICKNESS_MAX)
+    # body_thickness = np.random.uniform(low=THICKNESS_MIN, high=THICKNESS_MAX)
+
+    inner_radius = np.random.uniform(low=RADIUS_MIN, high=RADIUS_MAX)
+    cylindrical_length = np.random.uniform(low=LENGTH_MIN, high=LENGTH_MAX)
 
     random_solution = Design(head_thickness=head_thickness,
                              body_thickness=body_thickness,
                              inner_radius=inner_radius,
-                             cylindrical_length=cylindrical_length)
+                             cylindrical_length=cylindrical_length,
+                             radius_step_size=radius_step_size,
+                             length_step_size=length_step_size)
 
     # return np.array([head_thickness, body_thickness, inner_radius,
     #                  cylindrical_length])
@@ -188,11 +198,14 @@ def generate_random_solution_in_bounds() -> Design:
 
 
 
-def generate_pressure_vessel_solution():
+def generate_pressure_vessel_solution(radius_step_size, length_step_size):
     """"""
 
     while True:
-        potential_solution = generate_random_solution_in_bounds()
+        potential_solution = generate_random_solution_in_bounds(
+            radius_step_size,
+            length_step_size
+        )
         # if is_valid_pressure_vessel_solution(potential_solution):
         if potential_solution.is_valid_design():
             return potential_solution
@@ -245,7 +258,9 @@ def visualize_solution_fitness(fitness_values: list[float],
     plot.figure(figsize=(6, 4))
     plot.plot(iteration_numbers, fitness_values,
               # marker="o", markersize=2,
-              linestyle="-", linewidth=3,
+              linestyle="-",
+              linewidth=3,
+              # linewidth=1,
               color="b",
               # color="mediumslateblue",
               # color="royalblue",  # good color

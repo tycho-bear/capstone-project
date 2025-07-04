@@ -14,8 +14,8 @@ from helper_functions import (generate_random_cities,
                               generate_random_city_population,
                               generate_random_bin_population,
                               generate_pressure_vessel_solution)
-from config import (seed, x_min_WA, x_max_WA, y_min_WA, y_max_WA,
-                    thickness_min, thickness_max, thickness_scalar, radius_min, radius_max, length_min, length_max)
+from config import (SEED, X_MIN_WA, X_MAX_WA, Y_MIN_WA, Y_MAX_WA,
+                    THICKNESS_MIN, THICKNESS_MAX, THICKNESS_SCALAR, RADIUS_MIN, RADIUS_MAX, LENGTH_MIN, LENGTH_MAX)
 from helper_classes import Tour
 import copy
 import numpy as np
@@ -29,7 +29,7 @@ from simulated_annealing import SimulatedAnnealing
 from genetic_algorithm import GeneticAlgorithm
 
 
-np.random.seed(seed)
+np.random.seed(SEED)
 
 
 def sa_with_tsp():
@@ -143,10 +143,10 @@ def ga_with_tsp():
     print("------------------------------------------")
 
     initial_population = generate_random_city_population(pop_size, num_cities,
-                                                         x_min=x_min_WA,
-                                                         x_max=x_max_WA,
-                                                         y_min=y_min_WA,
-                                                         y_max=y_max_WA)
+                                                         x_min=X_MIN_WA,
+                                                         x_max=X_MAX_WA,
+                                                         y_min=Y_MIN_WA,
+                                                         y_max=Y_MAX_WA)
     # initial_population = generate_grid_population(pop_size, grid_side_length)
 
     ga_solver = GeneticAlgorithm(
@@ -301,33 +301,39 @@ def ga_with_bin_packing():
 def sa_with_pressure_vessel_design():
     """"""
 
-    # TODO d_1 and d_2 are actually discrete...
-    # d_min = 1
-    # d_max = 100
-    # d_scalar = 0.0625
-    # r_min = 10
-    # r_max = 100  # arbitrary, but not too high
-    # L_min = 10   # arbitrary, but not too low
-    # L_max = 200
-
-
-
     # -----------------------------------
     # |  Hyperparameter combinations:
     # -----------------------------------
 
-    # ...
+    # # Cost $6410.647
     max_iterations = 30000
-    initial_temperature = 5000
+    initial_temperature = 600
     cooling_rate = 0.9997
+    # TODO - thickness step size?
+    radius_step_size = 0.2
+    length_step_size = 2
+
+    # Cost $6411.805
+    # max_iterations = 50000
+    # initial_temperature = 150
+    # cooling_rate = 0.9999
+    # radius_step_size = 0.5
+    # length_step_size = 1.5
 
     # ------------------------------------------
     # |  The actual code to run the algorithm:
     # ------------------------------------------
 
-    # initial guess, need a helper method
-    initial_guess = generate_pressure_vessel_solution()
     problem = PressureVesselProblem()
+
+    # initial guess, need a helper method
+    initial_guess = generate_pressure_vessel_solution(radius_step_size,
+                                                      length_step_size)
+    print("Initial solution:")
+    problem.display_solution(initial_guess)
+
+    # guess an optimal solution to see what happens, todo
+
 
     # set up and run solver
     sa_solver = SimulatedAnnealing(
@@ -340,12 +346,12 @@ def sa_with_pressure_vessel_design():
     sa_solver.anneal()
     problem.display_solution(sa_solver.solution)  # 74.601?
 
-    plot_y_max = 20000
-    plot_y_min = 6000
+    plot_y_max = 10000
+    plot_y_min = 5500
     print(f"Generating plot of fitness values...")
     visualize_solution_fitness(sa_solver.get_solution_values(),
                                xlabel="Iteration",
-                               ylabel="Current pressure vessel cost",
+                               ylabel="Current pressure vessel cost ($)",
                              title="Pressure Vessel Design Cost Over Iterations",
                                y_min=plot_y_min,
                                y_max=plot_y_max
