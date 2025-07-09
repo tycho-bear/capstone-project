@@ -12,6 +12,7 @@ from config import (SEED, THICKNESS_MIN, THICKNESS_MAX, THICKNESS_SCALAR,
                     THICKNESS_MIN_INT, THICKNESS_MAX_INT)
 import matplotlib.pyplot as plot
 import math
+from matplotlib.ticker import MaxNLocator
 
 np.random.seed(SEED)
 
@@ -255,20 +256,29 @@ def visualize_solution_fitness(fitness_values: list[float],
 
     # making the plot size smaller basically scales up the text and axis numbers
     # this will be useful for presentations and reports
-    plot.figure(figsize=(6, 4))
+    # plot.figure(figsize=(6, 4))
+    plot.figure(figsize=(12, 8))
+    plot.rcParams.update({"font.size": 22})
     plot.plot(iteration_numbers, fitness_values,
               # marker="o", markersize=2,
               linestyle="-",
-              linewidth=3,
+              # linewidth=3,
+              linewidth=5,
               # linewidth=1,
               color="b",
               # color="mediumslateblue",
               # color="royalblue",  # good color
               label="Distance")
 
-    plot.xlabel(xlabel)
-    plot.ylabel(ylabel)
-    plot.title(title)
+    plot.gca().yaxis.set_major_locator(MaxNLocator(integer=True))  # only ints
+
+    # plot.xlabel(xlabel)  # sets label font size but not axis #s
+    # plot.ylabel(ylabel)
+    # plot.title(title)
+
+    plot.xlabel(xlabel, fontsize=26)  # sets label font size but not axis #s
+    plot.ylabel(ylabel, fontsize=26)
+    plot.title(title, fontsize=30)
 
     if y_min:
         plot.ylim(bottom=y_min)

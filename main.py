@@ -39,12 +39,31 @@ def sa_with_tsp():
     # |  Hyperparameter combinations:
     # -----------------------------------
 
-    # 64 city grid, distance 69.136
-    # 263 --> 271 --> 246 --> 250
+    # # 64 city grid, distance 69.136
+    # # 263 --> 271 --> 246 --> 250
+    # max_iterations = 50000
+    # initial_temperature = 29
+    # cooling_rate = 0.9998
+    # shift_max = 32
+    # grid_side_length = 8
+
+    # 64 city grid, distance 72.075
+    # max_iterations = 50000
+    # initial_temperature = 25
+    # cooling_rate = 0.9998
+    # grid_side_length = 8
+
+    # 64 city grid, distance 68.485 (very good)
+    # max_iterations = 50000
+    # initial_temperature = 10
+    # cooling_rate = 0.9998
+    # grid_side_length = 8
+
+    # random 64 cities, distance 40.952
+    # max_iterations = 1000  # 50000
     max_iterations = 50000
-    initial_temperature = 29
+    initial_temperature = 5
     cooling_rate = 0.9998
-    shift_max = 32
     grid_side_length = 8
 
     # random 64 cities, distance 38.171 (good)
@@ -59,14 +78,16 @@ def sa_with_tsp():
     # ------------------------------------------
 
     # grid_side_length = 8
-    initial_guess = generate_square_grid(grid_side_length)  # grid
+    # initial_guess = generate_square_grid(grid_side_length)  # grid
+
+
     num_cities = grid_side_length ** 2
 
     # -----------------------------
     # For random cities, do this:
     # -----------------------------
-    # initial_guess = generate_random_cities(num_cities, x_min_WA, x_max_WA,
-    #                                        y_min_WA, y_max_WA)
+    initial_guess = generate_random_cities(num_cities, X_MIN_WA, X_MAX_WA,
+                                           Y_MIN_WA, Y_MAX_WA)
 
     # define problem here
     problem = TravelingSalesmanProblem(
@@ -108,10 +129,28 @@ def ga_with_tsp():
     # mutation_rate = 0.10
     # tournament_size = 3
 
-    # 64 city grid, distance 66.243
+    # 64 city grid, distance 66.243 (messed up somehow)
     # 228 --> 191 --> 163 --> 147
+    # pop_size = 600  # 600
+    # num_generations = 500  # 400
+    # elitism_percent = 0.06
+    # crossover_percent = 0.75
+    # mutation_rate = 0.10
+    # tournament_size = 4
+
+    # 64 city grid, distance 68.142 (real)
+    # 228 --> 193 --> 173 --> 157
+    # pop_size = 600
+    # num_generations = 400  # 400
+    # elitism_percent = 0.05
+    # crossover_percent = 0.75
+    # mutation_rate = 0.10
+    # tournament_size = 4
+
+    # 64 random cities, distance 35.833 (real)
+    # 141 --> 115 --> 97 --> 75
     pop_size = 600
-    num_generations = 400  # 400
+    num_generations = 500
     elitism_percent = 0.05
     crossover_percent = 0.75
     mutation_rate = 0.10
@@ -142,12 +181,13 @@ def ga_with_tsp():
     print(f"If grid, optimal solution distance is {num_cities}.")
     print("------------------------------------------")
 
+    # initial_population = generate_grid_population(pop_size, grid_side_length)
+
     initial_population = generate_random_city_population(pop_size, num_cities,
                                                          x_min=X_MIN_WA,
                                                          x_max=X_MAX_WA,
                                                          y_min=Y_MIN_WA,
                                                          y_max=Y_MAX_WA)
-    # initial_population = generate_grid_population(pop_size, grid_side_length)
 
     ga_solver = GeneticAlgorithm(
         problem=problem,
@@ -185,8 +225,8 @@ def sa_with_bin_packing():
     num_items = 200
     bin_capacity = 50
     weights_min = 1
-    # weights_max = bin_capacity
-    weights_max = bin_capacity - 1
+    weights_max = bin_capacity
+    # weights_max = bin_capacity - 1
     # weights_max = round(bin_capacity / 2)
     # weights_max = round(bin_capacity**(5/6))
     # weights_max = 29
@@ -219,8 +259,8 @@ def sa_with_bin_packing():
 
     print("Displaying solution fitness over time...")
     visualize_solution_fitness(sa_solver.get_solution_values(),
-                               ylabel="Number of bins in solution",
-                               title="Number of bins over iterations")
+                               ylabel="Number of Bins in Solution",
+                               title="Number of Bins Over Iterations")
 
     # current # bins used
     # print(f"Current number of bins used: {}")
@@ -235,21 +275,31 @@ def ga_with_bin_packing():
     # |  Hyperparameter combinations:
     # -----------------------------------
 
+    # max_iterations = 10000
+    # initial_temperature = 10
+    # cooling_rate = 0.999
+
+    # num_items = 200
+    # bin_capacity = 50
+    # weights_min = 1
+    # weights_max = bin_capacity
+
+
     #
     #
     pop_size = 150
-    num_generations = 300
+    num_generations = 200
     elitism_percent = 0.05
     crossover_percent = 0.75
     mutation_rate = 0.10
     tournament_size = 4
 
-    num_items = 150
-    bin_capacity = 40
+    num_items = 200
+    bin_capacity = 50
     weights_min = 1
-    weights_max = bin_capacity - 1
+    weights_max = bin_capacity
 
-    # weights_max = bin_capacity
+    # weights_max = bin_capacity - 1
     # weights_max = round(bin_capacity / 2)
     # weights_max = round(bin_capacity**(5/6))
     # weights_max = 29
@@ -351,7 +401,7 @@ def sa_with_pressure_vessel_design():
     print(f"Generating plot of fitness values...")
     visualize_solution_fitness(sa_solver.get_solution_values(),
                                xlabel="Iteration",
-                               ylabel="Current pressure vessel cost ($)",
+                               ylabel="Current Pressure Vessel Cost ($)",
                              title="Pressure Vessel Design Cost Over Iterations",
                                y_min=plot_y_min,
                                y_max=plot_y_max
@@ -366,11 +416,20 @@ def main():
 
     # sa_with_tsp()
     # ga_with_tsp()
-    # sa_with_bin_packing()
+    sa_with_bin_packing()
     # ga_with_bin_packing()
 
-    sa_with_pressure_vessel_design()
+    # sa_with_pressure_vessel_design()
 
+    # sa tsp    (done)
+    # sa bpp    (done)
+    # sa pvd    (done)
+    # ga tsp    (done)
+    # ga bpp    (done)
+    # ga pvd    (in progress?)
+    # pso tsp   (need this)
+    # pso bpp   (need this)
+    # pso pvd   (need this)
 
 
 if __name__ == '__main__':

@@ -179,6 +179,8 @@ class Tour:
         :return: None
         """
 
+        plot.figure(figsize=(12, 10))  # make it bigger like in helper_functions
+
         # get coordinates
         x_coords = []
         y_coords = []
@@ -192,18 +194,19 @@ class Tour:
             x_coords.append(self.cities[0].x)
             y_coords.append(self.cities[0].y)
 
-        plot.scatter(x_coords, y_coords, color="darkslateblue")
+        plot.scatter(x_coords, y_coords, color="darkslateblue", s=140)
         if show_segments:  # include segments between the cities
             plot.plot(x_coords, y_coords, color="mediumseagreen",
-                      linestyle="-")
+                      linestyle="-", linewidth=3)
 
         # including city names
         if include_names:
             for city in self.cities:
                 plot.text(city.x, city.y, city.name, fontsize=9, ha="right")
 
-        plot.title(plot_title)
+        plot.title(plot_title, fontsize=30)
         plot.axis("off")
+        plot.tight_layout()  # does this work?
         plot.show()
 
 

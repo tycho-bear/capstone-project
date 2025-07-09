@@ -81,6 +81,8 @@ class BinPackingProblem(Problem):
         bar_length = solution.BIN_CAPACITY
         bin_num = 1
         block_chars = ["█", "▒"]
+        # block_chars = ["█", "▓"]  # not as good
+        # block_chars = ["▓", "▒"]  # better?
         space = " "
 
         for filled_bin in solution.bins:
