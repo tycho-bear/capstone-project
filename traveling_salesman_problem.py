@@ -269,3 +269,27 @@ class TravelingSalesmanProblem(Problem):
 
         new_tour = reference_individual.shuffle_tour()
         return new_tour
+
+
+    # ==========================================================================
+    # |  Particle swarm optimization methods
+    # ==========================================================================
+
+
+    # def calculate_swap_sequence  -- put this in the tour class
+
+    def calculate_velocity(self, particle, global_best):
+        """"""
+        # calculates the swap sequence (tour class method) to the two bests
+        # probabilistically creates a new swap sequence
+
+        # for the TSP, this returns a swap sequence
+        # for bin packing, maybe also returns a swap sequence
+        # for pressure vessel design, returns a perturbation
+
+
+    def apply_velocity(self, particle, velocity):
+        """"""
+        # for the TSP, apply the swap sequence
+        # for bin packing, also apply the swap sequence (or whatever "velocity")
+        # for PVD, apply the vector perturbation

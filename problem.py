@@ -177,8 +177,35 @@ class Problem(ABC):
 
 
     # ==========================================================================
-    # |  Future algorithm methods
+    # |  Particle swarm optimization methods
     # ==========================================================================
 
 
+    # calculate velocity? (current_tour, other_tour)
+    # apply velocity?
 
+    # calculate swap sequence (current_tour, other_tour)  (not abstract method)
+    # calculate_velocity (particle, global_best)
+
+    @abstractmethod
+    def calculate_velocity(self, particle, global_best):
+        """
+
+
+        :param particle:
+        :param global_best:
+        :return:
+        """
+        pass
+
+
+    @abstractmethod
+    def apply_velocity(self, particle, velocity):
+        """
+
+
+        :param particle:
+        :param velocity:
+        :return:
+        """
+        pass

@@ -151,6 +151,25 @@ class Tour:
         return swapped_tour
 
 
+    def swap_two_cities(self, position1: int, position2: int) -> "Tour":
+        """
+        Straightforward method that creates a copy of this Tour with two cities
+        swapped. The city at position 1 is swapped with the city at position 2.
+
+        :param position1: (int) The index of the first city to swap.
+        :param position2: (int) The index of the second city to swap.
+        :return: (Tour) A new Tour object the same as this one, but with the two
+            cities swapped.
+        """
+
+        cities_copy = copy.deepcopy(self.cities)
+        cities_copy[position1], cities_copy[position2] = cities_copy[
+            position2], cities_copy[position1]
+
+        swapped_tour = Tour(cities_copy)  # should automatically update distance
+        return swapped_tour
+
+
     def shuffle_tour(self) -> "Tour":
         """
         Helper function that shuffles the city order in this Tour. Returns a new
@@ -164,6 +183,36 @@ class Tour:
         np.random.shuffle(self_cities)  # this works
         shuffled_tour = Tour(self_cities)
         return shuffled_tour
+
+
+    def calculate_swap_sequence(self, other_tour: "Tour") -> list[(int, int)]:
+        """
+        Calculates the swap sequence that transforms the current tour into the
+        given tour. This is useful for particle swarm optimization, where the
+        velocity is the swap sequence between two tours.
+
+        :param other_tour: (Tour) The other Tour to compute the swap sequence
+            to.
+        :return: (list[(int, int)]) A list of tuples, where each tuple contains
+            the indices of the two cities to swap.
+        """
+
+        
+
+
+
+
+    # def get_basic_swap_sequence(current_tour, target_tour):
+    #     current_tour = current_tour.copy()
+    #     swaps = []
+    #     for i in range(len(target_tour)):
+    #         if current_tour[i] != target_tour[i]:
+    #             j = current_tour.index(target_tour[i])
+    #             swaps.append((i, j))
+    #             current_tour[i], current_tour[j] = current_tour[j], \
+    #             current_tour[i]
+    #     return swaps
+
 
 
     def draw_tour(self, include_start_end=False, show_segments=True,
@@ -338,6 +387,9 @@ class BinConfiguration:
     # visualize fitness (show number of bins, plus how full they are) (see pic)
 
 
+
+
+
 class Design:
     """
     Class representing the design of a cylindrical pressure vessel.
@@ -486,6 +538,28 @@ class Design:
                 new_inner_radius, new_cylindrical_length)
 
 
+
+class Particle:
+    """
+    Class representing a particle for particle swarm optimization. Stores the
+    particle's current solution, plus the best solution it has seen so far.
+    """
+
+    def __init__(self,
+                 current_solution,
+                 best_solution
+                 ):
+        """
+        Initializes this particle with its current solution and the best
+        solution it has seen so far.
+
+        :param current_solution: (Solution) This particle's current solution.
+        :param best_solution: (Solution) The best solution seen by this particle
+            so far.
+        """
+
+        self.current_solution = current_solution
+        self.best_solution = best_solution
 
 
 
