@@ -43,7 +43,7 @@ class TravelingSalesmanProblem(Problem):
 
         position = np.random.randint(low=0, high=current_solution.num_cities)
         shift = np.random.randint(low=1, high=shift_max + 1)
-        new_solution = current_solution.swap_cities(position, shift)
+        new_solution = current_solution.swap_cities_shift(position, shift)
         return new_solution
 
 

@@ -52,7 +52,7 @@ def test_stuff():
     pos1 = 1
     shift1 = 2  # 1 + 2 = 3
     print(f"Starting tour:\t{random_tour}")
-    new_tour = random_tour.swap_cities(pos1, shift1)
+    new_tour = random_tour.swap_cities_shift(pos1, shift1)
     print(f"After swapping:\t{new_tour}")
 
     new_tour.draw_tour(plot_title="new_tour", include_start_end=False)
@@ -61,7 +61,7 @@ def test_stuff():
     pos2 = 3
     shift2 = 2
     print(f"New tour:\t\t{new_tour}")
-    new_new_tour = new_tour.swap_cities(pos2, shift2)
+    new_new_tour = new_tour.swap_cities_shift(pos2, shift2)
     print(f"After swapping:\t{new_new_tour}")
     print(f"new_tour:\t\t{new_tour}")
 
