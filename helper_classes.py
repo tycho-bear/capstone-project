@@ -124,7 +124,7 @@ class Tour:
         return total_distance
 
 
-    def swap_cities(self, position: int, shift: int) -> "Tour":
+    def swap_cities_shift(self, position: int, shift: int) -> "Tour":
         """
         Creates a copy of this Tour with two cities swapped.
         The city at the given ``position``
@@ -151,7 +151,7 @@ class Tour:
         return swapped_tour
 
 
-    def swap_two_cities(self, position1: int, position2: int) -> "Tour":
+    def swap_cities(self, position1: int, position2: int) -> "Tour":
         """
         Straightforward method that creates a copy of this Tour with two cities
         swapped. The city at position 1 is swapped with the city at position 2.
@@ -185,19 +185,32 @@ class Tour:
         return shuffled_tour
 
 
-    def calculate_swap_sequence(self, other_tour: "Tour") -> list[(int, int)]:
+    def calculate_swap_sequence(self, target_tour: "Tour") -> list[(int, int)]:
         """
         Calculates the swap sequence that transforms the current tour into the
         given tour. This is useful for particle swarm optimization, where the
         velocity is the swap sequence between two tours.
 
-        :param other_tour: (Tour) The other Tour to compute the swap sequence
+        :param target_tour: (Tour) The other Tour to compute the swap sequence
             to.
         :return: (list[(int, int)]) A list of tuples, where each tuple contains
             the indices of the two cities to swap.
         """
 
-        
+        current_cities_copy = copy.deepcopy(self.cities)
+        swap_sequence = []
+
+        for i in range(target_tour.num_cities):
+            if current_cities_copy[i] != target_tour.cities[i]:
+                # find the index of the city that should be here
+                j = current_cities_copy.index(target_tour.cities[i])
+                swap_sequence.append((i, j))
+
+                # swap the cities in the copy so we're up to date
+                current_cities_copy[i], current_cities_copy[j] = \
+                    current_cities_copy[j], current_cities_copy[i]
+
+        return swap_sequence
 
 
 
