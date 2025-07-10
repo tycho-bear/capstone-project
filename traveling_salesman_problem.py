@@ -5,11 +5,11 @@
 # Summer 2025
 # ===============================
 
-from helper_classes import Tour
+from helper_classes import Tour, TSPParticle
 import numpy as np
 from config import SEED
 import copy
-from problem import Problem, Solution, Particle
+from problem import Problem, Solution
 
 
 np.random.seed(SEED)
@@ -212,7 +212,7 @@ class TravelingSalesmanProblem(Problem):
         :return: (Tour) The mutated Tour.
         """
 
-        operation = np.random.randint(low=0, high=3)
+        operation = np.random.randint(low=0, high=3)  # gives us 0, 1, or 2
 
         # 0 = swap two cities, already have a method for this
         if operation == 0:
@@ -275,30 +275,11 @@ class TravelingSalesmanProblem(Problem):
     # |  Particle swarm optimization methods
     # ==========================================================================
 
-    class TSPParticle(Particle):
-        """
-        Particle implementation for the traveling salesman problem. Not much
-        different from the abstract Particle class, just has new type
-        annotations.
-        """
-
-        def __init__(self, current_solution: Tour, best_solution: Tour):
-            """
-            Initializes this particle with its current solution and the best
-            solution it has seen so far.
-
-            :param current_solution: (Tour) This particle's current Tour.
-            :param best_solution: (Tour) The best Tour seen by this particle so
-                far.
-            """
-
-            self.current_solution = current_solution
-            self.best_solution = best_solution
-
 
     # def calculate_swap_sequence  -- put this in the tour class
 
-    def calculate_velocity(self, particle: TSPParticle, global_best: Tour,
+    def calculate_velocity(self, particle: TSPParticle,
+                           global_best: TSPParticle,
                            alpha: float, beta: float) -> list[(int, int)]:
         """
         For the TSP, velocity is based on swap sequences that transform one Tour
@@ -332,7 +313,7 @@ class TravelingSalesmanProblem(Problem):
         swaps_to_best = particle.current_solution.calculate_swap_sequence(
             particle.best_solution)
         swaps_to_global = particle.current_solution.calculate_swap_sequence(
-            global_best)
+            global_best.current_solution)
 
         new_velocity = []  # list[(int, int)]
 
@@ -372,7 +353,46 @@ class TravelingSalesmanProblem(Problem):
         particle.current_solution = new_solution
 
         # update the best solution if needed
-        if new_solution.tour_distance < particle.best_solution.tour_distance:
-            particle.best_solution = new_solution
+        # if new_solution.tour_distance < particle.best_solution.tour_distance:
+        #     particle.best_solution = new_solution
+
+
+    def apply_mutation_to_swarm(self, population: list[TSPParticle],
+                                mutation_prob: float) -> None:
+        """
+        Applies mutation to each particle's current solution with the given
+        probability.
+
+        :param population: (list[TSPParticle]) The swarm of particles.
+        :param mutation_prob: (float) The probability of mutating a given
+            particle's current solution.
+        :return: None
+        """
+
+        for particle in population:
+            rand = np.random.random()
+            if rand < mutation_prob:
+                particle.current_solution = self.mutate_individual(
+                    particle.current_solution)
+
+
+    # def update_bests
+    def update_particle_bests(self, population: list[TSPParticle]) -> None:
+        """
+        Updates the best solutions seen by any particle in the swarm.
+
+        :param population: (list[TSPParticle]) The swarm of particles.
+        :return: None
+        """
+
+        for particle in population:
+            if (particle.current_solution.tour_distance <
+                    particle.best_solution.tour_distance):
+                particle.best_solution = copy.deepcopy(
+                    particle.current_solution)
+
+
+
+
 
 

@@ -8,12 +8,14 @@
 import math
 import numpy as np
 from config import SEED
-from problem import Problem, Solution
+from problem import Problem
 import time
 from helper_functions import (generate_random_city_population,
                               generate_grid_population,
-                              visualize_solution_fitness)
+                              visualize_solution_fitness,
+                              generate_grid_swarm)
 from traveling_salesman_problem import TravelingSalesmanProblem
+import copy
 
 
 np.random.seed(SEED)
@@ -31,6 +33,7 @@ class ParticleSwarmOptimization:
                  num_iterations: int,
                  alpha: float,
                  beta: float,
+                 mutation_rate: float,
                  ):
         """"""
         # problem
@@ -46,11 +49,12 @@ class ParticleSwarmOptimization:
         self.NUM_ITERATIONS = num_iterations
         self.ALPHA = alpha
         self.BETA = beta
+        self.MUTATION_RATE = mutation_rate
 
         # setting things up
         self.population = initial_population
         self.iteration_number = 0
-        self.global_best = None
+        self.global_best = None  # particle
         self.global_best_fitness = None
 
         # keep track of the best
@@ -79,6 +83,16 @@ class ParticleSwarmOptimization:
                                                        self.BETA)
             self.problem.apply_velocity(particle, velocity)
 
+        self.problem.update_particle_bests(self.population)
+
+        # can comment this to turn off mutation and see the crap solutions
+        self.problem.apply_mutation_to_swarm(self.population,
+                                             self.MUTATION_RATE)
+
+
+        # apply mutation to swarm
+        # update bests
+
         # update global best after the loop completes? or in housekeeping?
 
 
@@ -104,18 +118,17 @@ class ParticleSwarmOptimization:
         # particles don't store fitness, just current solution and best solution
         # use problem.evaluate_solution
 
-        self.global_best = min(self.population, key=lambda p: self.problem.evaluate_solution(p.current_solution))
+        self.global_best = copy.deepcopy(min(self.population, key=lambda p: self.problem.evaluate_solution(p.current_solution)))
         self.global_best_fitness = self.problem.evaluate_solution(self.global_best.current_solution)
 
         self.solution_values.append(self.global_best_fitness)
 
         # print stuff every 100 iterations (called again after the main loop)
-        if self.iteration_number % 100 == 0:
+        if self.iteration_number % 10 == 0:
             self.print_current_iteration_information()
 
 
-
-    def optimize(self) -> None:
+    def swarm(self) -> None:
         """
         Runs the PSO algorithm for the given number of iterations.
         Every so often, housekeeping prints the information about the
@@ -195,13 +208,78 @@ def main():
     # |  Hyperparameter combinations:
     # =========================================
 
-    # ...
+    # problem is this algorithm is really slow
+    # should keep track of all hyperparameter combinations and their results
+    # 500 pop / 500 iterations seems good? 500 iterations low, maybe do 1000
+
+    # 64 city grid, plateaus a bit, distance ___
+    # pop_size = 500
+    # num_iterations = 500
+    # alpha = 0.3
+    # beta = 0.3
+    # mutation_rate = 0.1
+
+    # 64 city grid, plateaus a bit, distance 73.282, time 760.0 seconds
+    # pop_size = 500
+    # num_iterations = 1000   # todo - run this updated version with 1000 iter
+    # alpha = 0.3
+    # beta = 0.3
+    # mutation_rate = 0.1
+
+    # running this now
+    # 64 city grid, distance 70.844, time 719.0 seconds
+    # pop_size = 500
+    # num_iterations = 1000
+    # alpha = 0.4
+    # beta = 0.4
+    # mutation_rate = 0.1
+
+    # 64 city grid, distance 70.844, 719.0 seconds
+    pop_size = 500
+    num_iterations = 1000
+    alpha = 0.5
+    beta = 0.5
+    mutation_rate = 0.1
+
 
     # =========================================
     # |  The actual code to run the algorithm:
     # =========================================
 
-    # ...
+    grid_side_length = 8
+    # grid_side_length = 4
+    num_cities = grid_side_length ** 2
+    problem = TravelingSalesmanProblem()
+
+    print("------------------------------------------")
+    print(f"Solving {num_cities}-city TSP with PSO.")
+    print(f"If grid, optimal solution distance is {num_cities}.")
+    print("------------------------------------------")
+
+    initial_population = generate_grid_swarm(pop_size, grid_side_length)
+
+    pso_solver = ParticleSwarmOptimization(
+        problem=problem,
+        initial_population=initial_population,
+        population_size=pop_size,
+        num_iterations=num_iterations,
+        alpha=alpha,
+        beta=beta,
+        mutation_rate=mutation_rate
+    )
+    pso_solver.print_initial_information()
+    pso_solver.swarm()
+
+    best_individual = pso_solver.global_best
+    problem.display_solution(best_individual.current_solution)
+    visualize_solution_fitness(pso_solver.get_solution_values(),
+                               xlabel="Iteration",
+                               ylabel="Current Tour Distance",
+                               title="Tour Distance Over Iterations")
+
+
+
+
 
 
 if __name__ == '__main__':
