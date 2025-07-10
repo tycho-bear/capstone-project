@@ -7,7 +7,6 @@
 
 from abc import ABC, abstractmethod
 from typing import Any
-from helper_classes import Tour
 from helper_functions import generate_random_cities, generate_square_grid
 import numpy as np
 from config import SEED
@@ -18,28 +17,28 @@ import copy
 np.random.seed(SEED)
 Solution = Any  # abstract methods return this instead of a Tour or something
 Velocity = Any  # can be a list of swaps or something
+Particle = Any
 
-
-class Particle(ABC):
-    """
-    Class representing a particle for particle swarm optimization. Stores the
-    particle's current solution, plus the best solution it has seen so far.
-    """
-
-    @abstractmethod
-    def __init__(self,
-                 current_solution: Solution,
-                 best_solution: Solution
-                 ):
-        """
-        Initializes this particle with its current solution and the best
-        solution it has seen so far.
-
-        :param current_solution: (Solution) This particle's current solution.
-        :param best_solution: (Solution) The best solution seen by this particle
-            so far.
-        """
-        pass
+# class Particle(ABC):
+#     """
+#     Class representing a particle for particle swarm optimization. Stores the
+#     particle's current solution, plus the best solution it has seen so far.
+#     """
+#
+#     @abstractmethod
+#     def __init__(self,
+#                  current_solution: Solution,
+#                  best_solution: Solution
+#                  ):
+#         """
+#         Initializes this particle with its current solution and the best
+#         solution it has seen so far.
+#
+#         :param current_solution: (Solution) This particle's current solution.
+#         :param best_solution: (Solution) The best solution seen by this particle
+#             so far.
+#         """
+#         pass
 
 
 class Problem(ABC):

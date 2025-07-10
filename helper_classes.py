@@ -6,6 +6,7 @@
 # ===============================
 
 import math
+from typing import Any
 import numpy
 import numpy as np
 import copy
@@ -13,6 +14,12 @@ import matplotlib.pyplot as plot
 import statistics
 from config import (THICKNESS_MIN, THICKNESS_MAX, THICKNESS_SCALAR, RADIUS_MIN,
                     RADIUS_MAX, LENGTH_MIN, LENGTH_MAX)
+from abc import ABC, abstractmethod
+# from problem import Solution
+# from problem import Particle
+
+
+Solution = Any
 
 
 class City:
@@ -225,6 +232,21 @@ class Tour:
     #             current_tour[i], current_tour[j] = current_tour[j], \
     #             current_tour[i]
     #     return swaps
+
+
+
+    # reverse a segment
+
+    # def reverse_segment(self, start: int, end: int) -> "Tour":
+    #     """"""
+
+        # start, end = sorted([start, end])
+        # new_cities = copy.deepcopy(self.cities)
+
+
+
+
+    # scramble a segment
 
 
 
@@ -551,6 +573,29 @@ class Design:
                 new_inner_radius, new_cylindrical_length)
 
 
+
+
+
+# class TSPParticle(Particle):
+class TSPParticle:
+    """
+    Particle implementation for the traveling salesman problem. Not much
+    different from the abstract Particle class, just has new type
+    annotations.
+    """
+
+    def __init__(self, current_solution: Tour, best_solution: Tour):
+        """
+        Initializes this particle with its current solution and the best
+        solution it has seen so far.
+
+        :param current_solution: (Tour) This particle's current Tour.
+        :param best_solution: (Tour) The best Tour seen by this particle so
+            far.
+        """
+
+        self.current_solution = current_solution
+        self.best_solution = best_solution
 
 
 
