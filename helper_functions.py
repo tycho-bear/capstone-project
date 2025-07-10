@@ -6,7 +6,7 @@
 # ===============================
 
 import numpy as np
-from helper_classes import City, Tour, BinConfiguration, Design
+from helper_classes import City, Tour, BinConfiguration, Design, TSPParticle
 from config import (SEED, THICKNESS_MIN, THICKNESS_MAX, THICKNESS_SCALAR,
                     RADIUS_MIN, RADIUS_MAX, LENGTH_MIN, LENGTH_MAX,
                     THICKNESS_MIN_INT, THICKNESS_MAX_INT)
@@ -156,6 +156,38 @@ def generate_grid_population(pop_size: int, side_length: int):
         pop[i] = pop[i].shuffle_tour()
 
     return pop
+
+
+
+# TODO - for PSO
+def generate_grid_swarm(pop_size: int, side_length: int):
+    """
+    Generates a swarm of particles that will optimize a square grid of cities.
+
+    :param pop_size:
+    :param side_length:
+    :return:
+    """
+
+    # make sure we use the same cities for all tours in the population
+
+    swarm = [generate_square_grid(side_length)]
+    swarm = swarm * pop_size
+    # now have a bunch of tours over the same square grid
+
+    # shuffle each tour
+    for i in range(pop_size):
+        swarm[i] = swarm[i].shuffle_tour()
+
+    # convert to particles
+    particles = []
+    for tour in swarm:
+        # each particle is a tour
+        particle = TSPParticle(current_solution=tour, best_solution=tour)
+        particles.append(particle)
+
+    return particles
+
 
 
 
