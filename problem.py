@@ -17,6 +17,30 @@ import copy
 
 np.random.seed(SEED)
 Solution = Any  # abstract methods return this instead of a Tour or something
+Velocity = Any  # can be a list of swaps or something
+
+
+class Particle(ABC):
+    """
+    Class representing a particle for particle swarm optimization. Stores the
+    particle's current solution, plus the best solution it has seen so far.
+    """
+
+    @abstractmethod
+    def __init__(self,
+                 current_solution: Solution,
+                 best_solution: Solution
+                 ):
+        """
+        Initializes this particle with its current solution and the best
+        solution it has seen so far.
+
+        :param current_solution: (Solution) This particle's current solution.
+        :param best_solution: (Solution) The best solution seen by this particle
+            so far.
+        """
+        pass
+
 
 class Problem(ABC):
     """
@@ -188,19 +212,22 @@ class Problem(ABC):
     # calculate_velocity (particle, global_best)
 
     @abstractmethod
-    def calculate_velocity(self, particle, global_best):
+    def calculate_velocity(self, particle: Particle, global_best: Solution,
+                           alpha: float, beta: float):
         """
 
 
         :param particle:
         :param global_best:
+        :param alpha:
+        :param beta:
         :return:
         """
         pass
 
 
     @abstractmethod
-    def apply_velocity(self, particle, velocity):
+    def apply_velocity(self, particle: Particle, velocity: Velocity):
         """
 
 

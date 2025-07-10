@@ -189,7 +189,7 @@ class Tour:
         """
         Calculates the swap sequence that transforms the current tour into the
         given tour. This is useful for particle swarm optimization, where the
-        velocity is the swap sequence between two tours.
+        velocity is based on the swap sequence between two tours.
 
         :param target_tour: (Tour) The other Tour to compute the swap sequence
             to.
@@ -552,27 +552,7 @@ class Design:
 
 
 
-class Particle:
-    """
-    Class representing a particle for particle swarm optimization. Stores the
-    particle's current solution, plus the best solution it has seen so far.
-    """
 
-    def __init__(self,
-                 current_solution,
-                 best_solution
-                 ):
-        """
-        Initializes this particle with its current solution and the best
-        solution it has seen so far.
-
-        :param current_solution: (Solution) This particle's current solution.
-        :param best_solution: (Solution) The best solution seen by this particle
-            so far.
-        """
-
-        self.current_solution = current_solution
-        self.best_solution = best_solution
 
 
 
