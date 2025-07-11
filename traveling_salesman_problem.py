@@ -377,19 +377,20 @@ class TravelingSalesmanProblem(Problem):
 
 
     # def update_bests
-    def update_particle_bests(self, population: list[TSPParticle]) -> None:
-        """
-        Updates the best solutions seen by any particle in the swarm.
-
-        :param population: (list[TSPParticle]) The swarm of particles.
-        :return: None
-        """
-
-        for particle in population:
-            if (particle.current_solution.tour_distance <
-                    particle.best_solution.tour_distance):
-                particle.best_solution = copy.deepcopy(
-                    particle.current_solution)
+    # todo - this isn't needed, can have a method in the PSO class
+    # def update_particle_bests(self, population: list[TSPParticle]) -> None:
+    #     """
+    #     Updates the best solutions seen by any particle in the swarm.
+    #
+    #     :param population: (list[TSPParticle]) The swarm of particles.
+    #     :return: None
+    #     """
+    #
+    #     for particle in population:
+    #         if (particle.current_solution.tour_distance <
+    #                 particle.best_solution.tour_distance):
+    #             particle.best_solution = copy.deepcopy(
+    #                 particle.current_solution)
 
 
 

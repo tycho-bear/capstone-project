@@ -10,6 +10,7 @@ import numpy as np
 from config import SEED
 from problem import Problem
 import time
+from helper_classes import Particle
 from helper_functions import (generate_random_city_population,
                               generate_grid_population,
                               visualize_solution_fitness,
@@ -28,7 +29,7 @@ class ParticleSwarmOptimization:
 
     def __init__(self,
                  problem: Problem,
-                 initial_population: list,
+                 initial_population: list[Particle],
                  population_size: int,
                  num_iterations: int,
                  alpha: float,
@@ -83,7 +84,8 @@ class ParticleSwarmOptimization:
                                                        self.BETA)
             self.problem.apply_velocity(particle, velocity)
 
-        self.problem.update_particle_bests(self.population)
+        # self.problem.update_particle_bests(self.population)
+        self.update_particle_bests()  # do these two work the same?
 
         # can comment this to turn off mutation and see the crap solutions
         self.problem.apply_mutation_to_swarm(self.population,
@@ -94,6 +96,20 @@ class ParticleSwarmOptimization:
         # update bests
 
         # update global best after the loop completes? or in housekeeping?
+
+
+    def update_particle_bests(self) -> None:
+        """
+        Updates the best solutions seen by any particle in the swarm.
+
+        :return: None
+        """
+
+        for particle in self.population:
+            if (self.problem.evaluate_solution(particle.current_solution) <
+                    self.problem.evaluate_solution(particle.best_solution)):
+                particle.best_solution = copy.deepcopy(
+                    particle.current_solution)
 
 
     def iteration_housekeeping(self):
