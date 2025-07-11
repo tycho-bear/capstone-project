@@ -573,11 +573,15 @@ class Design:
                 new_inner_radius, new_cylindrical_length)
 
 
+class Particle:
+    def __init__(self, current_solution, best_solution):
+        self.current_solution = current_solution
+        self.best_solution = best_solution
 
 
 
-# class TSPParticle(Particle):
-class TSPParticle:
+class TSPParticle(Particle):
+# class TSPParticle:
     """
     Particle implementation for the traveling salesman problem. Not much
     different from the abstract Particle class, just has new type
@@ -594,8 +598,9 @@ class TSPParticle:
             far.
         """
 
-        self.current_solution = current_solution
-        self.best_solution = best_solution
+        super().__init__(current_solution, best_solution)
+        # self.current_solution = current_solution
+        # self.best_solution = best_solution
 
 
 
