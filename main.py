@@ -13,7 +13,9 @@ from helper_functions import (generate_random_cities,
                               generate_random_bin_config,
                               generate_random_city_population,
                               generate_random_bin_population,
-                              generate_pressure_vessel_solution)
+                              generate_pressure_vessel_solution,
+                              generate_grid_swarm,
+                              generate_random_city_swarm,)
 from config import (SEED, X_MIN_WA, X_MAX_WA, Y_MIN_WA, Y_MAX_WA,
                     THICKNESS_MIN, THICKNESS_MAX, THICKNESS_SCALAR, RADIUS_MIN, RADIUS_MAX, LENGTH_MIN, LENGTH_MAX)
 from helper_classes import Tour
@@ -27,6 +29,7 @@ from bin_packing_problem import BinPackingProblem
 from pressure_vessel_problem import PressureVesselProblem
 from simulated_annealing import SimulatedAnnealing
 from genetic_algorithm import GeneticAlgorithm
+from particle_swarm_optimization import ParticleSwarmOptimization
 
 
 np.random.seed(SEED)
@@ -208,6 +211,123 @@ def ga_with_tsp():
                                xlabel="Generation",
                                ylabel="Current Tour Distance",
                                title="Tour Distance Over Generations")
+
+# ==============================================================================
+
+
+def pso_with_tsp():
+    """"""
+    # testing PSO on TSP grid
+    # copy some stuff / structure from genetic_algorithm.py main
+
+    # =========================================
+    # |  Hyperparameter combinations:
+    # =========================================
+
+    # problem is this algorithm is really slow
+    # should keep track of all hyperparameter combinations and their results
+    # 500 pop / 500 iterations seems good? 500 iterations low, maybe do 1000
+
+    # 64 city grid, plateaus a bit, distance ___
+    # pop_size = 500
+    # num_iterations = 500
+    # alpha = 0.3
+    # beta = 0.3
+    # mutation_rate = 0.1
+
+    # 64 city grid, plateaus a bit, distance 73.282, time 760.0 seconds
+    # pop_size = 500
+    # num_iterations = 1000
+    # alpha = 0.3
+    # beta = 0.3
+    # mutation_rate = 0.1
+
+    # todo - using this one for the report
+    # 64 city grid, distance 70.844, time 719.0 seconds
+    # 228 --> 192 --> 158 --> 136
+    # pop_size = 500
+    # num_iterations = 1000
+    # alpha = 0.4
+    # beta = 0.4
+    # mutation_rate = 0.1
+
+    # 64 city grid, distance 82.407, time 801.1 seconds
+    # pop_size = 500
+    # num_iterations = 1000
+    # alpha = 0.5
+    # beta = 0.5
+    # mutation_rate = 0.1
+
+    # --------------------------
+    # random cities parameters
+
+    # 64 random cities, distance 46.149, time 732.1 seconds
+    # 141 --> 109 --> 92 --> 88
+    # pop_size = 500
+    # num_iterations = 1000
+    # alpha = 0.4
+    # beta = 0.4
+    # mutation_rate = 0.1
+
+    # 64 random cities, distance 47.879, time 769.7 seconds
+    # 141 --> 123 --> 109 --> 96
+    # pop_size = 500
+    # num_iterations = 1000
+    # alpha = 0.3
+    # beta = 0.3
+    # mutation_rate = 0.1
+
+    # 64 random cities, distance __, time __
+    # 141 --> 125 --> 114 --> 102
+    pop_size = 500
+    num_iterations = 1000
+    alpha = 0.2
+    beta = 0.2
+    mutation_rate = 0.1
+
+
+    # =========================================
+    # |  The actual code to run the algorithm:
+    # =========================================
+
+    grid_side_length = 8
+    # grid_side_length = 4
+    num_cities = grid_side_length ** 2
+    problem = TravelingSalesmanProblem()
+
+    print("------------------------------------------")
+    print(f"Solving {num_cities}-city TSP with PSO.")
+    print(f"If grid, optimal solution distance is {num_cities}.")
+    print("------------------------------------------")
+
+    # initial_population = generate_grid_swarm(pop_size, grid_side_length)
+
+    initial_population = generate_random_city_swarm(pop_size, num_cities,
+                                                    x_min=X_MIN_WA,
+                                                    x_max=X_MAX_WA,
+                                                    y_min=Y_MIN_WA,
+                                                    y_max=Y_MAX_WA)
+
+
+    pso_solver = ParticleSwarmOptimization(
+        problem=problem,
+        initial_population=initial_population,
+        population_size=pop_size,
+        num_iterations=num_iterations,
+        alpha=alpha,
+        beta=beta,
+        mutation_rate=mutation_rate
+    )
+    pso_solver.print_initial_information()
+    pso_solver.swarm()
+
+    best_individual = pso_solver.global_best
+    problem.display_solution(best_individual.current_solution)
+    visualize_solution_fitness(pso_solver.get_solution_values(),
+                               xlabel="Iteration",
+                               ylabel="Current Tour Distance",
+                               title="Tour Distance Over Iterations")
+
 
 # ==============================================================================
 
@@ -416,7 +536,8 @@ def main():
 
     # sa_with_tsp()
     # ga_with_tsp()
-    sa_with_bin_packing()
+    pso_with_tsp()
+    # sa_with_bin_packing()
     # ga_with_bin_packing()
 
     # sa_with_pressure_vessel_design()

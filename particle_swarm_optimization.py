@@ -171,6 +171,7 @@ class ParticleSwarmOptimization:
         print(f"Number of iterations: {self.NUM_ITERATIONS}")
         print(f"Alpha: {self.ALPHA}")
         print(f"Beta: {self.BETA}")
+        print(f"Mutation rate: {self.MUTATION_RATE}")
         print()
 
 
@@ -221,12 +222,13 @@ def main():
 
     # 64 city grid, plateaus a bit, distance 73.282, time 760.0 seconds
     # pop_size = 500
-    # num_iterations = 1000   # todo - run this updated version with 1000 iter
+    # num_iterations = 1000
     # alpha = 0.3
     # beta = 0.3
     # mutation_rate = 0.1
 
     # running this now
+    # use this one for the report
     # 64 city grid, distance 70.844, time 719.0 seconds
     # pop_size = 500
     # num_iterations = 1000
@@ -234,7 +236,7 @@ def main():
     # beta = 0.4
     # mutation_rate = 0.1
 
-    # 64 city grid, distance 70.844, 719.0 seconds
+    # 64 city grid, distance 82.407, time 801.1 seconds
     pop_size = 500
     num_iterations = 1000
     alpha = 0.5
