@@ -12,12 +12,13 @@ import numpy as np
 from config import SEED
 import math
 import copy
+from helper_classes import Particle
 
 
 np.random.seed(SEED)
 Solution = Any  # abstract methods return this instead of a Tour or something
 Velocity = Any  # can be a list of swaps or something
-Particle = Any
+# Particle = Any
 
 # class Particle(ABC):
 #     """
@@ -233,5 +234,20 @@ class Problem(ABC):
         :param particle:
         :param velocity:
         :return:
+        """
+        pass
+
+
+    @abstractmethod
+    def apply_mutation_to_swarm(self, population: list[Particle],
+                                mutation_prob: float) -> None:
+        """
+        Applies mutation to each particle's current solution with the given
+        probability.
+
+        :param population: (list[TSPParticle]) The swarm of particles.
+        :param mutation_prob: (float) The probability of mutating a given
+            particle's current solution.
+        :return: None
         """
         pass
