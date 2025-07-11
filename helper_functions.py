@@ -93,6 +93,45 @@ def generate_random_city_population(pop_size: int, num_cities: int,
     return pop
 
 
+def generate_random_city_swarm(pop_size: int, num_cities: int,
+                               x_min: float, x_max: float, y_min: float,
+                               y_max: float) -> list[TSPParticle]:
+    """
+    Generates a random swarm of particles for use in a particle swarm
+    optimization algorithm. Each particle in the swarm is a different Tour over
+    the same cities.
+
+    :param pop_size:
+    :param num_cities:
+    :param x_min:
+    :param x_max:
+    :param y_min:
+    :param y_max:
+    :return:
+    """
+
+    # make sure we use the same cities for all tours in the population
+    swarm = [generate_random_cities(num_cities, x_min, x_max, y_min, y_max)]
+    swarm = swarm * pop_size
+    # now have a bunch of tours over the same cities
+
+    # shuffle each tour
+    particles = []
+    for i in range(pop_size):
+        swarm[i] = swarm[i].shuffle_tour()
+
+    # convert to particles
+    for tour in swarm:
+        # each particle is a tour
+        # TODO - this and the same method below may need to use copy.deepcopy
+        #  for best_solution.
+        particle = TSPParticle(current_solution=tour, best_solution=tour)
+        particles.append(particle)
+
+    return particles
+
+
+
 def generate_random_bin_population(pop_size: int, num_items: int,
                                    weights_min: int, weights_max: int,
                                    bin_capacity: int) -> list[BinConfiguration]:
@@ -159,7 +198,6 @@ def generate_grid_population(pop_size: int, side_length: int):
 
 
 
-# TODO - for PSO
 def generate_grid_swarm(pop_size: int, side_length: int):
     """
     Generates a swarm of particles that will optimize a square grid of cities.
@@ -183,6 +221,8 @@ def generate_grid_swarm(pop_size: int, side_length: int):
     particles = []
     for tour in swarm:
         # each particle is a tour
+        # TODO - this and the same method above may need to use copy.deepcopy
+        #  for best_solution.
         particle = TSPParticle(current_solution=tour, best_solution=tour)
         particles.append(particle)
 
