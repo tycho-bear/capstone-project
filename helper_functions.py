@@ -6,7 +6,8 @@
 # ===============================
 
 import numpy as np
-from helper_classes import City, Tour, BinConfiguration, Design, TSPParticle
+from helper_classes import (City, Tour, BinConfiguration, Design, TSPParticle,
+                            BPPParticle)
 from config import (SEED, THICKNESS_MIN, THICKNESS_MAX, THICKNESS_SCALAR,
                     RADIUS_MIN, RADIUS_MAX, LENGTH_MIN, LENGTH_MAX,
                     THICKNESS_MIN_INT, THICKNESS_MAX_INT)
@@ -156,6 +157,45 @@ def generate_random_bin_population(pop_size: int, num_items: int,
      return pop
 
 
+def generate_random_bin_swarm(pop_size: int, num_items: int,
+                              weights_min: int, weights_max: int,
+                              bin_capacity: int) -> list[BPPParticle]:
+    """
+    Generates a random swarm of particles for use in a particle swarm
+    optimization algorithm. Each particle in the swarm is a different
+    BinConfiguration over the same items.
+
+    :param pop_size:
+    :param num_items:
+    :param weights_min:
+    :param weights_max:
+    :param bin_capacity:
+    :return:
+    """
+
+    # make sure we use the same items for all configurations in the population
+    swarm = [generate_random_bin_config(num_items, weights_min, weights_max,
+                                        bin_capacity)]
+    swarm = swarm * pop_size
+
+    # shuffle bins
+    for i in range(pop_size):
+        swarm[i] = swarm[i].shuffle_bins()
+
+    # convert to particles
+    particles = []
+    for config in swarm:
+        # each particle is a configuration
+        # TODO - this and the same method above may need to use copy.deepcopy
+        #  for best_solution.
+        particle = BPPParticle(current_solution=config, best_solution=config)
+        particles.append(particle)
+
+    return particles
+
+
+
+
 def generate_square_grid(side_length: int) -> Tour:
     """
     Generates a Tour whose cities are arranged in a completely square grid. The
@@ -198,7 +238,7 @@ def generate_grid_population(pop_size: int, side_length: int):
 
 
 
-def generate_grid_swarm(pop_size: int, side_length: int):
+def generate_grid_swarm(pop_size: int, side_length: int) -> list[TSPParticle]:
     """
     Generates a swarm of particles that will optimize a square grid of cities.
 
