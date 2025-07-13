@@ -422,6 +422,61 @@ class BinConfiguration:
     # visualize fitness (show number of bins, plus how full they are) (see pic)
 
 
+    def calculate_swap_sequence(self, target_configuration: "BinConfiguration")\
+            -> list[(int, int)]:
+        """
+        Calculates the swap sequence that transforms the current bin
+        configuration into the
+        given configuration. This is useful for particle swarm optimization,
+        where the
+        velocity is based on the swap sequence between two configurations.
+
+        :param target_configuration: (BinCongfiguration) The other
+            BinConfiguration to compute the swap sequence to.
+        :return: (list[(int, int)]) A list of tuples, where each tuple contains
+            the indices of the two bins to swap.
+        """
+
+        # this is similar to the TSP version, but we swap bins instead of cities
+        # no need to worry about how .index works with duplicates
+
+        # copy the current configuration
+        # todo - not trying to work with the bins, just item weights
+
+        current_items_copy = copy.deepcopy(self.ITEM_WEIGHTS)
+        swap_sequence = []
+
+        for i in range(target_configuration.num_bins):
+            if current_items_copy[i] != target_configuration.bins[i]:
+                # find the index of the bin that should be here
+                # j = current_items_copy.index(target_configuration.bins[i])
+                j = current_items_copy.index(target_configuration.
+                                             ITEM_WEIGHTS[i])
+                swap_sequence.append((i, j))
+
+                # swap the bins in the copy so we're up to date
+                current_items_copy[i], current_items_copy[j] = \
+                    current_items_copy[j], current_items_copy[i]
+
+        return swap_sequence
+
+
+        # current_cities_copy = copy.deepcopy(self.cities)
+        # swap_sequence = []
+        #
+        # for i in range(target_tour.num_cities):
+        #     if current_cities_copy[i] != target_tour.cities[i]:
+        #         # find the index of the city that should be here
+        #         j = current_cities_copy.index(target_tour.cities[i])
+        #         swap_sequence.append((i, j))
+        #
+        #         # swap the cities in the copy so we're up to date
+        #         current_cities_copy[i], current_cities_copy[j] = \
+        #             current_cities_copy[j], current_cities_copy[i]
+        #
+        # return swap_sequence
+
+
 
 
 
@@ -596,6 +651,29 @@ class TSPParticle(Particle):
         :param current_solution: (Tour) This particle's current Tour.
         :param best_solution: (Tour) The best Tour seen by this particle so
             far.
+        """
+
+        super().__init__(current_solution, best_solution)
+        # self.current_solution = current_solution
+        # self.best_solution = best_solution
+
+
+class BPPParticle(Particle):
+    """
+    Particle implementation for the bin packing problem. Not much different from
+    the abstract Particle class, just has new type annotations.
+    """
+
+    def __init__(self, current_solution: BinConfiguration,
+                 best_solution: BinConfiguration):
+        """
+        Initializes this particle with its current solution and the best
+        solution it has seen so far.
+
+        :param current_solution: (BinConfiguration) This particle's current
+            BinConfiguration.
+        :param best_solution: (BinConfiguration) The best BinConfiguration seen
+            by this particle so far.
         """
 
         super().__init__(current_solution, best_solution)
