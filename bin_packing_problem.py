@@ -315,7 +315,8 @@ class BinPackingProblem(Problem):
 
     def calculate_velocity(self, particle: BPPParticle,
                            global_best: BPPParticle,
-                           alpha: float, beta: float) -> list[(int, int)]:
+                           alpha: float, beta: float, inertia_weight: float) \
+            -> None:
         """
         For the BPP, velocity is based on swap sequences that push one
         BinConfiguration
@@ -337,6 +338,7 @@ class BinPackingProblem(Problem):
             given swap to the particle's best solution will be kept.
         :param beta: (float) Parameter in [0, 1] that determines whether a
             given swap to the current global best solution will be kept.
+        :param inertia_weight: (float) Not used in this implementation.
         :return:
         """
 
@@ -354,12 +356,15 @@ class BinPackingProblem(Problem):
             if np.random.random() < beta:
                 new_velocity.append(swap)
 
-        return new_velocity
+        # return new_velocity
+        particle.velocity = new_velocity
 
 
 
-    def apply_velocity(self, particle: BPPParticle, velocity: list[(int, int)])\
-            -> None:
+
+    # def apply_velocity(self, particle: BPPParticle, velocity: list[(int, int)])\
+    #         -> None:
+    def apply_velocity(self, particle: BPPParticle) -> None:
         """
         Applies the given velocity to the current solution of the particle.
 
@@ -372,6 +377,7 @@ class BinPackingProblem(Problem):
         # apply a similar swap sequence
         # sorta like the TSP
 
+        velocity = particle.velocity
         items = copy.deepcopy(particle.current_solution.ITEM_WEIGHTS)
 
         for swap in velocity:

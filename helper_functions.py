@@ -188,7 +188,8 @@ def generate_random_bin_swarm(pop_size: int, num_items: int,
         # each particle is a configuration
         # TODO - this and the same method above may need to use copy.deepcopy
         #  for best_solution.
-        particle = BPPParticle(current_solution=config, best_solution=config)
+        particle = BPPParticle(current_solution=config, best_solution=config,
+                               velocity=[])
         particles.append(particle)
 
     return particles
@@ -242,6 +243,8 @@ def generate_grid_swarm(pop_size: int, side_length: int) -> list[TSPParticle]:
     """
     Generates a swarm of particles that will optimize a square grid of cities.
 
+    For PSO with TSP.
+
     :param pop_size:
     :param side_length:
     :return:
@@ -263,7 +266,8 @@ def generate_grid_swarm(pop_size: int, side_length: int) -> list[TSPParticle]:
         # each particle is a tour
         # TODO - this and the same method above may need to use copy.deepcopy
         #  for best_solution.
-        particle = TSPParticle(current_solution=tour, best_solution=tour)
+        particle = TSPParticle(current_solution=tour, best_solution=tour,
+                               velocity=[])
         particles.append(particle)
 
     return particles

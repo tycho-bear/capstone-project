@@ -213,7 +213,8 @@ class Problem(ABC):
 
     @abstractmethod
     def calculate_velocity(self, particle: Particle, global_best: Solution,
-                           alpha: float, beta: float):
+                           alpha: float, beta: float, inertia_weight: float) \
+            -> Velocity:
         """
 
 
@@ -221,18 +222,18 @@ class Problem(ABC):
         :param global_best:
         :param alpha:
         :param beta:
+        :param inertia_weight:
         :return:
         """
         pass
 
 
     @abstractmethod
-    def apply_velocity(self, particle: Particle, velocity: Velocity):
+    def apply_velocity(self, particle: Particle):  #, velocity: Velocity):
         """
 
 
         :param particle:
-        :param velocity:
         :return:
         """
         pass

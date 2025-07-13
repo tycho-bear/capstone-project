@@ -34,6 +34,7 @@ class ParticleSwarmOptimization:
                  num_iterations: int,
                  alpha: float,
                  beta: float,
+                 inertia_weight: float,
                  mutation_rate: float,
                  ):
         """"""
@@ -50,6 +51,7 @@ class ParticleSwarmOptimization:
         self.NUM_ITERATIONS = num_iterations
         self.ALPHA = alpha
         self.BETA = beta
+        self.INERTIA_WEIGHT = inertia_weight
         self.MUTATION_RATE = mutation_rate
 
         # setting things up
@@ -78,11 +80,18 @@ class ParticleSwarmOptimization:
 
         # for each particle, generate velocity, move, and update current best
         for particle in self.population:
-            velocity = self.problem.calculate_velocity(particle,
-                                                       self.global_best,
-                                                       self.ALPHA,
-                                                       self.BETA)
-            self.problem.apply_velocity(particle, velocity)
+            # velocity = self.problem.calculate_velocity(particle,
+            #                                            self.global_best,
+            #                                            self.ALPHA,
+            #                                            self.BETA,
+            #                                            self.INERTIA_WEIGHT)
+
+            self.problem.calculate_velocity(particle, self.global_best,
+                                            self.ALPHA, self.BETA,
+                                            self.INERTIA_WEIGHT)
+
+            # self.problem.apply_velocity(particle, velocity)
+            self.problem.apply_velocity(particle)
 
         # self.problem.update_particle_bests(self.population)
         self.update_particle_bests()  # do these two work the same?

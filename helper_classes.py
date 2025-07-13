@@ -501,8 +501,8 @@ class Design:
         self.inner_radius = inner_radius
         self.cylindrical_length = cylindrical_length
 
-        self.radius_step_size = radius_step_size
-        self.length_step_size = length_step_size
+        self.RADIUS_STEP_SIZE = radius_step_size
+        self.LENGTH_STEP_SIZE = length_step_size
 
         # then calculate total cost (see penalty method)
         self.cost = self.calculate_penalized_cost(penalty_constant)
@@ -575,12 +575,15 @@ class Design:
         (new_head_thickness,
          new_body_thickness,
          new_inner_radius,
-         new_cylindrical_length) = self.apply_perturbations(perturbations)
+         new_cylindrical_length) = self.clip_values_to_bounds(
+            self.apply_perturbations(perturbations))
 
         new_neighbor = Design(head_thickness=new_head_thickness,
                               body_thickness=new_body_thickness,
                               inner_radius=new_inner_radius,
                               cylindrical_length=new_cylindrical_length)
+        # new_neighbor.clip_self_to_bounds()
+
         return new_neighbor
 
 
@@ -602,36 +605,74 @@ class Design:
                 # can go negative or positive
                 delta = THICKNESS_SCALAR * np.random.choice([-2, -1, 1, 2])
                 new_head_thickness += delta
-                new_head_thickness = np.clip(new_head_thickness,
-                                             a_min=THICKNESS_MIN,
-                                             a_max=THICKNESS_MAX)
+                # new_head_thickness = np.clip(new_head_thickness,
+                #                              a_min=THICKNESS_MIN,
+                #                              a_max=THICKNESS_MAX)
             if perturbation == "body":
                 delta = THICKNESS_SCALAR * np.random.choice([-2, -1, 1, 2])
                 new_body_thickness += delta
-                new_body_thickness = np.clip(new_body_thickness,
-                                             a_min=THICKNESS_MIN,
-                                             a_max=THICKNESS_MAX)
+                # new_body_thickness = np.clip(new_body_thickness,
+                #                              a_min=THICKNESS_MIN,
+                #                              a_max=THICKNESS_MAX)
             if perturbation == "radius":
-                delta = np.random.normal(loc=0, scale=self.radius_step_size)
+                delta = np.random.normal(loc=0, scale=self.RADIUS_STEP_SIZE)
                 new_inner_radius += delta
-                new_inner_radius = np.clip(new_inner_radius,
-                                           a_min=RADIUS_MIN,
-                                           a_max=RADIUS_MAX)
+                # new_inner_radius = np.clip(new_inner_radius,
+                #                            a_min=RADIUS_MIN,
+                #                            a_max=RADIUS_MAX)
             if perturbation == "length":
-                delta = np.random.normal(loc=0, scale=self.length_step_size)
+                delta = np.random.normal(loc=0, scale=self.LENGTH_STEP_SIZE)
                 new_cylindrical_length += delta
-                new_cylindrical_length = np.clip(new_cylindrical_length,
-                                                 a_min=RADIUS_MIN,
-                                                 a_max=RADIUS_MAX)
+                # new_cylindrical_length = np.clip(new_cylindrical_length,
+                #                                  a_min=LENGTH_MIN,
+                #                                  a_max=LENGTH_MAX)
 
         return (new_head_thickness, new_body_thickness,
                 new_inner_radius, new_cylindrical_length)
 
 
+    # def clip_self_to_bounds(self, ):
+    #     """"""
+    #
+    #     self.head_thickness = np.clip(self.head_thickness,
+    #                                  a_min=THICKNESS_MIN,
+    #                                  a_max=THICKNESS_MAX)
+    #     self.body_thickness = np.clip(self.body_thickness,
+    #                                  a_min=THICKNESS_MIN,
+    #                                  a_max=THICKNESS_MAX)
+    #     self.inner_radius = np.clip(self.inner_radius,
+    #                                a_min=RADIUS_MIN,
+    #                                a_max=RADIUS_MAX)
+    #     self.cylindrical_length = np.clip(self.cylindrical_length,
+    #                                      a_min=LENGTH_MIN,
+    #                                      a_max=LENGTH_MAX)
+
+    def clip_values_to_bounds(self, tuple_values):
+        """"""
+        clipped_values = list(tuple_values)
+
+        clipped_values[0] = np.clip(clipped_values[0],
+                                     a_min=THICKNESS_MIN,
+                                     a_max=THICKNESS_MAX)
+        clipped_values[1] = np.clip(clipped_values[1],
+                                     a_min=THICKNESS_MIN,
+                                     a_max=THICKNESS_MAX)
+        clipped_values[2] = np.clip(clipped_values[2],
+                                    a_min=RADIUS_MIN,
+                                    a_max=RADIUS_MAX)
+        clipped_values[3] = np.clip(clipped_values[3],
+                                     a_min=LENGTH_MIN,
+                                     a_max=LENGTH_MAX)
+
+        return tuple(clipped_values)
+
+
+
 class Particle:
-    def __init__(self, current_solution, best_solution):
+    def __init__(self, current_solution, best_solution, velocity):
         self.current_solution = current_solution
         self.best_solution = best_solution
+        self.velocity = velocity
 
 
 
@@ -643,7 +684,8 @@ class TSPParticle(Particle):
     annotations.
     """
 
-    def __init__(self, current_solution: Tour, best_solution: Tour):
+    def __init__(self, current_solution: Tour, best_solution: Tour,
+                 velocity: list[(int, int)]):
         """
         Initializes this particle with its current solution and the best
         solution it has seen so far.
@@ -653,7 +695,7 @@ class TSPParticle(Particle):
             far.
         """
 
-        super().__init__(current_solution, best_solution)
+        super().__init__(current_solution, best_solution, velocity)
         # self.current_solution = current_solution
         # self.best_solution = best_solution
 
@@ -665,7 +707,7 @@ class BPPParticle(Particle):
     """
 
     def __init__(self, current_solution: BinConfiguration,
-                 best_solution: BinConfiguration):
+                 best_solution: BinConfiguration, velocity: list[(int, int)]):
         """
         Initializes this particle with its current solution and the best
         solution it has seen so far.
@@ -676,12 +718,28 @@ class BPPParticle(Particle):
             by this particle so far.
         """
 
-        super().__init__(current_solution, best_solution)
+        super().__init__(current_solution, best_solution, velocity)
         # self.current_solution = current_solution
         # self.best_solution = best_solution
 
 
+class PVDParticle(Particle):
+    """
+    Particle implementation for the pressure vessel design problem. Not much
+    different from the abstract Particle class, just has new type annotations.
+    """
 
+    def __init__(self, current_solution: Design, best_solution: Design,
+                 velocity: list[float]):
+        """
+        Initializes this particle with its current solution and the best
+        solution it has seen so far.
 
+        :param current_solution: (Design) This particle's current Design.
+        :param best_solution: (Design) The best Design seen by this particle so
+            far.
+        """
+
+        super().__init__(current_solution, best_solution, velocity)
 
 

@@ -280,7 +280,8 @@ class TravelingSalesmanProblem(Problem):
 
     def calculate_velocity(self, particle: TSPParticle,
                            global_best: TSPParticle,
-                           alpha: float, beta: float) -> list[(int, int)]:
+                           alpha: float, beta: float, inertia_weight: float) \
+            -> None:
         """
         For the TSP, velocity is based on swap sequences that transform one Tour
         into another.
@@ -298,6 +299,7 @@ class TravelingSalesmanProblem(Problem):
             given swap to the particle's best solution will be kept.
         :param beta: (float) Parameter in [0, 1] that determines whether a
             given swap to the current global best solution will be kept.
+        :param inertia_weight: (float) Not used here.
         :return:
         """
         # calculates the swap sequence (tour class method) to the two bests
@@ -309,6 +311,8 @@ class TravelingSalesmanProblem(Problem):
 
         # swaps_to_particle_best = particle.current_solution.calculate_swap_sequence(particle.best_solution)
         # swaps_to_best = particle.current_solution.calculate_swap_sequence(particle.best_solution)
+
+        # swaps_to_best1 = particle.current_solution.calculate_swap_sequence()
 
         swaps_to_best = particle.current_solution.calculate_swap_sequence(
             particle.best_solution)
@@ -324,14 +328,15 @@ class TravelingSalesmanProblem(Problem):
             if np.random.random() < beta:
                 new_velocity.append(swap)
 
-        return new_velocity
+        # return new_velocity
+        particle.velocity = new_velocity
 
 
-    def apply_velocity(self, particle: TSPParticle, velocity: list[(int, int)])\
-            -> None:
+    # def apply_velocity(self, particle: TSPParticle, velocity: list[(int, int)])\
+    #         -> None:
+    def apply_velocity(self, particle: TSPParticle) -> None:
         """
         Applies the given velocity to the current solution of the particle.
-        Also updates the best solution if the new solution is better.
 
         :param particle: (TSPParticle) The particle to apply the velocity to.
         :param velocity: (list[(int, int)]) The velocity to apply. In this case,
@@ -342,6 +347,7 @@ class TravelingSalesmanProblem(Problem):
         # for bin packing, also apply the swap sequence (or whatever "velocity")
         # for PVD, apply the vector perturbation
 
+        velocity = particle.velocity
         cities = copy.deepcopy(particle.current_solution.cities)
 
         for swap in velocity:
