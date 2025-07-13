@@ -14,6 +14,7 @@ RADIUS_MIN = 10
 RADIUS_MAX = 100  # arbitrary, but not too high
 LENGTH_MIN = 10   # arbitrary, but not too low
 LENGTH_MAX = 200
+NUM_DESIGN_VARIABLES = 4
 
 
 # ==========================================================================
