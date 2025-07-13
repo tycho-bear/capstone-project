@@ -15,7 +15,8 @@ from helper_functions import (generate_random_cities,
                               generate_random_bin_population,
                               generate_pressure_vessel_solution,
                               generate_grid_swarm,
-                              generate_random_city_swarm,)
+                              generate_random_city_swarm,
+                              generate_random_bin_swarm,)
 from config import (SEED, X_MIN_WA, X_MAX_WA, Y_MIN_WA, Y_MAX_WA,
                     THICKNESS_MIN, THICKNESS_MAX, THICKNESS_SCALAR, RADIUS_MIN, RADIUS_MAX, LENGTH_MIN, LENGTH_MAX)
 from helper_classes import Tour
@@ -245,11 +246,11 @@ def pso_with_tsp():
     # todo - using this one for the report
     # 64 city grid, distance 70.844, time 719.0 seconds
     # 228 --> 192 --> 158 --> 136
-    # pop_size = 500
-    # num_iterations = 1000
-    # alpha = 0.4
-    # beta = 0.4
-    # mutation_rate = 0.1
+    pop_size = 500
+    num_iterations = 1000
+    alpha = 0.4
+    beta = 0.4
+    mutation_rate = 0.1
 
     # 64 city grid, distance 82.407, time 801.1 seconds
     # pop_size = 500
@@ -258,7 +259,7 @@ def pso_with_tsp():
     # beta = 0.5
     # mutation_rate = 0.1
 
-    # --------------------------
+    # ------------------------------------------------------
     # random cities parameters
 
     # 64 random cities, distance 46.149, time 732.1 seconds
@@ -277,13 +278,13 @@ def pso_with_tsp():
     # beta = 0.3
     # mutation_rate = 0.1
 
-    # 64 random cities, distance __, time __
+    # 64 random cities, distance 43.494, time 777.9 seconds
     # 141 --> 125 --> 114 --> 102
-    pop_size = 500
-    num_iterations = 1000
-    alpha = 0.2
-    beta = 0.2
-    mutation_rate = 0.1
+    # pop_size = 500
+    # num_iterations = 1000
+    # alpha = 0.2
+    # beta = 0.2
+    # mutation_rate = 0.1
 
 
     # =========================================
@@ -300,13 +301,13 @@ def pso_with_tsp():
     print(f"If grid, optimal solution distance is {num_cities}.")
     print("------------------------------------------")
 
-    # initial_population = generate_grid_swarm(pop_size, grid_side_length)
+    initial_population = generate_grid_swarm(pop_size, grid_side_length)
 
-    initial_population = generate_random_city_swarm(pop_size, num_cities,
-                                                    x_min=X_MIN_WA,
-                                                    x_max=X_MAX_WA,
-                                                    y_min=Y_MIN_WA,
-                                                    y_max=Y_MAX_WA)
+    # initial_population = generate_random_city_swarm(pop_size, num_cities,
+    #                                                 x_min=X_MIN_WA,
+    #                                                 x_max=X_MAX_WA,
+    #                                                 y_min=Y_MIN_WA,
+    #                                                 y_max=Y_MAX_WA)
 
 
     pso_solver = ParticleSwarmOptimization(
@@ -468,6 +469,71 @@ def ga_with_bin_packing():
 
 # ==============================================================================
 
+def pso_with_bin_packing():
+    """"""
+
+    num_items = 200
+    bin_capacity = 50
+    weights_min = 1
+    weights_max = bin_capacity
+
+    # -----------------------------------
+    # |  Hyperparameter combinations:
+    # -----------------------------------
+
+    # let's see what this does
+    pop_size = 100
+    num_iterations = 500
+    alpha = 0.2
+    beta = 0.2
+    mutation_rate = 0.1
+
+
+    # ------------------------------------------
+    # |  The actual code to run the algorithm:
+    # ------------------------------------------
+
+    problem = BinPackingProblem()
+
+    print("------------------------------------------------")
+    print(f"Solving {num_items}-item bin packing with PSO.")
+    print("------------------------------------------------")
+
+    initial_population = generate_random_bin_swarm(pop_size, num_items,
+                                                   weights_min=weights_min,
+                                                   weights_max=weights_max,
+                                                   bin_capacity=bin_capacity)
+
+    pso_solver = ParticleSwarmOptimization(
+        problem=problem,
+        initial_population=initial_population,
+        population_size=pop_size,
+        num_iterations=num_iterations,
+        alpha=alpha,
+        beta=beta,
+        mutation_rate=mutation_rate
+    )
+    pso_solver.print_initial_information()
+    pso_solver.swarm()
+
+    print(f"Displaying bin configuration...")
+    best_individual = pso_solver.global_best.current_solution
+    # problem.display_solution(best_individual)
+
+    lower_bound = math.ceil(sum(best_individual.ITEM_WEIGHTS) / bin_capacity)
+    print(
+        f"Theoretical minimum number of bins, maybe impossible: {lower_bound}")
+
+
+    problem.display_solution(best_individual)
+    visualize_solution_fitness(pso_solver.get_solution_values(),
+                               xlabel="Iteration",
+                               ylabel="Number of Bins Used",
+                               title="Bins Used Over Iterations")
+
+
+# ==============================================================================
+
 def sa_with_pressure_vessel_design():
     """"""
 
@@ -536,9 +602,10 @@ def main():
 
     # sa_with_tsp()
     # ga_with_tsp()
-    pso_with_tsp()
+    # pso_with_tsp()
     # sa_with_bin_packing()
     # ga_with_bin_packing()
+    pso_with_bin_packing()
 
     # sa_with_pressure_vessel_design()
 
@@ -548,8 +615,8 @@ def main():
     # ga tsp    (done)
     # ga bpp    (done)
     # ga pvd    (in progress?)
-    # pso tsp   (need this)
-    # pso bpp   (need this)
+    # pso tsp   (done)
+    # pso bpp   (in progress)
     # pso pvd   (need this)
 
 
