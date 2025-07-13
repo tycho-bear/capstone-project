@@ -220,6 +220,7 @@ def pso_with_tsp():
     """"""
     # testing PSO on TSP grid
     # copy some stuff / structure from genetic_algorithm.py main
+    inertia_weight = -999  # not used here
 
     # =========================================
     # |  Hyperparameter combinations:
@@ -317,6 +318,7 @@ def pso_with_tsp():
         num_iterations=num_iterations,
         alpha=alpha,
         beta=beta,
+        inertia_weight=inertia_weight,
         mutation_rate=mutation_rate
     )
     pso_solver.print_initial_information()
@@ -476,6 +478,7 @@ def pso_with_bin_packing():
     bin_capacity = 50
     weights_min = 1
     weights_max = bin_capacity
+    inertia_weight = -999  # not used here
 
     # -----------------------------------
     # |  Hyperparameter combinations:
@@ -511,6 +514,7 @@ def pso_with_bin_packing():
         num_iterations=num_iterations,
         alpha=alpha,
         beta=beta,
+        inertia_weight=inertia_weight,
         mutation_rate=mutation_rate
     )
     pso_solver.print_initial_information()
@@ -542,19 +546,25 @@ def sa_with_pressure_vessel_design():
     # -----------------------------------
 
     # # Cost $6410.647
-    max_iterations = 30000
-    initial_temperature = 600
-    cooling_rate = 0.9997
-    # TODO - thickness step size?
-    radius_step_size = 0.2
-    length_step_size = 2
+    # 114683 --> 16079 --> 15617 --> 14920
+    # below is after length clipping fix... -_-
+    # Cost $6090.759
+    # 114683 --> 21831 --> 18787 --> 16703
+    # max_iterations = 30000
+    # initial_temperature = 600
+    # cooling_rate = 0.9997
+    # # TODO - thickness step size?
+    # radius_step_size = 0.2
+    # length_step_size = 2
 
-    # Cost $6411.805
-    # max_iterations = 50000
-    # initial_temperature = 150
-    # cooling_rate = 0.9999
-    # radius_step_size = 0.5
-    # length_step_size = 1.5
+    # Cost $6092.422
+    # 114683 --> 16120 --> 14835 --> 13018
+    # use this one for the report
+    max_iterations = 30000
+    initial_temperature = 150
+    cooling_rate = 0.99985
+    radius_step_size = 0.5
+    length_step_size = 1.5
 
     # ------------------------------------------
     # |  The actual code to run the algorithm:
@@ -593,7 +603,14 @@ def sa_with_pressure_vessel_design():
                                y_max=plot_y_max
                             )
 
+# ==============================================================================
 
+
+
+# ==============================================================================
+
+def pso_with_pressure_vessel_design():
+    """"""
 
 
 
@@ -605,9 +622,9 @@ def main():
     # pso_with_tsp()
     # sa_with_bin_packing()
     # ga_with_bin_packing()
-    pso_with_bin_packing()
+    # pso_with_bin_packing()
 
-    # sa_with_pressure_vessel_design()
+    sa_with_pressure_vessel_design()
 
     # sa tsp    (done)
     # sa bpp    (done)
