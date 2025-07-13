@@ -5,7 +5,7 @@
 # Summer 2025
 # ===============================
 
-from helper_classes import BinConfiguration
+from helper_classes import BinConfiguration, BPPParticle
 import numpy as np
 from config import SEED
 import copy
@@ -307,3 +307,105 @@ class BinPackingProblem(Problem):
 
         new_config = reference_individual.shuffle_bins()
         return new_config
+
+
+    # ==========================================================================
+    # |  Particle swarm optimization methods
+    # ==========================================================================
+
+    def calculate_velocity(self, particle: BPPParticle,
+                           global_best: BPPParticle,
+                           alpha: float, beta: float) -> list[(int, int)]:
+        """
+        For the BPP, velocity is based on swap sequences that push one
+        BinConfiguration
+        in the direction of another.
+
+        Calculates the swap sequence from this particle to its stored best
+        BinConfiguration,
+        as well as to the global best BinConfiguration. Then, using alpha and
+        beta, randomly
+        keeps some of the swaps from each sequence to create a new swap
+        sequence. This new swap sequence is the velocity.
+
+        :param particle: (BPPParticle) The current particle whose velocity is
+            being calculated.
+        :param global_best: (BinConfiguration) The global best BinConfiguration
+            seen by any particle.
+            This is updated each iteration.
+        :param alpha: (float) Parameter in [0, 1] that determines whether a
+            given swap to the particle's best solution will be kept.
+        :param beta: (float) Parameter in [0, 1] that determines whether a
+            given swap to the current global best solution will be kept.
+        :return:
+        """
+
+        swaps_to_best = particle.current_solution.calculate_swap_sequence(
+            particle.best_solution)
+        swaps_to_global = particle.current_solution.calculate_swap_sequence(
+            global_best.best_solution)
+
+        new_velocity = []  # list[(int, int)]
+
+        for swap in swaps_to_best:
+            if np.random.random() < alpha:
+                new_velocity.append(swap)
+        for swap in swaps_to_global:
+            if np.random.random() < beta:
+                new_velocity.append(swap)
+
+        return new_velocity
+
+
+
+    def apply_velocity(self, particle: BPPParticle, velocity: list[(int, int)])\
+            -> None:
+        """
+        Applies the given velocity to the current solution of the particle.
+
+        :param particle: (BPPParticle) The particle to apply the velocity to.
+        :param velocity: (list[(int, int)]) The velocity to apply. In this case,
+            it is a list of (int, int) tuples that represent swaps to make.
+        :return: None
+        """
+
+        # apply a similar swap sequence
+        # sorta like the TSP
+
+        items = copy.deepcopy(particle.current_solution.ITEM_WEIGHTS)
+
+        for swap in velocity:
+            i, j = swap
+            items[i], items[j] = items[j], items[i]
+
+        new_configuration = BinConfiguration(items, particle.current_solution.
+                                                                BIN_CAPACITY)
+        particle.current_solution = new_configuration
+
+
+    def apply_mutation_to_swarm(self, population: list[BPPParticle],
+                                mutation_prob: float) -> None:
+        """
+        Applies mutation to each particle's current solution with the given
+        probability.
+
+        :param population: (list[BPPParticle]) The swarm of particles.
+        :param mutation_prob: (float) The probability of mutating a given
+            particle's current solution.
+        :return: None
+        """
+
+        pass
+
+        # TODO - uncomment this if we need mutation for this problem
+
+        for particle in population:
+            rand = np.random.random()
+            if rand < mutation_prob:
+                particle.current_solution = self.mutate_individual(
+                    particle.current_solution)
+
+
+
+
+
