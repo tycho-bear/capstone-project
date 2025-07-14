@@ -7,13 +7,14 @@
 
 import numpy as np
 from helper_classes import (City, Tour, BinConfiguration, Design, TSPParticle,
-                            BPPParticle)
+                            BPPParticle, PVDParticle)
 from config import (SEED, THICKNESS_MIN, THICKNESS_MAX, THICKNESS_SCALAR,
                     RADIUS_MIN, RADIUS_MAX, LENGTH_MIN, LENGTH_MAX,
-                    THICKNESS_MIN_INT, THICKNESS_MAX_INT)
+                    THICKNESS_MIN_INT, THICKNESS_MAX_INT, NUM_DESIGN_VARIABLES)
 import matplotlib.pyplot as plot
 import math
 from matplotlib.ticker import MaxNLocator
+import copy
 
 np.random.seed(SEED)
 
@@ -126,7 +127,8 @@ def generate_random_city_swarm(pop_size: int, num_cities: int,
         # each particle is a tour
         # TODO - this and the same method below may need to use copy.deepcopy
         #  for best_solution.
-        particle = TSPParticle(current_solution=tour, best_solution=tour)
+        particle = TSPParticle(current_solution=tour, best_solution=tour,
+                               velocity=[])
         particles.append(particle)
 
     return particles
@@ -309,13 +311,34 @@ def generate_random_solution_in_bounds(radius_step_size, length_step_size) \
 
 
 
+# def clip_values_to_bounds(values: list[float]) -> list[float]:
+#     """"""
+#     # clipped_values = list(tuple_values)
+#     clipped_values = copy.deepcopy(values)
+#
+#     clipped_values[0] = np.clip(clipped_values[0],
+#                                  a_min=THICKNESS_MIN,
+#                                  a_max=THICKNESS_MAX)
+#     clipped_values[1] = np.clip(clipped_values[1],
+#                                  a_min=THICKNESS_MIN,
+#                                  a_max=THICKNESS_MAX)
+#     clipped_values[2] = np.clip(clipped_values[2],
+#                                 a_min=RADIUS_MIN,
+#                                 a_max=RADIUS_MAX)
+#     clipped_values[3] = np.clip(clipped_values[3],
+#                                  a_min=LENGTH_MIN,
+#                                  a_max=LENGTH_MAX)
+#
+#     # return tuple(clipped_values)
+#
+#
+#     return list(clipped_values)
 
 
 
 
 
-
-def generate_pressure_vessel_solution(radius_step_size, length_step_size):
+def generate_pressure_vessel_solution(radius_step_size=0.2, length_step_size=0.5):
     """"""
 
     while True:
@@ -326,6 +349,30 @@ def generate_pressure_vessel_solution(radius_step_size, length_step_size):
         # if is_valid_pressure_vessel_solution(potential_solution):
         if potential_solution.is_valid_design():
             return potential_solution
+
+
+
+def generate_pressure_vessel_swarm(pop_size: int) -> list[PVDParticle]:
+    """"""
+
+    def generate_random_PVD_particle_velocity():
+        """"""
+        # can be zeros for now
+        return np.zeros(NUM_DESIGN_VARIABLES)
+
+    # repeatedly generate valid solutions and turn them into particles
+
+    particles = []
+    for i in range(pop_size):
+        random_solution = generate_pressure_vessel_solution()
+        particle = PVDParticle(current_solution=random_solution,
+                               best_solution=random_solution,
+                               velocity=generate_random_PVD_particle_velocity())  # TODO need to generate a random velocity
+        particles.append(particle)
+
+    return particles
+
+
 
 
 
