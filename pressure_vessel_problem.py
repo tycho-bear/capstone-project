@@ -7,10 +7,10 @@
 from typing import Any
 
 import numpy as np
-from config import SEED
+from config import SEED, NUM_DESIGN_VARIABLES
 import copy
-from problem import Problem, Solution
-from helper_classes import Design
+from problem import Problem, Solution, Velocity
+from helper_classes import Design, Particle, PVDParticle
 from collections import Counter
 
 
@@ -94,4 +94,102 @@ class PressureVesselProblem(Problem):
     def generate_new_individual(self, reference_individual: Solution) -> (
             Solution):
         pass
+
+
+    # ==========================================================================
+    # |  Particle swarm optimization methods
+    # ==========================================================================
+
+
+    def calculate_velocity(self, particle: PVDParticle,
+                           global_best: PVDParticle,
+                           alpha: float, beta: float, inertia_weight: float):
+        """
+
+
+        :param particle:
+        :param global_best:
+        :param alpha:
+        :param beta:
+        :param inertia_weight:
+        :return:
+        """
+
+        # L = 0.7  # inertia weight
+        # # generate new velocity vi using equation (7.1)
+        # v[i] = L * v[i] + alpha * e1 * (g_star - x[i]) + beta * e2 * (x_bests[i] - x[i])
+
+        # TODO - need copy.deepcopy in here?
+
+        current_velocity = particle.velocity
+
+        e1 = np.random.uniform(size=NUM_DESIGN_VARIABLES)
+        e2 = np.random.uniform(size=NUM_DESIGN_VARIABLES)
+
+        # might not be able to one-line it like above
+        # current_values = particle.current_solution.get_values()
+        current_values = particle.current_solution.get_values()
+        global_best_values = global_best.current_solution.get_values()
+        personal_best_values = particle.best_solution.get_values()
+
+        difference_to_global_best = global_best_values - current_values
+        difference_to_personal_best = personal_best_values - current_values
+
+        new_velocity = (inertia_weight * current_velocity) + \
+                       (alpha * e1 * difference_to_global_best) + \
+                       (beta * e2 * difference_to_personal_best)
+
+        particle.velocity = new_velocity
+
+
+
+
+    def apply_velocity(self, particle: Particle):
+        """
+
+
+        :param particle:
+        :param velocity:
+        :return:
+        """
+
+
+        # x[i] = x[i] + v[i]
+
+        # so get a new set of values
+        # clip to bounds here
+        # then create a new Design object
+        # and do particle.current_solution = new_design
+
+        current_values = particle.current_solution.get_values()
+        new_values = current_values + particle.velocity
+        # clip to bounds
+        new_values = Design.clip_values_to_bounds(new_values)
+        new_design = Design(head_thickness=new_values[0],
+                            body_thickness=new_values[1],
+                            inner_radius=new_values[2],
+                            cylindrical_length=new_values[3],
+                            radius_step_size=particle.current_solution.
+                                                            radius_step_size,
+                            length_step_size=particle.current_solution.
+                                                            length_step_size)
+
+        particle.current_solution = new_design
+
+
+
+
+
+    def apply_mutation_to_swarm(self, population: list[Particle],
+                                mutation_prob: float) -> None:
+        """
+
+        :param population:
+        :param mutation_prob:
+        :return:
+        """
+
+        # leaving this blank for now, may turn it on later
+        pass
+
 
