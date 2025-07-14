@@ -487,10 +487,11 @@ def pso_with_bin_packing():
 
     # let's see what this does
     pop_size = 100
-    num_iterations = 500
-    alpha = 0.2
-    beta = 0.2
-    mutation_rate = 0.1
+    num_iterations = 100
+    alpha = 0.4
+    beta = 0.4
+    # mutation_rate = 0.03  # turn this way down to 0.02 maybe?
+    mutation_rate = 0.00  # turn this way down to 0.02 maybe?
 
 
     # ------------------------------------------
@@ -699,11 +700,10 @@ def main():
     # pso_with_tsp()
     # sa_with_bin_packing()
     # ga_with_bin_packing()
-    # pso_with_bin_packing()
-
+    pso_with_bin_packing()
     # sa_with_pressure_vessel_design()
 
-    pso_with_pressure_vessel_design()
+    # pso_with_pressure_vessel_design()
 
     # sa tsp    (done)
     # sa bpp    (done)
@@ -713,7 +713,7 @@ def main():
     # ga pvd    (need this)
     # pso tsp   (done)
     # pso bpp   (done)
-    # pso pvd   (in progress)
+    # pso pvd   (done)
 
 
 if __name__ == '__main__':
