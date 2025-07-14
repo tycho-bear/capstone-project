@@ -507,6 +507,13 @@ class Design:
         # then calculate total cost (see penalty method)
         self.cost = self.calculate_penalized_cost(penalty_constant)
 
+
+    def get_values(self):
+        """"""
+        return np.array([self.head_thickness, self.body_thickness,
+                         self.inner_radius, self.cylindrical_length])
+
+
     def get_constraints(self):
         """"""
 
@@ -572,11 +579,17 @@ class Design:
                                          replace=False)
 
         # apply the perturbations here, then create and return the new neighbor
-        (new_head_thickness,
+        [new_head_thickness,
          new_body_thickness,
          new_inner_radius,
-         new_cylindrical_length) = self.clip_values_to_bounds(
+         new_cylindrical_length] = self.clip_values_to_bounds(
             self.apply_perturbations(perturbations))
+
+        # new_values = self.clip_values_to_bounds(self.apply_perturbations(perturbations))
+        # [new_head_thickness,
+        #  new_body_thickness,
+        #  new_inner_radius,
+        #  new_cylindrical_length] = new_values
 
         new_neighbor = Design(head_thickness=new_head_thickness,
                               body_thickness=new_body_thickness,
@@ -627,8 +640,8 @@ class Design:
                 #                                  a_min=LENGTH_MIN,
                 #                                  a_max=LENGTH_MAX)
 
-        return (new_head_thickness, new_body_thickness,
-                new_inner_radius, new_cylindrical_length)
+        return [new_head_thickness, new_body_thickness,
+                new_inner_radius, new_cylindrical_length]
 
 
     # def clip_self_to_bounds(self, ):
@@ -647,9 +660,11 @@ class Design:
     #                                      a_min=LENGTH_MIN,
     #                                      a_max=LENGTH_MAX)
 
-    def clip_values_to_bounds(self, tuple_values):
+    @staticmethod
+    def clip_values_to_bounds(values: list[float]) -> list[float]:
         """"""
-        clipped_values = list(tuple_values)
+        # clipped_values = list(tuple_values)
+        clipped_values = copy.deepcopy(values)
 
         clipped_values[0] = np.clip(clipped_values[0],
                                      a_min=THICKNESS_MIN,
@@ -664,7 +679,10 @@ class Design:
                                      a_min=LENGTH_MIN,
                                      a_max=LENGTH_MAX)
 
-        return tuple(clipped_values)
+        # return tuple(clipped_values)
+
+
+        return list(clipped_values)
 
 
 
@@ -696,8 +714,9 @@ class TSPParticle(Particle):
         """
 
         super().__init__(current_solution, best_solution, velocity)
-        # self.current_solution = current_solution
-        # self.best_solution = best_solution
+        self.current_solution = current_solution
+        self.best_solution = best_solution
+        self.velocity = velocity
 
 
 class BPPParticle(Particle):
@@ -719,8 +738,9 @@ class BPPParticle(Particle):
         """
 
         super().__init__(current_solution, best_solution, velocity)
-        # self.current_solution = current_solution
-        # self.best_solution = best_solution
+        self.current_solution = current_solution
+        self.best_solution = best_solution
+        self.velocity = velocity
 
 
 class PVDParticle(Particle):
@@ -730,7 +750,7 @@ class PVDParticle(Particle):
     """
 
     def __init__(self, current_solution: Design, best_solution: Design,
-                 velocity: list[float]):
+                 velocity: np.ndarray):
         """
         Initializes this particle with its current solution and the best
         solution it has seen so far.
@@ -741,5 +761,8 @@ class PVDParticle(Particle):
         """
 
         super().__init__(current_solution, best_solution, velocity)
+        self.current_solution = current_solution
+        self.best_solution = best_solution
+        self.velocity = velocity
 
 
