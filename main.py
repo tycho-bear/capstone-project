@@ -616,12 +616,20 @@ def pso_with_pressure_vessel_design():
     # |  Hyperparameter combinations:
     # -----------------------------------
 
-    pop_size = 100
-    num_iterations = 2000
-    alpha = 0.7
-    beta = 0.7
-    inertia_weight = 0.7
-    mutation_rate = 0.05  # not used here
+    # Cost $6064.636
+    # 17456 --> 8071 --> 7371 --> 7030
+    # good for report/presentation
+    pop_size = 150
+    num_iterations = 1000
+    # alpha = 0.5
+    # beta = 0.5
+    alpha = 1.2
+    beta = 1.2
+    inertia_weight = 0.8
+    mutation_radius_step_size = 1
+    mutation_length_step_size = 1
+    mutation_rate = 0.1
+
 
     # ------------------------------------------
     # |  The actual code to run the algorithm:
@@ -629,7 +637,9 @@ def pso_with_pressure_vessel_design():
 
     problem = PressureVesselProblem()
 
-    initial_population = generate_pressure_vessel_swarm(pop_size)
+    initial_population = generate_pressure_vessel_swarm(pop_size,
+                                                        mutation_radius_step_size,
+                                                        mutation_length_step_size)
 
     pso_solver = ParticleSwarmOptimization(
         problem=problem,

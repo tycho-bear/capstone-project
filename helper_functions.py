@@ -338,7 +338,7 @@ def generate_random_solution_in_bounds(radius_step_size, length_step_size) \
 
 
 
-def generate_pressure_vessel_solution(radius_step_size=0.2, length_step_size=0.5):
+def generate_pressure_vessel_solution(radius_step_size, length_step_size):
     """"""
 
     while True:
@@ -352,7 +352,8 @@ def generate_pressure_vessel_solution(radius_step_size=0.2, length_step_size=0.5
 
 
 
-def generate_pressure_vessel_swarm(pop_size: int) -> list[PVDParticle]:
+def generate_pressure_vessel_swarm(pop_size: int, radius_step_size: float,
+                                   length_step_size: float) -> list[PVDParticle]:
     """"""
 
     def generate_random_PVD_particle_velocity():
@@ -364,7 +365,8 @@ def generate_pressure_vessel_swarm(pop_size: int) -> list[PVDParticle]:
 
     particles = []
     for i in range(pop_size):
-        random_solution = generate_pressure_vessel_solution()
+        random_solution = generate_pressure_vessel_solution(radius_step_size,
+                                                            length_step_size)
         particle = PVDParticle(current_solution=random_solution,
                                best_solution=random_solution,
                                velocity=generate_random_PVD_particle_velocity())  # TODO need to generate a random velocity
