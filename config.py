@@ -15,6 +15,8 @@ RADIUS_MAX = 100  # arbitrary, but not too high
 LENGTH_MIN = 10   # arbitrary, but not too low
 LENGTH_MAX = 200
 NUM_DESIGN_VARIABLES = 4
+PVD_PLOT_Y_MAX = 10000
+PVD_PLOT_Y_MIN = 5500
 
 
 # ==========================================================================

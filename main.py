@@ -16,8 +16,9 @@ from helper_functions import (generate_random_cities,
                               generate_pressure_vessel_solution,
                               generate_grid_swarm,
                               generate_random_city_swarm,
-                              generate_random_bin_swarm,)
-from config import (SEED, X_MIN_WA, X_MAX_WA, Y_MIN_WA, Y_MAX_WA,
+                              generate_random_bin_swarm,
+                              generate_pressure_vessel_swarm,)
+from config import (SEED, X_MIN_WA, X_MAX_WA, Y_MIN_WA, Y_MAX_WA, PVD_PLOT_Y_MAX, PVD_PLOT_Y_MIN,
                     THICKNESS_MIN, THICKNESS_MAX, THICKNESS_SCALAR, RADIUS_MIN, RADIUS_MAX, LENGTH_MIN, LENGTH_MAX)
 from helper_classes import Tour
 import copy
@@ -592,15 +593,14 @@ def sa_with_pressure_vessel_design():
     sa_solver.anneal()
     problem.display_solution(sa_solver.solution)  # 74.601?
 
-    plot_y_max = 10000
-    plot_y_min = 5500
+
     print(f"Generating plot of fitness values...")
     visualize_solution_fitness(sa_solver.get_solution_values(),
                                xlabel="Iteration",
                                ylabel="Current Pressure Vessel Cost ($)",
                              title="Pressure Vessel Design Cost Over Iterations",
-                               y_min=plot_y_min,
-                               y_max=plot_y_max
+                               y_min=PVD_PLOT_Y_MIN,
+                               y_max=PVD_PLOT_Y_MAX
                             )
 
 # ==============================================================================
@@ -611,6 +611,51 @@ def sa_with_pressure_vessel_design():
 
 def pso_with_pressure_vessel_design():
     """"""
+
+    # -----------------------------------
+    # |  Hyperparameter combinations:
+    # -----------------------------------
+
+    pop_size = 100
+    num_iterations = 2000
+    alpha = 0.7
+    beta = 0.7
+    inertia_weight = 0.7
+    mutation_rate = 0.05  # not used here
+
+    # ------------------------------------------
+    # |  The actual code to run the algorithm:
+    # ------------------------------------------
+
+    problem = PressureVesselProblem()
+
+    initial_population = generate_pressure_vessel_swarm(pop_size)
+
+    pso_solver = ParticleSwarmOptimization(
+        problem=problem,
+        initial_population=initial_population,
+        population_size=pop_size,
+        num_iterations=num_iterations,
+        alpha=alpha,
+        beta=beta,
+        inertia_weight=inertia_weight,
+        mutation_rate=mutation_rate
+    )
+    pso_solver.print_initial_information()
+    pso_solver.swarm()
+
+    print(f"Printing found solution...")
+    best_individual = pso_solver.global_best.current_solution
+    # problem.display_solution(best_individual)
+
+    problem.display_solution(best_individual)
+    visualize_solution_fitness(pso_solver.get_solution_values(),
+                               xlabel="Iteration",
+                               ylabel="Current Pressure Vessel Cost ($)",
+                            title="Pressure Vessel Design Cost Over Iterations",
+                               y_min=PVD_PLOT_Y_MIN,
+                               y_max=PVD_PLOT_Y_MAX,
+                               )
 
 
 
@@ -624,17 +669,19 @@ def main():
     # ga_with_bin_packing()
     # pso_with_bin_packing()
 
-    sa_with_pressure_vessel_design()
+    # sa_with_pressure_vessel_design()
+
+    pso_with_pressure_vessel_design()
 
     # sa tsp    (done)
     # sa bpp    (done)
     # sa pvd    (done)
     # ga tsp    (done)
     # ga bpp    (done)
-    # ga pvd    (in progress?)
+    # ga pvd    (need this)
     # pso tsp   (done)
-    # pso bpp   (in progress)
-    # pso pvd   (need this)
+    # pso bpp   (done)
+    # pso pvd   (in progress)
 
 
 if __name__ == '__main__':
