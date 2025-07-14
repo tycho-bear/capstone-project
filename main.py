@@ -616,19 +616,41 @@ def pso_with_pressure_vessel_design():
     # |  Hyperparameter combinations:
     # -----------------------------------
 
-    # Cost $6064.636
-    # 17456 --> 8071 --> 7371 --> 7030
-    # good for report/presentation
+    # # Cost $6064.636
+    # # 17456 --> 8071 --> 7371 --> 7030
+    # # good for report/presentation TODO
+    # pop_size = 150
+    # num_iterations = 1000
+    # alpha = 1.2
+    # beta = 1.2
+    # inertia_weight = 0.8
+    # mutation_radius_step_size = 1
+    # mutation_length_step_size = 1
+    # mutation_rate = 0.1
+
+    # # Cost $6060.563
+    # # 17456 --> 8112 --> 7371 --> 7228
+    # # also good for report/presentation
+    # pop_size = 150
+    # num_iterations = 1000
+    # alpha = 1.2
+    # beta = 1.2
+    # inertia_weight = 0.8
+    # mutation_radius_step_size = 1.25
+    # mutation_length_step_size = 1.25
+    # mutation_rate = 0.1
+
+    # # Cost $6070.251
+    # # 17456 --> 8586 --> 7412 --> 7456
+    # # TODO using this one
     pop_size = 150
-    num_iterations = 1000
-    # alpha = 0.5
-    # beta = 0.5
+    num_iterations = 500
     alpha = 1.2
     beta = 1.2
     inertia_weight = 0.8
-    mutation_radius_step_size = 1
-    mutation_length_step_size = 1
-    mutation_rate = 0.1
+    mutation_radius_step_size = 1.25
+    mutation_length_step_size = 1.25
+    mutation_rate = 0.15
 
 
     # ------------------------------------------
