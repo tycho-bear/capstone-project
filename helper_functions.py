@@ -19,10 +19,120 @@ import copy
 np.random.seed(SEED)
 
 
+# ==============================================================================
+# TSP - square grid
+# ==============================================================================
+
+#       ======================================
+#        Simulated annealing
+#       ======================================
+
+def generate_square_grid(side_length: int) -> Tour:
+    """
+    Generates a Tour whose cities are arranged in a completely square grid. The
+    positions of each City are shuffled to avoid starting with the optimal
+    solution.
+    A square grid is useful for benchmarking the algorithms, since we know the
+    shortest path beforehand.
+
+    TSP - square grid - simulated annealing
+
+    :param side_length: (int) The length of each side. Setting this to `5`
+        would result in a Tour of `25` cities.
+    :return: (Tour) A Tour object containing a grid of cities.
+    """
+
+    cities = []
+    city_number = 1
+    for x in range(1, side_length + 1):
+        for y in range(1, side_length + 1):
+            city = City(f"{city_number}", x, y)
+            cities.append(city)
+            city_number += 1
+
+    # print(f"Before shuffling: {Tour(cities)}")
+    np.random.shuffle(cities)  # works fine
+    # print(f"After shuffling: {Tour(cities)}")
+
+    return Tour(cities)
+
+#       ======================================
+#        Genetic algorithm
+#       ======================================
+
+def generate_grid_population(pop_size: int, side_length: int):
+    """
+    ...
+
+    TSP - square grid - genetic algorithm
+
+    :param pop_size:
+    :param side_length:
+    :return:
+    """
+
+    # make sure we use the same cities for all tours in the population
+    pop = [generate_square_grid(side_length)]
+    pop = pop * pop_size
+
+    # shuffle each tour
+    for i in range(pop_size):
+        pop[i] = pop[i].shuffle_tour()
+
+    return pop
+
+#       ======================================
+#        Particle swarm optimization
+#       ======================================
+
+def generate_grid_swarm(pop_size: int, side_length: int) -> list[TSPParticle]:
+    """
+    Generates a swarm of particles that will optimize a square grid of cities.
+
+    TSP - square grid - particle swarm optimization
+
+    :param pop_size:
+    :param side_length:
+    :return:
+    """
+
+    # make sure we use the same cities for all tours in the population
+
+    swarm = [generate_square_grid(side_length)]
+    swarm = swarm * pop_size
+    # now have a bunch of tours over the same square grid
+
+    # shuffle each tour
+    for i in range(pop_size):
+        swarm[i] = swarm[i].shuffle_tour()
+
+    # convert to particles
+    particles = []
+    for tour in swarm:
+        # each particle is a tour
+        # TODO - this and the same method above may need to use copy.deepcopy
+        #  for best_solution.
+        particle = TSPParticle(current_solution=tour, best_solution=tour,
+                               velocity=[])
+        particles.append(particle)
+
+    return particles
+
+
+# ==============================================================================
+# TSP - random cities
+# ==============================================================================
+
+#       ======================================
+#        Simulated annealing
+#       ======================================
+
 def generate_random_cities(num_cities: int, x_min: float, x_max: float,
                            y_min: float, y_max: float) -> Tour:
     """
     Generates a specific number of cities in random positions.
+
+    TSP - random cities - simulated annealing
 
     :param num_cities: (int) The number of cities to generate.
     :param x_min: (double) Lower bound on the x coordinates.
@@ -44,29 +154,9 @@ def generate_random_cities(num_cities: int, x_min: float, x_max: float,
 
     return Tour(cities)
 
-
-def generate_random_bin_config(num_items, weights_min, weights_max,
-                               bin_capacity) -> BinConfiguration:
-    """SA with bin packing, weights_max is inclusive"""
-
-    weights = []
-    for i in range(num_items):
-
-
-        # weight = np.random.randint(low=weights_min, high=weights_max)
-        # weight = round(weights_min + np.random.beta(a=2, b=7) * (weights_max - weights_min))
-        weight = round(weights_min + np.random.beta(a=2, b=3) * (weights_max - weights_min))
-        #
-
-        # weight = round(weights_min + np.random.beta(2, 8) * (weights_max - weights_min))
-        # weight = round(weights_min + np.random.beta(2, 5) * (weights_max - weights_min))
-        # weight = round(weights_min + np.random.beta(0.3, 0.3) * (weights_max - weights_min))
-        weights.append(weight)
-
-    config = BinConfiguration(weights, bin_capacity)
-    return config
-
-
+#       ======================================
+#        Genetic algorithm
+#       ======================================
 
 def generate_random_city_population(pop_size: int, num_cities: int,
                                     x_min: float, x_max: float, y_min: float,
@@ -74,6 +164,8 @@ def generate_random_city_population(pop_size: int, num_cities: int,
     """
     Generates a random population of Tours for use in a genetic algorithm.
     Each individual in the population is a different Tour over the same cities.
+
+    TSP - random cities - genetic algorithm
 
     :param pop_size:
     :param num_cities:
@@ -94,6 +186,9 @@ def generate_random_city_population(pop_size: int, num_cities: int,
 
     return pop
 
+#       ======================================
+#        Particle swarm optimization
+#       ======================================
 
 def generate_random_city_swarm(pop_size: int, num_cities: int,
                                x_min: float, x_max: float, y_min: float,
@@ -102,6 +197,8 @@ def generate_random_city_swarm(pop_size: int, num_cities: int,
     Generates a random swarm of particles for use in a particle swarm
     optimization algorithm. Each particle in the swarm is a different Tour over
     the same cities.
+
+    TSP - random cities - particle swarm optimization
 
     :param pop_size:
     :param num_cities:
@@ -134,30 +231,77 @@ def generate_random_city_swarm(pop_size: int, num_cities: int,
     return particles
 
 
+# ==============================================================================
+# Bin packing
+# ==============================================================================
+
+#       ======================================
+#        Simulated annealing
+#       ======================================
+
+def generate_random_bin_config(num_items, weights_min, weights_max,
+                               bin_capacity) -> BinConfiguration:
+    """
+    SA with bin packing, weights_max is inclusive
+
+    Bin packing - simulated annealing
+
+    :param num_items:
+    :param weights_min:
+    :param weights_max:
+    :param bin_capacity:
+    :return:
+    """
+
+    weights = []
+    for i in range(num_items):
+        # weight = np.random.randint(low=weights_min, high=weights_max)
+        # weight = round(weights_min + np.random.beta(a=2, b=7) * (weights_max - weights_min))
+        weight = round(weights_min + np.random.beta(a=2, b=3) * (
+                    weights_max - weights_min))
+        #
+
+        # weight = round(weights_min + np.random.beta(2, 8) * (weights_max - weights_min))
+        # weight = round(weights_min + np.random.beta(2, 5) * (weights_max - weights_min))
+        # weight = round(weights_min + np.random.beta(0.3, 0.3) * (weights_max - weights_min))
+        weights.append(weight)
+
+    config = BinConfiguration(weights, bin_capacity)
+    return config
+
+
+#       ======================================
+#        Genetic algorithm
+#       ======================================
 
 def generate_random_bin_population(pop_size: int, num_items: int,
                                    weights_min: int, weights_max: int,
                                    bin_capacity: int) -> list[BinConfiguration]:
-     """
-     Generates a random population of BinConfigurations for use in a genetic
-     algorithm. Each individual in the population is a different
-     BinConfiguration over the same items.
+    """
+    Generates a random population of BinConfigurations for use in a genetic
+    algorithm. Each individual in the population is a different
+    BinConfiguration over the same items.
 
-     :param pop_size: (int) The size of the population to generate.
-     :param num_items: (int) The number of items in each configuration.
-     :param weights_min: (int) The minimum weight of an item.
-     :param weights_max: (int) The maximum weight of an item.
-     :param bin_capacity: (int) The capacity of each bin.
-     :return: (list[BinConfiguration]) A list of BinConfiguration objects.
-     """
+    Bin packing - genetic algorithm
 
-     # make sure we use the same items for all configurations in the population
-     pop = [generate_random_bin_config(num_items, weights_min, weights_max,
-                                          bin_capacity)]
-     pop = pop * pop_size
+    :param pop_size: (int) The size of the population to generate.
+    :param num_items: (int) The number of items in each configuration.
+    :param weights_min: (int) The minimum weight of an item.
+    :param weights_max: (int) The maximum weight of an item.
+    :param bin_capacity: (int) The capacity of each bin.
+    :return: (list[BinConfiguration]) A list of BinConfiguration objects.
+    """
 
-     return pop
+    # make sure we use the same items for all configurations in the population
+    pop = [generate_random_bin_config(num_items, weights_min, weights_max,
+                                      bin_capacity)]
+    pop = pop * pop_size
 
+    return pop
+
+#       ======================================
+#        Particle swarm optimization
+#       ======================================
 
 def generate_random_bin_swarm(pop_size: int, num_items: int,
                               weights_min: int, weights_max: int,
@@ -166,6 +310,8 @@ def generate_random_bin_swarm(pop_size: int, num_items: int,
     Generates a random swarm of particles for use in a particle swarm
     optimization algorithm. Each particle in the swarm is a different
     BinConfiguration over the same items.
+
+    Bin packing - particle swarm optimization
 
     :param pop_size:
     :param num_items:
@@ -198,90 +344,94 @@ def generate_random_bin_swarm(pop_size: int, num_items: int,
 
 
 
+# ==============================================================================
+# Pressure vessel design
+# ==============================================================================
 
-def generate_square_grid(side_length: int) -> Tour:
+#       ======================================
+#        Simulated annealing
+#       ======================================
+
+def generate_pressure_vessel_solution(radius_step_size, length_step_size):
     """
-    Generates a Tour whose cities are arranged in a completely square grid. The
-    positions of each City are shuffled to avoid starting with the optimal
-    solution.
-    A square grid is useful for benchmarking the algorithms, since we know the
-    shortest path beforehand.
+    ...
 
-    :param side_length: (int) The length of each side. Setting this to `5`
-        would result in a Tour of `25` cities.
-    :return: (Tour) A Tour object containing a grid of cities.
-    """
+    pressure vessel design - simulated annealing
 
-    cities = []
-    city_number = 1
-    for x in range(1, side_length + 1):
-        for y in range(1, side_length + 1):
-            city = City(f"{city_number}", x, y)
-            cities.append(city)
-            city_number += 1
-
-    # print(f"Before shuffling: {Tour(cities)}")
-    np.random.shuffle(cities)  # works fine
-    # print(f"After shuffling: {Tour(cities)}")
-
-    return Tour(cities)
-
-
-def generate_grid_population(pop_size: int, side_length: int):
-    """"""
-    # make sure we use the same cities for all tours in the population
-    pop = [generate_square_grid(side_length)]
-    pop = pop * pop_size
-
-    # shuffle each tour
-    for i in range(pop_size):
-        pop[i] = pop[i].shuffle_tour()
-
-    return pop
-
-
-
-def generate_grid_swarm(pop_size: int, side_length: int) -> list[TSPParticle]:
-    """
-    Generates a swarm of particles that will optimize a square grid of cities.
-
-    For PSO with TSP.
-
-    :param pop_size:
-    :param side_length:
+    :param radius_step_size:
+    :param length_step_size:
     :return:
     """
 
-    # make sure we use the same cities for all tours in the population
+    while True:
+        potential_solution = generate_random_solution_in_bounds(
+            radius_step_size,
+            length_step_size
+        )
+        # if is_valid_pressure_vessel_solution(potential_solution):
+        if potential_solution.is_valid_design():
+            return potential_solution
 
-    swarm = [generate_square_grid(side_length)]
-    swarm = swarm * pop_size
-    # now have a bunch of tours over the same square grid
+#       ======================================
+#        Genetic algorithm
+#       ======================================
 
-    # shuffle each tour
-    for i in range(pop_size):
-        swarm[i] = swarm[i].shuffle_tour()
+            # todo
 
-    # convert to particles
+#       ======================================
+#        Particle swarm optimization
+#       ======================================
+
+def generate_pressure_vessel_swarm(pop_size: int, radius_step_size: float,
+                                   length_step_size: float) -> list[
+    PVDParticle]:
+    """
+    ...
+
+    pressure vessel design - particle swarm optimization
+
+    :param pop_size:
+    :param radius_step_size:
+    :param length_step_size:
+    :return:
+    """
+
+    def generate_random_PVD_particle_velocity():
+        """"""
+        # can be zeros for now
+        return np.zeros(NUM_DESIGN_VARIABLES)
+
+    # repeatedly generate valid solutions and turn them into particles
+
     particles = []
-    for tour in swarm:
-        # each particle is a tour
-        # TODO - this and the same method above may need to use copy.deepcopy
-        #  for best_solution.
-        particle = TSPParticle(current_solution=tour, best_solution=tour,
-                               velocity=[])
+    for i in range(pop_size):
+        random_solution = generate_pressure_vessel_solution(radius_step_size,
+                                                            length_step_size)
+        particle = PVDParticle(current_solution=random_solution,
+                               best_solution=random_solution,
+                               velocity=generate_random_PVD_particle_velocity())  # TODO need to generate a random velocity
         particles.append(particle)
 
     return particles
 
 
-
+# ============================================================
+# Helper functions
+# ============================================================
 
 
 
 def generate_random_solution_in_bounds(radius_step_size, length_step_size) \
         -> Design:
-    """"""
+    """
+    helper
+
+
+
+    :param radius_step_size:
+    :param length_step_size:
+    :return:
+    """
 
     # thicknesses are discrete
     head_thickness = THICKNESS_SCALAR * np.random.randint(low=THICKNESS_MIN_INT,
@@ -338,41 +488,11 @@ def generate_random_solution_in_bounds(radius_step_size, length_step_size) \
 
 
 
-def generate_pressure_vessel_solution(radius_step_size, length_step_size):
-    """"""
-
-    while True:
-        potential_solution = generate_random_solution_in_bounds(
-            radius_step_size,
-            length_step_size
-        )
-        # if is_valid_pressure_vessel_solution(potential_solution):
-        if potential_solution.is_valid_design():
-            return potential_solution
 
 
 
-def generate_pressure_vessel_swarm(pop_size: int, radius_step_size: float,
-                                   length_step_size: float) -> list[PVDParticle]:
-    """"""
 
-    def generate_random_PVD_particle_velocity():
-        """"""
-        # can be zeros for now
-        return np.zeros(NUM_DESIGN_VARIABLES)
 
-    # repeatedly generate valid solutions and turn them into particles
-
-    particles = []
-    for i in range(pop_size):
-        random_solution = generate_pressure_vessel_solution(radius_step_size,
-                                                            length_step_size)
-        particle = PVDParticle(current_solution=random_solution,
-                               best_solution=random_solution,
-                               velocity=generate_random_PVD_particle_velocity())  # TODO need to generate a random velocity
-        particles.append(particle)
-
-    return particles
 
 
 
@@ -400,6 +520,7 @@ def visualize_solution_fitness(fitness_values: list[float],
                                xlabel: str="Iteration",
                                ylabel: str="Current Tour Distance",
                                title: str="Tour Distance Over Iterations",
+                               legend: str="TODO: ADD LEGEND HERE",
                                y_min: float=None,
                                y_max: float=None) \
         -> None:
@@ -410,6 +531,7 @@ def visualize_solution_fitness(fitness_values: list[float],
     :param xlabel: (str) The label for the x-axis.
     :param ylabel: (str) The label for the y-axis.
     :param title: (str) The plot title.
+    :param legend: (str) What the legend label should say.
     :param y_min: (float) The minimum value for the y-axis.
     :param y_max: (float) The maximum value for the y-axis. Useful for filtering
         extremely high costs in the pressure vessel design problem when the
@@ -433,7 +555,9 @@ def visualize_solution_fitness(fitness_values: list[float],
               color="b",
               # color="mediumslateblue",
               # color="royalblue",  # good color
-              label="Distance")
+              # label="Distancewtf",
+              label=legend,
+              )
 
     plot.gca().yaxis.set_major_locator(MaxNLocator(integer=True))  # only ints
 
