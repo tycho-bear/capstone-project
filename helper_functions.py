@@ -376,7 +376,28 @@ def generate_pressure_vessel_solution(radius_step_size, length_step_size):
 #        Genetic algorithm
 #       ======================================
 
-            # todo
+def generate_pressure_vessel_population(pop_size: int, radius_step_size: float,
+                                        length_step_size: float) -> list[
+    Design]:
+    """
+    ...
+
+    pressure vessel design - genetic algorithm
+
+    :return:
+    """
+
+    pop = []
+    for i in range(pop_size):
+        # generate a random solution
+        random_solution = generate_pressure_vessel_solution(radius_step_size,
+                                                            length_step_size)
+        # already all different
+        pop.append(random_solution)
+
+    return pop
+
+
 
 #       ======================================
 #        Particle swarm optimization

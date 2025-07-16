@@ -17,7 +17,8 @@ from helper_functions import (generate_random_cities,
                               generate_grid_swarm,
                               generate_random_city_swarm,
                               generate_random_bin_swarm,
-                              generate_pressure_vessel_swarm,)
+                              generate_pressure_vessel_swarm,
+                              generate_pressure_vessel_population)
 from config import (SEED, X_MIN_WA, X_MAX_WA, Y_MIN_WA, Y_MAX_WA, PVD_PLOT_Y_MAX, PVD_PLOT_Y_MIN,
                     THICKNESS_MIN, THICKNESS_MAX, THICKNESS_SCALAR, RADIUS_MIN, RADIUS_MAX, LENGTH_MIN, LENGTH_MAX)
 from helper_classes import Tour
@@ -535,7 +536,8 @@ def pso_with_bin_packing():
     visualize_solution_fitness(pso_solver.get_solution_values(),
                                xlabel="Iteration",
                                ylabel="Number of Bins Used",
-                               title="Bins Used Over Iterations")
+                               title="Bins Used Over Iterations",
+                               legend="Num. bins used")
 
 
 # ==============================================================================
@@ -605,6 +607,59 @@ def sa_with_pressure_vessel_design():
                             )
 
 # ==============================================================================
+
+def ga_with_pressure_vessel_design():
+    """"""
+
+    # -----------------------------------
+    # |  Hyperparameter combinations:
+    # -----------------------------------
+
+    pop_size = 150
+    num_generations = 400
+    elitism_percent = 0.05
+    crossover_percent = 0.75
+    mutation_rate = 0.10
+    tournament_size = 4
+
+    mutation_radius_step_size = 1.25
+    mutation_length_step_size = 1.25
+
+
+    # ------------------------------------------
+    # |  The actual code to run the algorithm:
+    # ------------------------------------------
+
+    problem = PressureVesselProblem()
+    initial_population = generate_pressure_vessel_population(pop_size,
+                                                             mutation_radius_step_size,
+                                                             mutation_length_step_size)
+    # GA solver
+    ga_solver = GeneticAlgorithm(
+        problem=problem,
+        initial_population=initial_population,
+        population_size=pop_size,
+        num_generations=num_generations,
+        elitism_percent=elitism_percent,
+        crossover_percent=crossover_percent,
+        mutation_rate=mutation_rate,
+        tournament_size=tournament_size
+    )
+    ga_solver.print_initial_information()
+    ga_solver.evolve()
+
+    print(f"Printing found solution...")
+    best_individual = ga_solver.gen_best_solution
+    problem.display_solution(best_individual)
+    visualize_solution_fitness(ga_solver.get_solution_values(),
+                               xlabel="Generation",
+                               ylabel="Current Pressure Vessel Cost ($)",
+                               title="Pressure Vessel Design Cost Over GA Generations",
+                               legend="Cost of design",
+                               y_min=PVD_PLOT_Y_MIN,
+                               y_max=PVD_PLOT_Y_MAX,
+                               )
+
 
 
 
@@ -686,6 +741,7 @@ def pso_with_pressure_vessel_design():
                                xlabel="Iteration",
                                ylabel="Current Pressure Vessel Cost ($)",
                             title="Pressure Vessel Design Cost Over Iterations",
+                               legend="Cost of design",
                                y_min=PVD_PLOT_Y_MIN,
                                y_max=PVD_PLOT_Y_MAX,
                                )
@@ -700,9 +756,9 @@ def main():
     # pso_with_tsp()
     # sa_with_bin_packing()
     # ga_with_bin_packing()
-    pso_with_bin_packing()
+    # pso_with_bin_packing()
     # sa_with_pressure_vessel_design()
-
+    ga_with_pressure_vessel_design()  # TODO
     # pso_with_pressure_vessel_design()
 
     # sa tsp    (done)

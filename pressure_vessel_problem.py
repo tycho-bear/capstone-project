@@ -50,7 +50,7 @@ class PressureVesselProblem(Problem):
               f"\tBody thickness:\t{solution.body_thickness}\n"
               f"\tInner radius:\t{solution.inner_radius:.4f}\n"
               f"\tCylindrical length:\t{solution.cylindrical_length:.4f}\n"
-              f"Total cost: {solution.cost:.3f}")
+              f"Total cost: ${solution.cost:.3f}")
         print(f"Valid solution? {solution.is_valid_design()}")
 
 
@@ -67,7 +67,7 @@ class PressureVesselProblem(Problem):
 
 
     # ==========================================================================
-    # |  Genetic algorithm methods
+    # |  TODO - Genetic algorithm methods
     # ==========================================================================
 
     def sort_by_fitness(self, population: list[Solution]) -> list[Solution]:
@@ -178,6 +178,7 @@ class PressureVesselProblem(Problem):
         new_values = current_values + particle.velocity
 
         # round the thicknesses to nearest 0.0625
+        # TODO - put the rounding stuff in a static method in Design?
         head_thickness = new_values[0]
         body_thickness = new_values[1]
         rounded_head_thickness = (round(head_thickness / THICKNESS_SCALAR) *
