@@ -170,9 +170,9 @@ class SimulatedAnnealing:
         end_time = time.time()
 
         # print best solution data
-        print(f"Found best solution at iteration "
-              f"{self.best_solution_iteration_num}:  "
-              f"distance {self.best_solution_fitness:.3f}")
+        # print(f"Found best solution at iteration "
+        #       f"{self.best_solution_iteration_num}:  "
+        #       f"distance {self.best_solution_fitness:.3f}")
         print(f"Elapsed time: {(end_time - start_time):.1f} seconds.")
 
 

@@ -615,15 +615,15 @@ def ga_with_pressure_vessel_design():
     # |  Hyperparameter combinations:
     # -----------------------------------
 
-    pop_size = 150
+    pop_size = 300
     num_generations = 400
     elitism_percent = 0.05
     crossover_percent = 0.75
-    mutation_rate = 0.10
+    mutation_rate = 0.12
     tournament_size = 4
 
-    mutation_radius_step_size = 1.25
-    mutation_length_step_size = 1.25
+    mutation_radius_step_size = 2
+    mutation_length_step_size = 5
 
 
     # ------------------------------------------
@@ -699,13 +699,15 @@ def pso_with_pressure_vessel_design():
     # # Cost $6070.251
     # # 17456 --> 8586 --> 7412 --> 7456
     # # TODO using this one
-    pop_size = 150
+    # # TODO - updated neighbor generation to correctly take the step sizes, need another solution
+    # # TODO - using this one, don't change
+    pop_size = 200
     num_iterations = 500
     alpha = 1.2
     beta = 1.2
-    inertia_weight = 0.8
+    inertia_weight = 0.7
     mutation_radius_step_size = 1.25
-    mutation_length_step_size = 1.25
+    mutation_length_step_size = 5
     mutation_rate = 0.15
 
 
@@ -758,7 +760,7 @@ def main():
     # ga_with_bin_packing()
     # pso_with_bin_packing()
     # sa_with_pressure_vessel_design()
-    ga_with_pressure_vessel_design()  # TODO
+    ga_with_pressure_vessel_design()
     # pso_with_pressure_vessel_design()
 
     # sa tsp    (done)

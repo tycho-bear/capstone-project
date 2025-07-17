@@ -594,7 +594,9 @@ class Design:
         new_neighbor = Design(head_thickness=new_head_thickness,
                               body_thickness=new_body_thickness,
                               inner_radius=new_inner_radius,
-                              cylindrical_length=new_cylindrical_length)
+                              cylindrical_length=new_cylindrical_length,
+                              radius_step_size=self.RADIUS_STEP_SIZE,
+                              length_step_size=self.LENGTH_STEP_SIZE)
         # new_neighbor.clip_self_to_bounds()
 
         return new_neighbor
@@ -659,6 +661,19 @@ class Design:
     #     self.cylindrical_length = np.clip(self.cylindrical_length,
     #                                      a_min=LENGTH_MIN,
     #                                      a_max=LENGTH_MAX)
+
+    @staticmethod
+    def round_thickness_value(thickness: float) -> float:
+        """
+        Helper function to round a thickness value to the nearest multiple of
+        0.0625.
+
+        :param thickness: (float) The thickness value to round.
+        :return: (float) The rounded thickness value.
+        """
+
+        return round(thickness / THICKNESS_SCALAR) * THICKNESS_SCALAR
+
 
     @staticmethod
     def clip_values_to_bounds(values: list[float]) -> list[float]:

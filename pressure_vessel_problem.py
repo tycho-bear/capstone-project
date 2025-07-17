@@ -12,6 +12,7 @@ import copy
 from problem import Problem, Solution, Velocity
 from helper_classes import Design, Particle, PVDParticle
 from collections import Counter
+from helper_functions import generate_pressure_vessel_solution
 
 
 np.random.seed(SEED)
@@ -70,19 +71,121 @@ class PressureVesselProblem(Problem):
     # |  TODO - Genetic algorithm methods
     # ==========================================================================
 
-    def sort_by_fitness(self, population: list[Solution]) -> list[Solution]:
-        pass
+    def sort_by_fitness(self, population: list[Design]) -> list[Design]:
+        """
+        Sorts the given population by fitness in ascending order. Most fit
+        individuals are at the start of the list. For the pressure vessel
+        problem, this sorts in ascending order according to the cost.
 
-    def get_elite(self, sorted_population: list[Solution],
-                  elitism_percent: float) -> list[Solution]:
-        pass
+        :param population: (list[Design]) The population to sort.
+        :return: (list[Design]) The population, sorted by design cost in
+            ascending order.
+        """
 
-    def tournament_selection(self, population: list[Solution],
-                             num_samples: int) -> Solution:
-        pass
+        new_population = sorted(population, key=lambda design: design.cost)
+        return new_population
 
-    def crossover(self, parent1: Solution, parent2: Solution) -> Solution:
-        pass
+
+
+    def get_elite(self, sorted_population: list[Design],
+                  elitism_percent: float) -> list[Design]:
+        """
+        Simple function to extract the best few individuals from a population.
+
+        :param sorted_population: (list[Design]) A population sorted in
+            ascending order by cost.
+        :param elitism_percent: (float) The percentage of the population to
+            retain for the next generation. If the number of individuals does
+            not come out to a whole number, it will be rounded.
+        :return: (list[Design]) The elite subset of the population.
+        """
+
+        population_size = len(sorted_population)
+        count_to_retain = round(elitism_percent * population_size)
+        elite = sorted_population[:count_to_retain]
+        return elite
+
+
+    def tournament_selection(self, population: list[Design], num_samples: int) \
+            -> Design:
+        """
+        Chooses `num_samples` Designs from the population without replacement
+        and returns the one with the lowest cost.
+
+        :param population: (list[Design]) The population to choose from.
+        :param num_samples: (int) The number of samples, without replacement.
+        :return: (Design) The lowest cost Design from the samples.
+        """
+
+        # choose a few unique participants
+        pop_size = len(population)
+        indices = np.random.choice(pop_size, size=num_samples, replace=False)
+        participants = [population[i] for i in indices]
+
+        # get the best
+        best = participants[0]
+        for design in participants:
+            if design.cost < best.cost:
+                best = design
+
+        return best
+
+
+    def crossover(self, parent1: Design, parent2: Design) -> Design:
+        """
+        Performs crossover with two parents.
+
+
+        TODO
+
+        :param parent1: (Design) The first parent.
+        :param parent2: (Design) The second parent.
+        :return: (Design) A child containing TODO.
+        """
+
+        head_thickness_average = (parent1.head_thickness +
+                                  parent2.head_thickness) / 2
+        body_thickness_average = (parent1.body_thickness +
+                                  parent2.body_thickness) / 2
+
+        new_head_thickness = Design.round_thickness_value(head_thickness_average)
+        new_body_thickness = Design.round_thickness_value(body_thickness_average)
+
+        def blx_crossover(value1: float, value2: float, alpha=0.3) -> float:
+            """
+
+
+            :param value1:
+            :param value2:
+            :param alpha:
+            :return:
+            """
+
+            lower = min(value1, value2)
+            upper = max(value1, value2)
+            difference = upper - lower
+            new_value = np.random.uniform(lower - alpha*difference,
+                                          upper + alpha*difference)
+            return new_value
+
+        new_inner_radius = blx_crossover(parent1.inner_radius,
+                                         parent2.inner_radius)
+        new_cylindrical_length = blx_crossover(parent1.cylindrical_length,
+                                               parent2.cylindrical_length)
+
+        new_design = Design(
+            head_thickness=new_head_thickness,
+            body_thickness=new_body_thickness,
+            inner_radius=new_inner_radius,
+            cylindrical_length=new_cylindrical_length,
+            radius_step_size=parent1.RADIUS_STEP_SIZE,
+            length_step_size=parent1.LENGTH_STEP_SIZE
+        )
+        return new_design
+
+
+
+
 
     def mutate_individual(self, individual: Design) -> Design:
         """
@@ -100,13 +203,43 @@ class PressureVesselProblem(Problem):
         return new_design
 
 
-    def apply_mutation(self, population: list[Solution],
-                       mutation_prob: float) -> list[Solution]:
-        pass
+    def apply_mutation(self, population: list[Design], mutation_prob: float) \
+            -> list[Design]:
+        """
+        Probabilistically applies mutation to the entire population.
 
-    def generate_new_individual(self, reference_individual: Solution) -> (
-            Solution):
-        pass
+        :param population: (list[Design]) The population to mutate.
+        :param mutation_prob: (float) The probability of mutating each
+            individual in the population.
+        :return: (list[Design]) The mutated population.
+        """
+
+        for i in range(len(population)):
+            rand = np.random.rand()
+            if rand < mutation_prob:
+                population[i] = self.mutate_individual(population[i])
+
+        return population
+
+
+
+    def generate_new_individual(self, reference_individual: Design) -> Design:
+        """
+        Generates a new Design. The reference individual is not used in this
+        implementation. This method is used when generating a population for a
+        genetic algorithm.
+
+        :param reference_individual: (Design) Not used in this implementation
+            for the pressure vessel problem.
+        :return: (Design) A new, randomly generated Design.
+        """
+
+        # use generate_pressure_vessel_solution
+        new_design = generate_pressure_vessel_solution(
+            reference_individual.RADIUS_STEP_SIZE,
+            reference_individual.LENGTH_STEP_SIZE
+        )
+        return new_design
 
 
     # ==========================================================================
@@ -179,14 +312,16 @@ class PressureVesselProblem(Problem):
 
         # round the thicknesses to nearest 0.0625
         # TODO - put the rounding stuff in a static method in Design?
-        head_thickness = new_values[0]
-        body_thickness = new_values[1]
-        rounded_head_thickness = (round(head_thickness / THICKNESS_SCALAR) *
-                                  THICKNESS_SCALAR)
-        rounded_body_thickness = (round(body_thickness / THICKNESS_SCALAR) *
-                                  THICKNESS_SCALAR)
-        new_values[0] = rounded_head_thickness
-        new_values[1] = rounded_body_thickness
+        # head_thickness = new_values[0]
+        # body_thickness = new_values[1]
+        # rounded_head_thickness = (round(head_thickness / THICKNESS_SCALAR) *
+        #                           THICKNESS_SCALAR)
+        # rounded_body_thickness = (round(body_thickness / THICKNESS_SCALAR) *
+        #                           THICKNESS_SCALAR)
+        # new_values[0] = rounded_head_thickness
+        # new_values[1] = rounded_body_thickness
+        new_values[0] = Design.round_thickness_value(new_values[0])  # works, ignore warning
+        new_values[1] = Design.round_thickness_value(new_values[1])
 
         # clip to bounds
         new_values = Design.clip_values_to_bounds(new_values)
