@@ -278,10 +278,10 @@ class Tour:
             x_coords.append(self.cities[0].x)
             y_coords.append(self.cities[0].y)
 
-        plot.scatter(x_coords, y_coords, color="darkslateblue", s=140)
+        plot.scatter(x_coords, y_coords, color="darkslateblue", s=200)
         if show_segments:  # include segments between the cities
             plot.plot(x_coords, y_coords, color="mediumseagreen",
-                      linestyle="-", linewidth=3)
+                      linestyle="-", linewidth=3.5)
 
         # including city names
         if include_names:
@@ -596,7 +596,8 @@ class Design:
                               inner_radius=new_inner_radius,
                               cylindrical_length=new_cylindrical_length,
                               radius_step_size=self.RADIUS_STEP_SIZE,
-                              length_step_size=self.LENGTH_STEP_SIZE)
+                              length_step_size=self.LENGTH_STEP_SIZE
+                              )
         # new_neighbor.clip_self_to_bounds()
 
         return new_neighbor
