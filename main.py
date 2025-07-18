@@ -19,8 +19,21 @@ from helper_functions import (generate_random_cities,
                               generate_random_bin_swarm,
                               generate_pressure_vessel_swarm,
                               generate_pressure_vessel_population)
-from config import (SEED, X_MIN_WA, X_MAX_WA, Y_MIN_WA, Y_MAX_WA, PVD_PLOT_Y_MAX, PVD_PLOT_Y_MIN,
-                    THICKNESS_MIN, THICKNESS_MAX, THICKNESS_SCALAR, RADIUS_MIN, RADIUS_MAX, LENGTH_MIN, LENGTH_MAX)
+from config import (SEED, X_MIN_WA, X_MAX_WA, Y_MIN_WA, Y_MAX_WA,
+                    PVD_PLOT_Y_MAX, PVD_PLOT_Y_MIN,
+                    THICKNESS_MIN, THICKNESS_MAX, THICKNESS_SCALAR,
+                    RADIUS_MIN, RADIUS_MAX, LENGTH_MIN, LENGTH_MAX,
+                    Y_AXIS_SA_TSP_GRID, Y_AXIS_SA_TSP_RANDOM,
+                    Y_AXIS_SA_BPP, Y_AXIS_SA_PVD,
+                    Y_AXIS_POP_TSP_GRID, Y_AXIS_POP_TSP_RANDOM,
+                    Y_AXIS_POP_BPP, Y_AXIS_POP_PVD,
+                    X_AXIS_SA, X_AXIS_GA, X_AXIS_PSO,
+                    LEGEND_TSP, LEGEND_BPP, LEGEND_PVD,
+                    COLOR_SA, COLOR_GA, COLOR_PSO,
+                    TITLE_SA_TSP, TITLE_GA_TSP, TITLE_PSO_TSP,
+                    TITLE_SA_BPP, TITLE_GA_BPP, TITLE_PSO_BPP,
+                    TITLE_SA_PVD, TITLE_GA_PVD, TITLE_PSO_PVD
+                    )
 from helper_classes import Tour
 import copy
 import numpy as np
@@ -53,11 +66,11 @@ def sa_with_tsp():
     # shift_max = 32
     # grid_side_length = 8
 
-    # 64 city grid, distance 72.075
-    # max_iterations = 50000
-    # initial_temperature = 25
-    # cooling_rate = 0.9998
-    # grid_side_length = 8
+    # 64 city grid, distance 72.075  # TODO using this
+    max_iterations = 50000
+    initial_temperature = 25
+    cooling_rate = 0.9998
+    grid_side_length = 8
 
     # 64 city grid, distance 68.485 (very good)
     # max_iterations = 50000
@@ -65,12 +78,12 @@ def sa_with_tsp():
     # cooling_rate = 0.9998
     # grid_side_length = 8
 
-    # random 64 cities, distance 40.952
+    # random 64 cities, distance 40.952  # TODO using this
     # max_iterations = 1000  # 50000
-    max_iterations = 50000
-    initial_temperature = 5
-    cooling_rate = 0.9998
-    grid_side_length = 8
+    # max_iterations = 50000
+    # initial_temperature = 5
+    # cooling_rate = 0.9998
+    # grid_side_length = 8
 
     # random 64 cities, distance 38.171 (good)
     # max_iterations = 50000
@@ -84,7 +97,7 @@ def sa_with_tsp():
     # ------------------------------------------
 
     # grid_side_length = 8
-    # initial_guess = generate_square_grid(grid_side_length)  # grid
+    initial_guess = generate_square_grid(grid_side_length)  # grid
 
 
     num_cities = grid_side_length ** 2
@@ -92,8 +105,8 @@ def sa_with_tsp():
     # -----------------------------
     # For random cities, do this:
     # -----------------------------
-    initial_guess = generate_random_cities(num_cities, X_MIN_WA, X_MAX_WA,
-                                           Y_MIN_WA, Y_MAX_WA)
+    # initial_guess = generate_random_cities(num_cities, X_MIN_WA, X_MAX_WA,
+    #                                        Y_MIN_WA, Y_MAX_WA)
 
     # define problem here
     problem = TravelingSalesmanProblem(
@@ -113,9 +126,17 @@ def sa_with_tsp():
     problem.display_solution(sa_solver.solution)  # 74.601?
 
     print(f"Generating plot of fitness values...")
+    # visualize_solution_fitness(sa_solver.get_solution_values(),
+    #                            # downsample_factor=50
+    #                            )
     visualize_solution_fitness(sa_solver.get_solution_values(),
-                               # downsample_factor=50
-                               )
+                                 xlabel=X_AXIS_SA,
+                                 # ylabel=Y_AXIS_SA_TSP_RANDOM,
+                                 ylabel=Y_AXIS_SA_TSP_GRID,
+                                 title=TITLE_SA_TSP,
+                                 legend=LEGEND_TSP,
+                                 linecolor=COLOR_SA,
+                                 )
 
 # ==============================================================================
 
@@ -135,14 +156,14 @@ def ga_with_tsp():
     # mutation_rate = 0.10
     # tournament_size = 3
 
-    # 64 city grid, distance 66.243 (messed up somehow)
-    # 228 --> 191 --> 163 --> 147
-    # pop_size = 600  # 600
-    # num_generations = 500  # 400
-    # elitism_percent = 0.06
-    # crossover_percent = 0.75
-    # mutation_rate = 0.10
-    # tournament_size = 4
+    # 64 city grid, distance 65.657  # TODO using this one
+    # 228 --> 188 --> 148 --> 134
+    pop_size = 600  # 600
+    num_generations = 500  # 400
+    elitism_percent = 0.06
+    crossover_percent = 0.75
+    mutation_rate = 0.10
+    tournament_size = 4
 
     # 64 city grid, distance 68.142 (real)
     # 228 --> 193 --> 173 --> 157
@@ -153,14 +174,14 @@ def ga_with_tsp():
     # mutation_rate = 0.10
     # tournament_size = 4
 
-    # 64 random cities, distance 35.833 (real)
+    # 64 random cities, distance 35.833 (real)  # TODO using this one
     # 141 --> 115 --> 97 --> 75
-    pop_size = 600
-    num_generations = 500
-    elitism_percent = 0.05
-    crossover_percent = 0.75
-    mutation_rate = 0.10
-    tournament_size = 4
+    # pop_size = 600
+    # num_generations = 500
+    # elitism_percent = 0.05
+    # crossover_percent = 0.75
+    # mutation_rate = 0.10
+    # tournament_size = 4
 
     # # 64 city grid, distance 70.614 (looks cool though, no loops)
     # # converges pretty fast
@@ -187,13 +208,13 @@ def ga_with_tsp():
     print(f"If grid, optimal solution distance is {num_cities}.")
     print("------------------------------------------")
 
-    # initial_population = generate_grid_population(pop_size, grid_side_length)
+    initial_population = generate_grid_population(pop_size, grid_side_length)
 
-    initial_population = generate_random_city_population(pop_size, num_cities,
-                                                         x_min=X_MIN_WA,
-                                                         x_max=X_MAX_WA,
-                                                         y_min=Y_MIN_WA,
-                                                         y_max=Y_MAX_WA)
+    # initial_population = generate_random_city_population(pop_size, num_cities,
+    #                                                      x_min=X_MIN_WA,
+    #                                                      x_max=X_MAX_WA,
+    #                                                      y_min=Y_MIN_WA,
+    #                                                      y_max=Y_MAX_WA)
 
     ga_solver = GeneticAlgorithm(
         problem=problem,
@@ -210,10 +231,18 @@ def ga_with_tsp():
 
     best_individual = ga_solver.gen_best_solution
     problem.display_solution(best_individual)
+    # visualize_solution_fitness(ga_solver.get_solution_values(),
+    #                            xlabel="Generation",
+    #                            ylabel="Current Tour Distance",
+    #                            title="Tour Distance Over Generations")
     visualize_solution_fitness(ga_solver.get_solution_values(),
-                               xlabel="Generation",
-                               ylabel="Current Tour Distance",
-                               title="Tour Distance Over Generations")
+                               xlabel=X_AXIS_GA,
+                               ylabel=Y_AXIS_POP_TSP_GRID,
+                               # ylabel=Y_AXIS_POP_TSP_RANDOM,
+                               title=TITLE_GA_TSP,
+                               legend=LEGEND_TSP,
+                               linecolor=COLOR_GA,
+                               )
 
 # ==============================================================================
 
@@ -249,11 +278,11 @@ def pso_with_tsp():
     # todo - using this one for the report
     # 64 city grid, distance 70.844, time 719.0 seconds
     # 228 --> 192 --> 158 --> 136
-    pop_size = 500
-    num_iterations = 1000
-    alpha = 0.4
-    beta = 0.4
-    mutation_rate = 0.1
+    # pop_size = 500
+    # num_iterations = 1000
+    # alpha = 0.4
+    # beta = 0.4
+    # mutation_rate = 0.1
 
     # 64 city grid, distance 82.407, time 801.1 seconds
     # pop_size = 500
@@ -281,13 +310,14 @@ def pso_with_tsp():
     # beta = 0.3
     # mutation_rate = 0.1
 
+    # todo - using this one for the report
     # 64 random cities, distance 43.494, time 777.9 seconds
     # 141 --> 125 --> 114 --> 102
-    # pop_size = 500
-    # num_iterations = 1000
-    # alpha = 0.2
-    # beta = 0.2
-    # mutation_rate = 0.1
+    pop_size = 500
+    num_iterations = 1000
+    alpha = 0.2
+    beta = 0.2
+    mutation_rate = 0.1
 
 
     # =========================================
@@ -304,13 +334,13 @@ def pso_with_tsp():
     print(f"If grid, optimal solution distance is {num_cities}.")
     print("------------------------------------------")
 
-    initial_population = generate_grid_swarm(pop_size, grid_side_length)
+    # initial_population = generate_grid_swarm(pop_size, grid_side_length)
 
-    # initial_population = generate_random_city_swarm(pop_size, num_cities,
-    #                                                 x_min=X_MIN_WA,
-    #                                                 x_max=X_MAX_WA,
-    #                                                 y_min=Y_MIN_WA,
-    #                                                 y_max=Y_MAX_WA)
+    initial_population = generate_random_city_swarm(pop_size, num_cities,
+                                                    x_min=X_MIN_WA,
+                                                    x_max=X_MAX_WA,
+                                                    y_min=Y_MIN_WA,
+                                                    y_max=Y_MAX_WA)
 
 
     pso_solver = ParticleSwarmOptimization(
@@ -328,10 +358,18 @@ def pso_with_tsp():
 
     best_individual = pso_solver.global_best
     problem.display_solution(best_individual.current_solution)
+    # visualize_solution_fitness(pso_solver.get_solution_values(),
+    #                            xlabel="Iteration",
+    #                            ylabel="Current Tour Distance",
+    #                            title="Tour Distance Over Iterations")
     visualize_solution_fitness(pso_solver.get_solution_values(),
-                               xlabel="Iteration",
-                               ylabel="Current Tour Distance",
-                               title="Tour Distance Over Iterations")
+                               xlabel=X_AXIS_PSO,
+                               ylabel=Y_AXIS_POP_TSP_RANDOM,
+                               # ylabel=Y_AXIS_POP_TSP_GRID,
+                               title=TITLE_PSO_TSP,
+                               legend=LEGEND_TSP,
+                               linecolor=COLOR_PSO,
+                               )
 
 
 # ==============================================================================
@@ -383,9 +421,16 @@ def sa_with_bin_packing():
     print(f"Theoretical minimum number of bins, maybe impossible: {lower_bound}")
 
     print("Displaying solution fitness over time...")
+    # visualize_solution_fitness(sa_solver.get_solution_values(),
+    #                            ylabel="Number of Bins in Solution",
+    #                            title="Number of Bins Over Iterations")
     visualize_solution_fitness(sa_solver.get_solution_values(),
-                               ylabel="Number of Bins in Solution",
-                               title="Number of Bins Over Iterations")
+                               xlabel=X_AXIS_SA,
+                               ylabel=Y_AXIS_SA_BPP,
+                               title=TITLE_SA_BPP,
+                               legend=LEGEND_BPP,
+                               linecolor=COLOR_SA,
+                               )
 
     # current # bins used
     # print(f"Current number of bins used: {}")
@@ -466,10 +511,17 @@ def ga_with_bin_packing():
     print(f"Theoretical minimum number of bins, maybe impossible: {lower_bound}")
 
     print("Displaying solution fitness over time...")
+    # visualize_solution_fitness(ga_solver.get_solution_values(),
+    #                            xlabel="Generation",
+    #                            ylabel="Number of Bins Used",
+    #                            title="Bins Used Over Generations")
     visualize_solution_fitness(ga_solver.get_solution_values(),
-                               xlabel="Generation",
-                               ylabel="Number of Bins Used",
-                               title="Bins Used Over Generations")
+                               xlabel=X_AXIS_GA,
+                               ylabel=Y_AXIS_POP_BPP,
+                               title=TITLE_GA_BPP,
+                               legend=LEGEND_BPP,
+                               linecolor=COLOR_GA,
+                               )
 
 # ==============================================================================
 
@@ -533,11 +585,19 @@ def pso_with_bin_packing():
 
 
     problem.display_solution(best_individual)
+    # visualize_solution_fitness(pso_solver.get_solution_values(),
+    #                            xlabel="Iteration",
+    #                            ylabel="Number of Bins Used",
+    #                            title="Bins Used Over Iterations",
+    #                            legend="Num. bins used")
+
     visualize_solution_fitness(pso_solver.get_solution_values(),
-                               xlabel="Iteration",
-                               ylabel="Number of Bins Used",
-                               title="Bins Used Over Iterations",
-                               legend="Num. bins used")
+                               xlabel=X_AXIS_PSO,
+                               ylabel=Y_AXIS_POP_BPP,
+                               title=TITLE_PSO_BPP,
+                               legend=LEGEND_BPP,
+                               linecolor=COLOR_PSO,
+                               )
 
 
 # ==============================================================================
@@ -549,26 +609,14 @@ def sa_with_pressure_vessel_design():
     # |  Hyperparameter combinations:
     # -----------------------------------
 
-    # # Cost $6410.647
-    # 114683 --> 16079 --> 15617 --> 14920
-    # below is after length clipping fix... -_-
-    # Cost $6090.759
-    # 114683 --> 21831 --> 18787 --> 16703
-    # max_iterations = 30000
-    # initial_temperature = 600
-    # cooling_rate = 0.9997
-    # # TODO - thickness step size?
-    # radius_step_size = 0.2
-    # length_step_size = 2
-
-    # Cost $6092.422
-    # 114683 --> 16120 --> 14835 --> 13018
+    # Cost $6096.407
+    # 114683 --> 6711 --> 6990 --> 7270
     # use this one for the report
-    max_iterations = 30000
-    initial_temperature = 150
-    cooling_rate = 0.99985
-    radius_step_size = 0.5
-    length_step_size = 1.5
+    max_iterations = 15000
+    initial_temperature = 400
+    cooling_rate = 0.9997
+    radius_step_size = 1
+    length_step_size = 2
 
     # ------------------------------------------
     # |  The actual code to run the algorithm:
@@ -582,9 +630,6 @@ def sa_with_pressure_vessel_design():
     print("Initial solution:")
     problem.display_solution(initial_guess)
 
-    # guess an optimal solution to see what happens, todo
-
-
     # set up and run solver
     sa_solver = SimulatedAnnealing(
         problem=problem,
@@ -596,15 +641,16 @@ def sa_with_pressure_vessel_design():
     sa_solver.anneal()
     problem.display_solution(sa_solver.solution)  # 74.601?
 
-
     print(f"Generating plot of fitness values...")
     visualize_solution_fitness(sa_solver.get_solution_values(),
-                               xlabel="Iteration",
-                               ylabel="Current Pressure Vessel Cost ($)",
-                             title="Pressure Vessel Design Cost Over Iterations",
+                               xlabel=X_AXIS_SA,
+                               ylabel=Y_AXIS_SA_PVD,
+                               title=TITLE_SA_PVD,
+                               legend=LEGEND_PVD,
+                               linecolor=COLOR_SA,
                                y_min=PVD_PLOT_Y_MIN,
                                y_max=PVD_PLOT_Y_MAX
-                            )
+                               )
 
 # ==============================================================================
 
@@ -615,15 +661,26 @@ def ga_with_pressure_vessel_design():
     # |  Hyperparameter combinations:
     # -----------------------------------
 
+    # Cost $6094.163
+    # 14322 --> 11596 --> 7017 --> 6228
+    # todo can Use this
     pop_size = 300
-    num_generations = 400
+    num_generations = 100
     elitism_percent = 0.05
     crossover_percent = 0.75
-    mutation_rate = 0.12
+    mutation_rate = 0.15
     tournament_size = 4
-
     mutation_radius_step_size = 2
-    mutation_length_step_size = 5
+    mutation_length_step_size = 6
+
+    # pop_size = 300
+    # num_generations = 150
+    # elitism_percent = 0.05
+    # crossover_percent = 0.75
+    # mutation_rate = 0.2
+    # tournament_size = 4
+    # mutation_radius_step_size = 3
+    # mutation_length_step_size = 10
 
 
     # ------------------------------------------
@@ -652,16 +709,18 @@ def ga_with_pressure_vessel_design():
     best_individual = ga_solver.gen_best_solution
     problem.display_solution(best_individual)
     visualize_solution_fitness(ga_solver.get_solution_values(),
-                               xlabel="Generation",
-                               ylabel="Current Pressure Vessel Cost ($)",
-                               title="Pressure Vessel Design Cost Over GA Generations",
-                               legend="Cost of design",
+                               # xlabel="Generation",
+                               # ylabel="Current Pressure Vessel Cost ($)",
+                               # title="Pressure Vessel Design Cost Over GA Generations",
+                               # legend="Cost of design",
+                               xlabel=X_AXIS_GA,
+                               ylabel=Y_AXIS_POP_PVD,
+                               title=TITLE_GA_PVD,
+                               legend=LEGEND_PVD,
+                               linecolor=COLOR_GA,
                                y_min=PVD_PLOT_Y_MIN,
                                y_max=PVD_PLOT_Y_MAX,
                                )
-
-
-
 
 # ==============================================================================
 
@@ -672,51 +731,32 @@ def pso_with_pressure_vessel_design():
     # |  Hyperparameter combinations:
     # -----------------------------------
 
-    # # Cost $6064.636
-    # # 17456 --> 8071 --> 7371 --> 7030
-    # # good for report/presentation TODO
-    # pop_size = 150
-    # num_iterations = 1000
-    # alpha = 1.2
-    # beta = 1.2
-    # inertia_weight = 0.8
-    # mutation_radius_step_size = 1
-    # mutation_length_step_size = 1
-    # mutation_rate = 0.1
-
-    # # Cost $6060.563
-    # # 17456 --> 8112 --> 7371 --> 7228
-    # # also good for report/presentation
-    # pop_size = 150
-    # num_iterations = 1000
-    # alpha = 1.2
-    # beta = 1.2
-    # inertia_weight = 0.8
-    # mutation_radius_step_size = 1.25
-    # mutation_length_step_size = 1.25
-    # mutation_rate = 0.1
-
-    # # Cost $6070.251
-    # # 17456 --> 8586 --> 7412 --> 7456
-    # # TODO using this one
-    # # TODO - updated neighbor generation to correctly take the step sizes, need another solution
-    # # TODO - using this one, don't change
-    pop_size = 200
-    num_iterations = 500
-    alpha = 1.2
+    # # Cost $6063.565
+    # # 14322 --> 7061 --> 6289 --> 6258
+    # # TODO can using this one
+    pop_size = 300
+    num_iterations = 100
+    alpha = 1.3
     beta = 1.2
     inertia_weight = 0.7
-    mutation_radius_step_size = 1.25
-    mutation_length_step_size = 5
+    mutation_radius_step_size = 1.5
+    mutation_length_step_size = 3
     mutation_rate = 0.15
 
+    # pop_size = 300
+    # num_iterations = 100
+    # alpha = 1.3
+    # beta = 1.3
+    # inertia_weight = 0.7
+    # mutation_radius_step_size = 1.5
+    # mutation_length_step_size = 3
+    # mutation_rate = 0.15
 
     # ------------------------------------------
     # |  The actual code to run the algorithm:
     # ------------------------------------------
 
     problem = PressureVesselProblem()
-
     initial_population = generate_pressure_vessel_swarm(pop_size,
                                                         mutation_radius_step_size,
                                                         mutation_length_step_size)
@@ -740,10 +780,15 @@ def pso_with_pressure_vessel_design():
 
     problem.display_solution(best_individual)
     visualize_solution_fitness(pso_solver.get_solution_values(),
-                               xlabel="Iteration",
-                               ylabel="Current Pressure Vessel Cost ($)",
-                            title="Pressure Vessel Design Cost Over Iterations",
-                               legend="Cost of design",
+                               # xlabel="Iteration",
+                               # ylabel="Current Pressure Vessel Cost ($)",
+                               # title="Pressure Vessel Design Cost Over Iterations",
+                               # legend="Cost of design",
+                               xlabel=X_AXIS_PSO,
+                               ylabel=Y_AXIS_POP_PVD,
+                               title=TITLE_PSO_PVD,
+                               legend=LEGEND_PVD,
+                               linecolor=COLOR_PSO,
                                y_min=PVD_PLOT_Y_MIN,
                                y_max=PVD_PLOT_Y_MAX,
                                )
@@ -753,15 +798,15 @@ def pso_with_pressure_vessel_design():
 def main():
     """"""
 
-    # sa_with_tsp()
-    # ga_with_tsp()
-    # pso_with_tsp()
-    # sa_with_bin_packing()
-    # ga_with_bin_packing()
-    # pso_with_bin_packing()
-    # sa_with_pressure_vessel_design()
-    ga_with_pressure_vessel_design()
-    # pso_with_pressure_vessel_design()
+    # sa_with_tsp()  # grid collected, random collected
+    # ga_with_tsp()  # grid collected, random collected
+    # pso_with_tsp()  # grid collected, random collected
+    # sa_with_bin_packing()  # collected
+    # ga_with_bin_packing()  # collected
+    # pso_with_bin_packing()  # collected
+    # sa_with_pressure_vessel_design()  # collected
+    # ga_with_pressure_vessel_design()  # collected
+    pso_with_pressure_vessel_design()  # collected
 
     # sa tsp    (done)
     # sa bpp    (done)
