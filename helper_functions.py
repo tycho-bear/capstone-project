@@ -542,6 +542,7 @@ def visualize_solution_fitness(fitness_values: list[float],
                                ylabel: str="Current Tour Distance",
                                title: str="Tour Distance Over Iterations",
                                legend: str="TODO: ADD LEGEND HERE",
+                               linecolor: str="royalblue",
                                y_min: float=None,
                                y_max: float=None) \
         -> None:
@@ -553,6 +554,8 @@ def visualize_solution_fitness(fitness_values: list[float],
     :param ylabel: (str) The label for the y-axis.
     :param title: (str) The plot title.
     :param legend: (str) What the legend label should say.
+    :param linecolor: (str) The color of the plot line. This should be different
+        for each algorithm.
     :param y_min: (float) The minimum value for the y-axis.
     :param y_max: (float) The maximum value for the y-axis. Useful for filtering
         extremely high costs in the pressure vessel design problem when the
@@ -573,7 +576,7 @@ def visualize_solution_fitness(fitness_values: list[float],
               # linewidth=3,
               linewidth=5,
               # linewidth=1,
-              color="b",
+              color=linecolor,
               # color="mediumslateblue",
               # color="royalblue",  # good color
               # label="Distancewtf",
