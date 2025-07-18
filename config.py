@@ -18,6 +18,46 @@ NUM_DESIGN_VARIABLES = 4
 PVD_PLOT_Y_MAX = 10000
 PVD_PLOT_Y_MIN = 5500
 
+# --------------
+# for plotting
+
+Y_AXIS_SA_TSP_GRID = "Tour Distance (units)"
+Y_AXIS_SA_TSP_RANDOM = "Tour Distance (Euclidean)"
+Y_AXIS_SA_BPP = "Number of Bins Used"
+Y_AXIS_SA_PVD = "Design Cost ($)"
+
+Y_AXIS_POP_TSP_GRID = "Best Tour Distance (units)"
+Y_AXIS_POP_TSP_RANDOM = "Best Tour Distance (Euclidean)"
+Y_AXIS_POP_BPP = "Best Number of Bins Used"
+Y_AXIS_POP_PVD = "Best Design Cost ($)"
+
+X_AXIS_SA = "Iteration"
+X_AXIS_GA = "Generation"
+X_AXIS_PSO = "Iteration"
+
+LEGEND_TSP = "Tour Distance"
+LEGEND_BPP = "Bins Used"
+LEGEND_PVD = "Design Cost"
+
+COLOR_SA = "indianred"
+COLOR_GA = "seagreen"
+COLOR_PSO = "slateblue"
+
+
+# titles
+
+TITLE_SA_TSP = "Tour Distance over SA Iterations"
+TITLE_GA_TSP = "Tour Distance over GA Generations"
+TITLE_PSO_TSP = "Tour Distance over PSO Iterations"
+
+TITLE_SA_BPP = "Bins Used over SA Iterations"
+TITLE_GA_BPP = "Bins Used over GA Generations"
+TITLE_PSO_BPP = "Bins Used over PSO Iterations"
+
+TITLE_SA_PVD = "Pressure Vessel Cost over SA Iterations"
+TITLE_GA_PVD = "Pressure Vessel Cost over GA Generations"
+TITLE_PSO_PVD = "Pressure Vessel Cost over PSO Iterations"
+
 
 # ==========================================================================
 # |  Different combinations of hyperparameters below:
