@@ -179,7 +179,7 @@ class ParticleSwarmOptimization:
         end_time = time.time()
         # print best solution data
         print(f"Best solution in population at iteration "
-              f"{self.iteration_number}: distance "
+              f"{self.iteration_number}: fitness "
               f"{self.solution_values[-1]:.3f}")
         print(f"Elapsed time: {(end_time - start_time):.1f} seconds.")
 
