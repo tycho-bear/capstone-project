@@ -46,25 +46,19 @@ from pressure_vessel_problem import PressureVesselProblem
 from simulated_annealing import SimulatedAnnealing
 from genetic_algorithm import GeneticAlgorithm
 from particle_swarm_optimization import ParticleSwarmOptimization
+import argparse
+import sys
 
 
 np.random.seed(SEED)
 
 
-def sa_with_tsp():
+def sa_with_tsp_grid():
     """"""
 
     # -----------------------------------
     # |  Hyperparameter combinations:
     # -----------------------------------
-
-    # # 64 city grid, distance 69.136
-    # # 263 --> 271 --> 246 --> 250
-    # max_iterations = 50000
-    # initial_temperature = 29
-    # cooling_rate = 0.9998
-    # shift_max = 32
-    # grid_side_length = 8
 
     # 64 city grid, distance 72.075  # TODO using this
     max_iterations = 50000
@@ -72,48 +66,16 @@ def sa_with_tsp():
     cooling_rate = 0.9998
     grid_side_length = 8
 
-    # 64 city grid, distance 68.485 (very good)
-    # max_iterations = 50000
-    # initial_temperature = 10
-    # cooling_rate = 0.9998
-    # grid_side_length = 8
-
-    # random 64 cities, distance 40.952  # TODO using this
-    # max_iterations = 1000  # 50000
-    # max_iterations = 50000
-    # initial_temperature = 5
-    # cooling_rate = 0.9998
-    # grid_side_length = 8
-
-    # random 64 cities, distance 38.171 (good)
-    # max_iterations = 50000
-    # initial_temperature = 2
-    # cooling_rate = 0.9998
-    # shift_max = 32
-    # grid_side_length = 8
-
     # ------------------------------------------
     # |  The actual code to run the algorithm:
     # ------------------------------------------
 
     # grid_side_length = 8
     initial_guess = generate_square_grid(grid_side_length)  # grid
-
-
-    num_cities = grid_side_length ** 2
-
-    # -----------------------------
-    # For random cities, do this:
-    # -----------------------------
-    # initial_guess = generate_random_cities(num_cities, X_MIN_WA, X_MAX_WA,
-    #                                        Y_MIN_WA, Y_MAX_WA)
+    # num_cities = grid_side_length ** 2
 
     # define problem here
-    problem = TravelingSalesmanProblem(
-        # initial_guess=initial_guess,
-        # num_cities=num_cities,
-        # shift_max=shift_max
-    )
+    problem = TravelingSalesmanProblem()
 
     sa_solver = SimulatedAnnealing(
         problem=problem,
@@ -126,12 +88,8 @@ def sa_with_tsp():
     problem.display_solution(sa_solver.solution)  # 74.601?
 
     print(f"Generating plot of fitness values...")
-    # visualize_solution_fitness(sa_solver.get_solution_values(),
-    #                            # downsample_factor=50
-    #                            )
     visualize_solution_fitness(sa_solver.get_solution_values(),
                                  xlabel=X_AXIS_SA,
-                                 # ylabel=Y_AXIS_SA_TSP_RANDOM,
                                  ylabel=Y_AXIS_SA_TSP_GRID,
                                  title=TITLE_SA_TSP,
                                  legend=LEGEND_TSP,
@@ -140,21 +98,61 @@ def sa_with_tsp():
 
 # ==============================================================================
 
-def ga_with_tsp():
+def sa_with_tsp_random():
     """"""
 
     # -----------------------------------
     # |  Hyperparameter combinations:
     # -----------------------------------
 
-    # # 64 city grid, distance 68.307
-    # # 228 --> 175 --> 170 --> 151 (30)
-    # pop_size = 500
-    # num_generations = 400  # 400
-    # elitism_percent = 0.05
-    # crossover_percent = 0.75
-    # mutation_rate = 0.10
-    # tournament_size = 3
+    # random 64 cities, distance 40.952  # TODO using this
+    max_iterations = 1000  # 50000
+    max_iterations = 50000
+    initial_temperature = 5
+    cooling_rate = 0.9998
+    grid_side_length = 8
+
+    # ------------------------------------------
+    # |  The actual code to run the algorithm:
+    # ------------------------------------------
+    # -----------------------------
+    # For random cities, do this:
+    # -----------------------------
+
+    num_cities = grid_side_length ** 2
+    initial_guess = generate_random_cities(num_cities, X_MIN_WA, X_MAX_WA,
+                                           Y_MIN_WA, Y_MAX_WA)
+
+    # define problem here
+    problem = TravelingSalesmanProblem()
+
+    sa_solver = SimulatedAnnealing(
+        problem=problem,
+        initial_guess=initial_guess,
+        max_iterations=max_iterations,
+        initial_temperature=initial_temperature,
+        cooling_rate=cooling_rate
+    )
+    sa_solver.anneal()
+    problem.display_solution(sa_solver.solution)  # 74.601?
+
+    print(f"Generating plot of fitness values...")
+    visualize_solution_fitness(sa_solver.get_solution_values(),
+                                 xlabel=X_AXIS_SA,
+                                 ylabel=Y_AXIS_SA_TSP_RANDOM,
+                                 title=TITLE_SA_TSP,
+                                 legend=LEGEND_TSP,
+                                 linecolor=COLOR_SA,
+                                 )
+
+# ==============================================================================
+
+def ga_with_tsp_grid():
+    """"""
+
+    # -----------------------------------
+    # |  Hyperparameter combinations:
+    # -----------------------------------
 
     # 64 city grid, distance 65.657  # TODO using this one
     # 228 --> 188 --> 148 --> 134
@@ -165,56 +163,20 @@ def ga_with_tsp():
     mutation_rate = 0.10
     tournament_size = 4
 
-    # 64 city grid, distance 68.142 (real)
-    # 228 --> 193 --> 173 --> 157
-    # pop_size = 600
-    # num_generations = 400  # 400
-    # elitism_percent = 0.05
-    # crossover_percent = 0.75
-    # mutation_rate = 0.10
-    # tournament_size = 4
-
-    # 64 random cities, distance 35.833 (real)  # TODO using this one
-    # 141 --> 115 --> 97 --> 75
-    # pop_size = 600
-    # num_generations = 500
-    # elitism_percent = 0.05
-    # crossover_percent = 0.75
-    # mutation_rate = 0.10
-    # tournament_size = 4
-
-    # # 64 city grid, distance 70.614 (looks cool though, no loops)
-    # # converges pretty fast
-    # pop_size = 500
-    # num_generations = 400
-    # elitism_percent = 0.05
-    # crossover_percent = 0.75
-    # mutation_rate = 0.07
-    # tournament_size = 3
-
     # ------------------------------------------
     # |  The actual code to run the algorithm:
     # ------------------------------------------
 
     grid_side_length = 8
     num_cities = grid_side_length ** 2
-    problem = TravelingSalesmanProblem(
-        # num_cities,
-        # shift_max=num_cities
-    )
+    problem = TravelingSalesmanProblem()
 
-    print("------------------------------------------")
-    print(f"Solving {num_cities}-city TSP with GA.")
-    print(f"If grid, optimal solution distance is {num_cities}.")
-    print("------------------------------------------")
+    print("--------------------------------------------------")
+    print(f"Solving {num_cities}-city grid TSP with GA.")
+    print(f"Optimal solution distance is {num_cities} units.")
+    print("--------------------------------------------------")
 
     initial_population = generate_grid_population(pop_size, grid_side_length)
-
-    # initial_population = generate_random_city_population(pop_size, num_cities,
-    #                                                      x_min=X_MIN_WA,
-    #                                                      x_max=X_MAX_WA,
-    #                                                      y_min=Y_MIN_WA,
-    #                                                      y_max=Y_MAX_WA)
 
     ga_solver = GeneticAlgorithm(
         problem=problem,
@@ -231,14 +193,69 @@ def ga_with_tsp():
 
     best_individual = ga_solver.gen_best_solution
     problem.display_solution(best_individual)
-    # visualize_solution_fitness(ga_solver.get_solution_values(),
-    #                            xlabel="Generation",
-    #                            ylabel="Current Tour Distance",
-    #                            title="Tour Distance Over Generations")
     visualize_solution_fitness(ga_solver.get_solution_values(),
                                xlabel=X_AXIS_GA,
                                ylabel=Y_AXIS_POP_TSP_GRID,
-                               # ylabel=Y_AXIS_POP_TSP_RANDOM,
+                               title=TITLE_GA_TSP,
+                               legend=LEGEND_TSP,
+                               linecolor=COLOR_GA,
+                               )
+
+# ==============================================================================
+
+def ga_with_tsp_random():
+    """"""
+
+    # -----------------------------------
+    # |  Hyperparameter combinations:
+    # -----------------------------------
+
+    # 64 random cities, distance 35.833 (real)  # TODO using this one
+    # 141 --> 115 --> 97 --> 75
+    pop_size = 600
+    num_generations = 500
+    elitism_percent = 0.05
+    crossover_percent = 0.75
+    mutation_rate = 0.10
+    tournament_size = 4
+
+    # ------------------------------------------
+    # |  The actual code to run the algorithm:
+    # ------------------------------------------
+
+    grid_side_length = 8
+    num_cities = grid_side_length ** 2
+    problem = TravelingSalesmanProblem()
+
+    print("------------------------------------------")
+    print(f"Solving {num_cities}-city TSP with GA.")
+    print(f"If grid, optimal solution distance is {num_cities}.")
+    print("------------------------------------------")
+
+    initial_population = generate_random_city_population(pop_size, num_cities,
+                                                         x_min=X_MIN_WA,
+                                                         x_max=X_MAX_WA,
+                                                         y_min=Y_MIN_WA,
+                                                         y_max=Y_MAX_WA)
+
+    ga_solver = GeneticAlgorithm(
+        problem=problem,
+        initial_population=initial_population,
+        population_size=pop_size,
+        num_generations=num_generations,
+        elitism_percent=elitism_percent,
+        crossover_percent=crossover_percent,
+        mutation_rate=mutation_rate,
+        tournament_size=tournament_size
+    )
+    ga_solver.print_initial_information()
+    ga_solver.evolve()
+
+    best_individual = ga_solver.gen_best_solution
+    problem.display_solution(best_individual)
+    visualize_solution_fitness(ga_solver.get_solution_values(),
+                               xlabel=X_AXIS_GA,
+                               ylabel=Y_AXIS_POP_TSP_RANDOM,
                                title=TITLE_GA_TSP,
                                legend=LEGEND_TSP,
                                linecolor=COLOR_GA,
@@ -247,7 +264,7 @@ def ga_with_tsp():
 # ==============================================================================
 
 
-def pso_with_tsp():
+def pso_with_tsp_grid():
     """"""
     # testing PSO on TSP grid
     # copy some stuff / structure from genetic_algorithm.py main
@@ -257,58 +274,67 @@ def pso_with_tsp():
     # |  Hyperparameter combinations:
     # =========================================
 
-    # problem is this algorithm is really slow
-    # should keep track of all hyperparameter combinations and their results
-    # 500 pop / 500 iterations seems good? 500 iterations low, maybe do 1000
-
-    # 64 city grid, plateaus a bit, distance ___
-    # pop_size = 500
-    # num_iterations = 500
-    # alpha = 0.3
-    # beta = 0.3
-    # mutation_rate = 0.1
-
-    # 64 city grid, plateaus a bit, distance 73.282, time 760.0 seconds
-    # pop_size = 500
-    # num_iterations = 1000
-    # alpha = 0.3
-    # beta = 0.3
-    # mutation_rate = 0.1
-
     # todo - using this one for the report
     # 64 city grid, distance 70.844, time 719.0 seconds
     # 228 --> 192 --> 158 --> 136
-    # pop_size = 500
-    # num_iterations = 1000
-    # alpha = 0.4
-    # beta = 0.4
-    # mutation_rate = 0.1
+    pop_size = 500
+    num_iterations = 1000
+    alpha = 0.4
+    beta = 0.4
+    mutation_rate = 0.1
 
-    # 64 city grid, distance 82.407, time 801.1 seconds
-    # pop_size = 500
-    # num_iterations = 1000
-    # alpha = 0.5
-    # beta = 0.5
-    # mutation_rate = 0.1
+    # =========================================
+    # |  The actual code to run the algorithm:
+    # =========================================
 
-    # ------------------------------------------------------
-    # random cities parameters
+    grid_side_length = 8
+    # grid_side_length = 4
+    num_cities = grid_side_length ** 2
+    problem = TravelingSalesmanProblem()
 
-    # 64 random cities, distance 46.149, time 732.1 seconds
-    # 141 --> 109 --> 92 --> 88
-    # pop_size = 500
-    # num_iterations = 1000
-    # alpha = 0.4
-    # beta = 0.4
-    # mutation_rate = 0.1
+    print("------------------------------------------")
+    print(f"Solving {num_cities}-city TSP with PSO.")
+    print(f"If grid, optimal solution distance is {num_cities}.")
+    print("------------------------------------------")
 
-    # 64 random cities, distance 47.879, time 769.7 seconds
-    # 141 --> 123 --> 109 --> 96
-    # pop_size = 500
-    # num_iterations = 1000
-    # alpha = 0.3
-    # beta = 0.3
-    # mutation_rate = 0.1
+    initial_population = generate_grid_swarm(pop_size, grid_side_length)
+
+    pso_solver = ParticleSwarmOptimization(
+        problem=problem,
+        initial_population=initial_population,
+        population_size=pop_size,
+        num_iterations=num_iterations,
+        alpha=alpha,
+        beta=beta,
+        inertia_weight=inertia_weight,
+        mutation_rate=mutation_rate
+    )
+    pso_solver.print_initial_information()
+    pso_solver.swarm()
+
+    best_individual = pso_solver.global_best
+    problem.display_solution(best_individual.current_solution)
+    visualize_solution_fitness(pso_solver.get_solution_values(),
+                               xlabel=X_AXIS_PSO,
+                               ylabel=Y_AXIS_POP_TSP_GRID,
+                               title=TITLE_PSO_TSP,
+                               legend=LEGEND_TSP,
+                               linecolor=COLOR_PSO,
+                               )
+
+
+# ==============================================================================
+
+
+def pso_with_tsp_random():
+    """"""
+    # testing PSO on TSP grid
+    # copy some stuff / structure from genetic_algorithm.py main
+    inertia_weight = -999  # not used here
+
+    # =========================================
+    # |  Hyperparameter combinations:
+    # =========================================
 
     # todo - using this one for the report
     # 64 random cities, distance 43.494, time 777.9 seconds
@@ -325,7 +351,6 @@ def pso_with_tsp():
     # =========================================
 
     grid_side_length = 8
-    # grid_side_length = 4
     num_cities = grid_side_length ** 2
     problem = TravelingSalesmanProblem()
 
@@ -333,8 +358,6 @@ def pso_with_tsp():
     print(f"Solving {num_cities}-city TSP with PSO.")
     print(f"If grid, optimal solution distance is {num_cities}.")
     print("------------------------------------------")
-
-    # initial_population = generate_grid_swarm(pop_size, grid_side_length)
 
     initial_population = generate_random_city_swarm(pop_size, num_cities,
                                                     x_min=X_MIN_WA,
@@ -358,14 +381,9 @@ def pso_with_tsp():
 
     best_individual = pso_solver.global_best
     problem.display_solution(best_individual.current_solution)
-    # visualize_solution_fitness(pso_solver.get_solution_values(),
-    #                            xlabel="Iteration",
-    #                            ylabel="Current Tour Distance",
-    #                            title="Tour Distance Over Iterations")
     visualize_solution_fitness(pso_solver.get_solution_values(),
                                xlabel=X_AXIS_PSO,
                                ylabel=Y_AXIS_POP_TSP_RANDOM,
-                               # ylabel=Y_AXIS_POP_TSP_GRID,
                                title=TITLE_PSO_TSP,
                                legend=LEGEND_TSP,
                                linecolor=COLOR_PSO,
@@ -796,7 +814,12 @@ def pso_with_pressure_vessel_design():
 
 
 def main():
-    """"""
+    """
+    Main function to run various optimization algorithms on different problems.
+    Uses argparse to select which algorithm and problem to run.
+
+    :return: None
+    """
 
     # sa_with_tsp()  # grid collected, random collected
     # ga_with_tsp()  # grid collected, random collected
@@ -806,17 +829,7 @@ def main():
     # pso_with_bin_packing()  # collected
     # sa_with_pressure_vessel_design()  # collected
     # ga_with_pressure_vessel_design()  # collected
-    pso_with_pressure_vessel_design()  # collected
-
-    # sa tsp    (done)
-    # sa bpp    (done)
-    # sa pvd    (done)
-    # ga tsp    (done)
-    # ga bpp    (done)
-    # ga pvd    (need this)
-    # pso tsp   (done)
-    # pso bpp   (done)
-    # pso pvd   (done)
+    # pso_with_pressure_vessel_design()  # collected
 
 
 if __name__ == '__main__':
