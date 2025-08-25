@@ -2,7 +2,7 @@
 
 ---
 
-## Overview of Work
+## What is this?
 
 Many interesting problems cannot be solved efficiently by exact algorithms. One such example is the traveling salesman problem.
 Additionally, some engineering problems, such as the pressure vessel design problem, are difficult to solve analytically.
@@ -32,7 +32,7 @@ python main.py
 ---
 
 
-## Additional Information
+## Additional information
 
 ### Full Report
 
