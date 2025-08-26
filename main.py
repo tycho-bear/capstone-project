@@ -56,6 +56,13 @@ np.random.seed(SEED)
 def sa_with_tsp_grid():
     """"""
 
+    print()
+    print("-------------------------------------")
+    print("|  ALGORITHM: simulated annealing")
+    print("|  PROBLEM: TSP grid")
+    print("-------------------------------------")
+    print()
+
     # -----------------------------------
     # |  Hyperparameter combinations:
     # -----------------------------------
@@ -100,6 +107,13 @@ def sa_with_tsp_grid():
 
 def sa_with_tsp_random():
     """"""
+
+    print()
+    print("-------------------------------------")
+    print("|  ALGORITHM: simulated annealing")
+    print("|  PROBLEM: TSP random")
+    print("-------------------------------------")
+    print()
 
     # -----------------------------------
     # |  Hyperparameter combinations:
@@ -149,6 +163,13 @@ def sa_with_tsp_random():
 
 def ga_with_tsp_grid():
     """"""
+
+    print()
+    print("-----------------------------------")
+    print("|  ALGORITHM: genetic algorithm")
+    print("|  PROBLEM: TSP grid")
+    print("-----------------------------------")
+    print()
 
     # -----------------------------------
     # |  Hyperparameter combinations:
@@ -205,6 +226,13 @@ def ga_with_tsp_grid():
 
 def ga_with_tsp_random():
     """"""
+
+    print()
+    print("-----------------------------------")
+    print("|  ALGORITHM: genetic algorithm")
+    print("|  PROBLEM: TSP random")
+    print("-----------------------------------")
+    print()
 
     # -----------------------------------
     # |  Hyperparameter combinations:
@@ -266,6 +294,14 @@ def ga_with_tsp_random():
 
 def pso_with_tsp_grid():
     """"""
+
+    print()
+    print("-------------------------------------------")
+    print("|  ALGORITHM: particle swarm optimization")
+    print("|  PROBLEM: TSP grid")
+    print("-------------------------------------------")
+    print()
+
     # testing PSO on TSP grid
     # copy some stuff / structure from genetic_algorithm.py main
     inertia_weight = -999  # not used here
@@ -328,6 +364,14 @@ def pso_with_tsp_grid():
 
 def pso_with_tsp_random():
     """"""
+
+    print()
+    print("-------------------------------------------")
+    print("|  ALGORITHM: particle swarm optimization")
+    print("|  PROBLEM: TSP random")
+    print("-------------------------------------------")
+    print()
+
     # testing PSO on TSP grid
     # copy some stuff / structure from genetic_algorithm.py main
     inertia_weight = -999  # not used here
@@ -395,6 +439,13 @@ def pso_with_tsp_random():
 def sa_with_bin_packing():
     """"""
 
+    print()
+    print("-----------------------------------")
+    print("|  ALGORITHM: simulated annealing")
+    print("|  PROBLEM: bin packing")
+    print("-----------------------------------")
+    print()
+
     # -----------------------------------
     # |  Hyperparameter combinations:
     # -----------------------------------
@@ -458,6 +509,13 @@ def sa_with_bin_packing():
 
 def ga_with_bin_packing():
     """"""
+
+    print()
+    print("-----------------------------------")
+    print("|  ALGORITHM: genetic algorithm")
+    print("|  PROBLEM: bin packing")
+    print("-----------------------------------")
+    print()
 
     # -----------------------------------
     # |  Hyperparameter combinations:
@@ -546,6 +604,13 @@ def ga_with_bin_packing():
 def pso_with_bin_packing():
     """"""
 
+    print()
+    print("-------------------------------------------")
+    print("|  ALGORITHM: particle swarm optimization")
+    print("|  PROBLEM: bin packing")
+    print("-------------------------------------------")
+    print()
+
     num_items = 200
     bin_capacity = 50
     weights_min = 1
@@ -623,6 +688,14 @@ def pso_with_bin_packing():
 def sa_with_pressure_vessel_design():
     """"""
 
+    print()
+    print("------------------------------------")
+    print("|  ALGORITHM: simulated annealing")
+    print("|  PROBLEM: pressure vessel design")
+    print("------------------------------------")
+    print()
+
+
     # -----------------------------------
     # |  Hyperparameter combinations:
     # -----------------------------------
@@ -674,6 +747,13 @@ def sa_with_pressure_vessel_design():
 
 def ga_with_pressure_vessel_design():
     """"""
+
+    print()
+    print("------------------------------------")
+    print("|  ALGORITHM: genetic algorithm")
+    print("|  PROBLEM: pressure vessel design")
+    print("------------------------------------")
+    print()
 
     # -----------------------------------
     # |  Hyperparameter combinations:
@@ -744,6 +824,13 @@ def ga_with_pressure_vessel_design():
 
 def pso_with_pressure_vessel_design():
     """"""
+
+    print()
+    print("-------------------------------------------")
+    print("|  ALGORITHM: particle swarm optimization")
+    print("|  PROBLEM: pressure vessel design")
+    print("-------------------------------------------")
+    print()
 
     # -----------------------------------
     # |  Hyperparameter combinations:
@@ -821,15 +908,35 @@ def main():
     :return: None
     """
 
-    # sa_with_tsp()  # grid collected, random collected
-    # ga_with_tsp()  # grid collected, random collected
-    # pso_with_tsp()  # grid collected, random collected
-    # sa_with_bin_packing()  # collected
-    # ga_with_bin_packing()  # collected
-    # pso_with_bin_packing()  # collected
-    # sa_with_pressure_vessel_design()  # collected
-    # ga_with_pressure_vessel_design()  # collected
-    # pso_with_pressure_vessel_design()  # collected
+    parser = argparse.ArgumentParser(
+        description="Run optimization algorithm on a given problem."
+    )
+    parser.add_argument("algorithm", choices=["sa", "ga", "pso"],
+                        help="Optimization algorithm to use.")
+    parser.add_argument("problem", choices=["tsp-grid", "tsp-random", "bpp", "pvd"],
+                        help="Problem to solve: TSP (traveling salesman problem) grid version, random version, BPP (bin packing problem), PVD (pressure vessel design).")
+    args = parser.parse_args()
+
+    dispatch = {
+        ("sa", "tsp-grid"): sa_with_tsp_grid,
+        ("sa", "tsp-random"): sa_with_tsp_random,
+        ("ga", "tsp-grid"): ga_with_tsp_grid,
+        ("ga", "tsp-random"): ga_with_tsp_random,
+        ("pso", "tsp-grid"): pso_with_tsp_grid,
+        ("pso", "tsp-random"): pso_with_tsp_random,
+        ("sa", "bpp"): sa_with_bin_packing,
+        ("ga", "bpp"): ga_with_bin_packing,
+        ("pso", "bpp"): pso_with_bin_packing,
+        ("sa", "pvd"): sa_with_pressure_vessel_design,
+        ("ga", "pvd"): ga_with_pressure_vessel_design,
+        ("pso", "pvd"): pso_with_pressure_vessel_design,
+    }
+
+    func = dispatch.get((args.algorithm, args.problem))
+    if func is None:
+        sys.exit("Invalid argument combination.")
+
+    func()
 
 
 if __name__ == '__main__':
