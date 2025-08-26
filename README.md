@@ -26,8 +26,14 @@ pip install -r requirements.txt
 To run the code, run 
 
 ```bash
-python main.py
+python main.py <ALGORITHM> <PROBLEM>
 ```
+
+`<ALGORITHM>` = `sa`, `ga`, or `pso`
+
+`<PROBLEM>` = `tsp-grid`, `tsp-random`, `bpp`, or `pvd`
+
+See the "Algorithms Used" and "Problems Examined" subsections for more information.
 
 ---
 
@@ -47,7 +53,7 @@ PSO simulates "swarm intelligence" behavior to find good solutions.
 
 ### Problems Examined
 
-These algorithms are tested on benchmark instances of the traveling salesman problem (TSP), bin packing problem (BPP), and pressure vessel design problem.
+These algorithms are tested on benchmark instances of the traveling salesman problem (TSP), bin packing problem (BPP), and pressure vessel design problem (PVD).
 Results show that properly tuned configurations achieve solutions within 1-10% of optimal or best known results.
 For the pressure vessel problem, solutions consistent with the best in the literature are found.
 These results demonstrate the effectiveness of metaheuristics for finding high-quality solutions to optimization problems.
