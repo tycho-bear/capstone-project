@@ -42,7 +42,7 @@ See the "Algorithms Used" and "Problems Examined" subsections for more informati
 
 ### Full Report
 
-The full report for this project may be found in [Capstone_Project_Report.pdf]([url](https://github.com/tycho-bear/capstone-project/blob/main/Capstone_Project_Report.pdf)).
+The full report for this project may be found in [Capstone_Project_Report.pdf](https://github.com/tycho-bear/capstone-project/blob/main/Capstone_Project_Report.pdf).
 
 ### Algorithms Used
 
