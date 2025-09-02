@@ -2,7 +2,7 @@
 
 ---
 
-## What is this?
+# What is this?
 
 Many interesting problems cannot be solved efficiently by exact algorithms. One such example is the traveling salesman problem.
 Additionally, some engineering problems, such as the pressure vessel design problem, are difficult to solve analytically.
@@ -12,7 +12,7 @@ This work applies metaheuristic algorithms to solve NP-hard combinatorial optimi
 
 ---
 
-## Requirements
+# Requirements
 
 Both `numpy` and `matplotlib` are required to run the code. To install them, run
 
@@ -21,19 +21,80 @@ pip install -r requirements.txt
 ```
 
 
-## Usage
+# Usage
 
-To run the code, run 
+This project can be run straight from the command line, as well as through Docker.
+
+## Command Line
+
+To run the code from the command line, run 
 
 ```bash
 python main.py <ALGORITHM> <PROBLEM>
 ```
+
+where
 
 `<ALGORITHM>` = `sa`, `ga`, or `pso`
 
 `<PROBLEM>` = `tsp-grid`, `tsp-random`, `bpp`, or `pvd`
 
 See the "Algorithms Used" and "Problems Examined" subsections for more information.
+
+## Docker
+
+This project can also be run with Docker. The simplest way is through `make`,
+but the actual commands are provided as well.
+
+### Makefile
+
+The project must be built before running. To do this, run 
+
+```bash
+make build
+```
+
+Alternatively, to build and run the project all at once, run
+
+```bash
+make start
+```
+
+To simply run the project after building, run
+
+```bash
+make run
+```
+
+### Additional Arguments
+
+To specify an algorithm and problem, put `ARGS="<ALGORITHM> <PROBLEM>"` at the
+end of the command. For example:
+
+```bash
+make run ARGS="sa pvd"
+```
+
+### Docker Commands
+
+Instead of running `make ...`, the raw Docker commands may be used. To build the
+project this way, run
+
+```bash
+docker build -t capstone-project .
+```
+
+To run, execute either
+
+```bash
+docker run capstone-project
+```
+
+or, to specify an algorithm and problem,
+
+```bash
+docker run capstone-project <ALGORITHM> <PROBLEM>
+```
 
 ---
 
