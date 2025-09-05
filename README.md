@@ -27,7 +27,7 @@ This project can be run straight from the command line, as well as through Docke
 
 ## Command Line
 
-To run the code from the command line, run 
+To run the code from the command line, install the requirements, then run 
 
 ```bash
 python main.py <ALGORITHM> <PROBLEM>
@@ -40,6 +40,14 @@ where
 `<PROBLEM>` = `tsp-grid`, `tsp-random`, `bpp`, or `pvd`
 
 See the "Algorithms Used" and "Problems Examined" subsections for more information.
+
+An example run (and a good place to start) might look like:
+
+```bash
+python main.py pso pvd
+```
+
+---
 
 ## Docker
 
