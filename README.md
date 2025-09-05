@@ -111,7 +111,7 @@ docker run capstone-project <ALGORITHM> <PROBLEM>
 
 ### Full Report
 
-The full report for this project may be found in [Capstone_Project_Report.pdf](https://github.com/tycho-bear/capstone-project/blob/main/Capstone_Project_Report.pdf).
+The full report for this project may be found in [Capstone_Project_Report.pdf](https://github.com/tycho-bear/capstone-project/blob/main/Capstone_Project_Report.pdf) (opens in browser).
 
 ### Algorithms Used
 
