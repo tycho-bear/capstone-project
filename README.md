@@ -1,8 +1,10 @@
 # Capstone Project: Combinatorial and Engineering Optimization with Metaheuristic Algorithms
 
----
+## What is this?
 
-# What is this?
+This is the final project for my master's degree in computer science at Rochester Institute of Technology.
+
+# Overview
 
 Many interesting problems cannot be solved efficiently by exact algorithms. One such example is the traveling salesman problem.
 Additionally, some engineering problems, such as the pressure vessel design problem, are difficult to solve analytically.
